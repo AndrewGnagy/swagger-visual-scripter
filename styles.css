@@ -113,7 +113,7 @@ body, html {
     margin-top: 6px;
 }
 
-#importInput{
+#importinput{
     display: none;
 }
 #import:hover {
@@ -412,7 +412,7 @@ input {
     z-index: 0;
     overflow: auto;
 }
-#propwrap {
+#rightcard {
     position: absolute;
     right: 0;
     top: 0;
