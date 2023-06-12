@@ -10,9 +10,6 @@ document.addEventListener("DOMContentLoaded", function(){
         loggers: ['<div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="9"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/log.svg"></div><div class="blocktext">                        <p class="blocktitle">Add new log entry</p><p class="blockdesc">Adds a new log entry to this project</p>        </div></div></div>']
     }
 
-
-
-
     /**
      * THE ASSIGNMENT:
      * When you add a new block from the toolbox to the chart, pull the properties from the swaggerJson.  chartProperties will just store these properties for existing entries on the flow chart
@@ -106,18 +103,32 @@ document.addEventListener("DOMContentLoaded", function(){
             document.querySelectorAll(".selectedblock").forEach((el) => el.classList.remove("selectedblock"));
             if (event.target.closest(".block") && !event.target.closest(".block").classList.contains("dragging")) {
                 if(chartProperties[flowy.getActiveBlockId()] == null) {
-                    chartProperties[flowy.getActiveBlockId()] = {
-                        'Name': properties[i].name,
-                        'Description': properties[i].description,
-                        'Required': properties[i].required,
-                        'Format': properties[i].in,
-                        'Type': properties[i].type
-                    }
+                    let blockPath = event.target.closest(".blockroot").getAttribute("id")
+                    let method = blockPath.split(' ')[0]
+                    let path = blockPath.split(' ')[1]
+
+                    Object.keys(swaggerJson.paths).forEach(swaggerPath => {
+                        if(swaggerPath == path) {
+                            pathMethods = Object.keys(swaggerJson.paths[swaggerPath])
+                            pathMethods.forEach(pathMethod => {
+                                if(pathMethod == method) {
+                                    chartProperties[flowy.getActiveBlockId()].path = blockPath
+                                    chartProperties[flowy.getActiveBlockId()].properties = swaggerJson.paths[swaggerPath][pathMethod].parameters
+                                }
+                            })
+                        }
+                    })
+
+                    // chartProperties[flowy.getActiveBlockId()] = {
+                    //     'Name': properties[i].name,
+                    //     'Description': properties[i].description,
+                    //     'Required': properties[i].required,
+                    //     'Format': properties[i].in,
+                    //     'Type': properties[i].type
+                    // }
                 } else {
                     document.getElementById("proplist").innerHTML = chartProperties[flowy.getActiveBlockId()]
                 }
-
-
 
                 tempblock = event.target.closest(".block");
                 rightcard = true;
@@ -161,7 +172,7 @@ document.addEventListener("DOMContentLoaded", function(){
             //TODO null check as appropriate
             for(let j=0; j < pathMethods.length; j++) {
                 let pathMethod = pathMethods[j];
-                generateBlock("api", pathMethod + " " + path, swaggerJson.paths[path][pathMethod]["summary"], "assets/arrow.svg", path[method].parameters)
+                generateBlock("api", pathMethod + " " + path, swaggerJson.paths[path][pathMethod]["summary"], "assets/arrow.svg", pathMethod.parameters)
             }
 
             //Models
@@ -189,9 +200,9 @@ document.addEventListener("DOMContentLoaded", function(){
     }
 
     //id = which blocklist to add block to. api, logic, loggers
-    function generateBlock(id, title, description, iconPath, properties) {
-        htmlToAdd = `<div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="9"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="${iconPath}"></div><div class="blocktext">                        <p class="blocktitle">${title}</p><p class="blockdesc">${description}</p>        </div></div></div>`
-        flowy.getActiveBlockId()
+    function generateBlock(id, title, description, iconPath) {
+        htmlToAdd = `<div id=${title} class="blockelem create-flowy noselect blockroot"><input type="hidden" name="blockelemtype" class="blockelemtype" value="9"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="${iconPath}"></div><div class="blocktext">                        <p class="blocktitle">${title}</p><p class="blockdesc">${description}</p>        </div></div></div>`
+        
         blockLists[id].push(htmlToAdd)
         if(blockLists.active == id) {
             document.getElementById("blocklist").innerHTML = blockLists[id].join("\n");
@@ -213,11 +224,6 @@ document.addEventListener("DOMContentLoaded", function(){
 
     }
 
-    // todo: this is done somewhere else
-    function openProperties() {
-        document.getElementById("properties").innerHTML = blockLists[id].properties
-    }
-    
     function filterBlocks(event) {
         let filter = event.target.value;
         let activeBl = blockLists[blockLists.active];
