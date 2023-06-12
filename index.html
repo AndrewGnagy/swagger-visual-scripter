@@ -1,18 +1,21 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
+
 <head>
     <!-- Primary Meta Tags -->
-<title>Flowy - The simple flowchart engine</title>
-<meta name="title" content="Swagger Visual Scripter">
-<meta name="description" content="Create scripts using swagger">
+    <title>Flowy - The simple flowchart engine</title>
+    <meta name="title" content="Swagger Visual Scripter">
+    <meta name="description" content="Create scripts using swagger">
 
-<link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">
-<link href='styles.css' rel='stylesheet' type='text/css'>
-<link href='../flowy-v2/engine/flowy.css' rel='stylesheet' type='text/css'>
-<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-<script src="../flowy-v2/engine/flowy.js"></script>
-<script src="main.js"></script>   
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">
+    <link href='styles.css' rel='stylesheet' type='text/css'>
+    <link href='../flowy-v2/engine/flowy.css' rel='stylesheet' type='text/css'>
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <script src="../flowy-v2/engine/flowy.js"></script>
+    <script src="main.js"></script>
 </head>
+
 <body>
     <div id="navigation">
         <div id="leftside">
@@ -26,7 +29,8 @@
             <div id="rightswitch">Code editor</div>
         </div>
         <div id="buttonsright">
-            <input id="import" class="btn" type="file">Import Swagger</input>
+            <button id="import" onclick="document.getElementById('importInput').click()">Import Swagger</button>
+            <input id="importInput" class="btn" type="file" />
             <div id="publish">Publish to site</div>
         </div>
     </div>
@@ -65,7 +69,9 @@
                 <input type="text">
                 <p class="inputlabel">ID</p>
                 <input type="text">
-                <div class="checkus"><img src="assets/checkoff.svg"><p>Something else</p></div>
+                <div class="checkus"><img src="assets/checkoff.svg">
+                    <p>Something else</p>
+                </div>
             </div>
             <div class="btn" id="addblock">Add block</div>
             <div id="divisionthing"></div>
@@ -76,4 +82,5 @@
     <div id="canvas">
     </div>
 </body>
+
 </html>
