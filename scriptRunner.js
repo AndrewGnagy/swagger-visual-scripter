@@ -1,4 +1,5 @@
 let flowchart;
+let flowVariables = {};
 
 function executeScript(fc) {
     flowchart = fc;
@@ -22,21 +23,21 @@ function executeBlock(id) {
     }
 }
 
-function getBlock(id) {
-    return flowchart.blocks.filter(b => {
+function getBlock(id, chart=flowchart) {
+    return chart ? chart.blocks.filter(b => {
         return b.id == id;
-    })[0];
+    })[0] : undefined;
 }
 
-function getChildBlocks(parentId) {
-    return flowchart.blocks.filter(b => {
+function getChildBlocks(parentId, chart=flowchart) {
+    return chart ? chart.blocks.filter(b => {
         return b.parent == parentId;
-    });
+    }) : [];
 }
 
 function getDataProperty(dataAry, name) {
     prop = dataAry.filter(d => d["name"] == name);
-    return prop.length ? prop[0] : undefined;
+    return prop.length ? prop[0]["value"] : undefined;
 }
 
 function executeApiBlock(block) {
@@ -47,6 +48,7 @@ function executeApiBlock(block) {
     console.log("Making " + method + " request to: " + path);
     //TODO uncomment when complete
     //makeRequest(method, path, data);
+    flowVariables['lastResult'] = {}
 }
 
 let makeRequest = (method, path, data) => {
