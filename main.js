@@ -172,7 +172,7 @@ document.addEventListener("DOMContentLoaded", function(){
             //TODO null check as appropriate
             for(let j=0; j < pathMethods.length; j++) {
                 let pathMethod = pathMethods[j];
-                generateBlock("api", pathMethod + " " + path, swaggerJson.paths[path][pathMethod]["summary"], "assets/arrow.svg", pathMethod.parameters)
+                generateBlock("api", pathMethod + " " + path, swaggerJson.paths[path][pathMethod]["summary"], "assets/arrow.svg")
             }
 
             //Models
