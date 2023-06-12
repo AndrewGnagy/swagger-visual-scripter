@@ -109,7 +109,7 @@ body, html {
     transition: all .2s cubic-bezier(.05,.03,.35,1);
 }
 
-#importInput{
+#importinput{
     display: none;
 }
 #import:hover {
@@ -407,7 +407,7 @@ input {
     z-index: 0;
     overflow: auto;
 }
-#propwrap {
+#rightcard {
     position: absolute;
     right: 0;
     top: 0;
