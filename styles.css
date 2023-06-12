@@ -90,12 +90,12 @@ body, html {
 }
 
 /* Import Button */
-input[type=file]::file-selector-button {
+#import {
     font-family: Roboto;
     font-weight: 500;
     font-size: 14px;
-    color: #FFF;
-    background-color: #217CE8;
+    color: #000000;
+    background-color: #E8E8EF;
     border-radius: 5px;
     border: none;
     width: 143px;
@@ -109,13 +109,14 @@ input[type=file]::file-selector-button {
     transition: all .2s cubic-bezier(.05,.03,.35,1);
 }
 
-input[type=file]{
-    border: none;
+#importInput{
+    display: none;
 }
-input[type=file]::file-selector-button::hover {
+#import:hover {
     cursor: pointer;
     opacity: .7;
 }
+
 #publish {
     font-family: Roboto;
     font-weight: 500;
