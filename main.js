@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function(){
+    let swaggerJson;
     var rightcard = false;
     var tempblock;
     var tempblock2;
@@ -89,8 +90,31 @@ document.addEventListener("DOMContentLoaded", function(){
             }
         }
     }
+
+    let importSwagger = function (event) {
+        var reader = new FileReader();
+
+        reader.onload = function(event) {
+            try {
+                fileJson = JSON.parse(event.target.result);
+                //TODO do better input validation
+                if (fileJson.info) {
+                    swaggerJson = fileJson;
+                } else {
+                    throw new Error("Not a real swagger json file?");
+                }
+            } catch(e) {
+                //TODO
+                console.log("Error reading swagger json");
+                console.error(e);
+            }
+        }
+    }
     addEventListener("mousedown", beginTouch, false);
     addEventListener("mousemove", checkTouch, false);
     addEventListener("mouseup", doneTouch, false);
     addEventListenerMulti("touchstart", beginTouch, false, ".block");
+
+    const importBtn = document.querySelector("#import");
+    importBtn.addEventListener("change", importSwagger, false);
 });
