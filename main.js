@@ -5,9 +5,9 @@ document.addEventListener("DOMContentLoaded", function(){
     var tempblock2;
     var blockLists = {
         active: 'api',
-        api: '',
-        logic: '<div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="5"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/database.svg"></div><div class="blocktext">                        <p class="blocktitle">IF</p><p class="blockdesc">If block</p>        </div></div></div><div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="6"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/database.svg"></div><div class="blocktext">                        <p class="blocktitle">FOR</p><p class="blockdesc">For loop</p>        </div></div></div>',
-        loggers: '<div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="9"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/log.svg"></div><div class="blocktext">                        <p class="blocktitle">Add new log entry</p><p class="blockdesc">Adds a new log entry to this project</p>        </div></div></div><div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="10"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/log.svg"></div><div class="blocktext">                        <p class="blocktitle">Update logs</p><p class="blockdesc">Edits and deletes log entries in this project</p>        </div></div></div><div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="11"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/error.svg"></div><div class="blocktext">                        <p class="blocktitle">Prompt an error</p><p class="blockdesc">Triggers a specified error</p>        </div></div></div>'
+        api: [],
+        logic: ['<div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="5"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/database.svg"></div><div class="blocktext">                        <p class="blocktitle">IF</p><p class="blockdesc">If block</p>        </div></div></div>', '<div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="6"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/database.svg"></div><div class="blocktext">                        <p class="blocktitle">FOR</p><p class="blockdesc">For loop</p>        </div></div></div>'],
+        loggers: ['<div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="9"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/log.svg"></div><div class="blocktext">                        <p class="blocktitle">Add new log entry</p><p class="blockdesc">Adds a new log entry to this project</p>        </div></div></div>']
     }
     flowy(document.getElementById("canvas"), drag, release, snapping, rearrange);
     function snapping(block, first, parent) {
@@ -146,18 +146,30 @@ document.addEventListener("DOMContentLoaded", function(){
     // Utility functions
     function switchActiveBlockList(id) {
         blockLists.active = id
-        document.getElementById("blocklist").innerHTML = blockLists[id]
+        document.getElementById("blocklist").innerHTML = blockLists[id].join("\n");
     }
 
     //id = which blocklist to add block to. api, logic, loggers
     function generateBlock(id, title, description, iconPath, properties) {
         htmlToAdd = `<div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="9"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="${iconPath}"></div><div class="blocktext">                        <p class="blocktitle">${title}</p><p class="blockdesc">${description}</p>        </div></div></div>`
 
-        blockLists[id] += htmlToAdd
+        blockLists[id].push(htmlToAdd)
         if(blockLists.active == id) {
-            document.getElementById("blocklist").innerHTML = blockLists[id]
+            document.getElementById("blocklist").innerHTML = blockLists[id].join("\n");
         }
     }
+
+    function filterBlocks(event) {
+        let filter = event.target.value;
+        let activeBl = blockLists[blockLists.active];
+        document.getElementById("blocklist").innerHTML = activeBl.filter(b => {
+            let parser = new DOMParser();
+            let title = parser.parseFromString(b, "text/html").querySelector('.blocktitle');
+            return title.innerHTML.toLowerCase().indexOf(filter.toLowerCase()) != -1;
+        });
+    }
+    const searchInput = document.querySelector("#search input");
+    searchInput.addEventListener("input", filterBlocks, false);
     
     const importBtn = document.querySelector("#import");
     importBtn.addEventListener("change", importSwagger, false);
