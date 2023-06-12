@@ -12,9 +12,22 @@ document.addEventListener("DOMContentLoaded", function(){
     flowy(document.getElementById("canvas"), drag, release, snapping, rearrange);
     function snapping(block, first, parent) {
         //Element can be modified here
+        let specialBlockCheck = block.querySelector("[name=\"logic\"]");
+        if (specialBlockCheck && specialBlockCheck.value == "if") {
+            let blockId = parseInt(block.querySelector(".blockid").value);
+            //This seems hacky???
+            setTimeout(function() {
+                flowy.addBlock(new DOMParser().parseFromString(generateBlock("True", "executes if true"), "text/html").body.childNodes[0], blockId);
+                flowy.addBlock(new DOMParser().parseFromString(generateBlock("False", "executes if false"), "text/html").body.childNodes[0], blockId);
+            }, 250);
+        }
 
-        //TODO Conditionally allow new block to snap
-        return true;
+        //Don't allow multiple children to be attached to the same block
+        if(first) {
+            return true;
+        }
+        let parentId = parseInt(parent.querySelector(".blockid").value);
+        return getChildBlocks(parentId, flowy.output()).length == 0;
     }
     function rearrange(block, parent) {
         return true;
@@ -60,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function(){
         flowy.deleteBranch(flowy.getActiveBlockId());
     });
     document.getElementById("addblock").addEventListener("click", function(){
-        generateBlock("api", "blah", "a very good block", "assets/arrow.svg", "")
+        //generateBlock("api", "blah", "a very good block", "assets/arrow.svg", "")
         // let newBlock = document.createElement("div");
         // newBlock.classList = "blockelem noselect block";
         // newBlock.innerHTML = '<input type="hidden" name="blockelemtype" class="blockelemtype" value="9"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/log.svg"></div><div class="blocktext">                        <p class="blocktitle">Add new log entry</p><p class="blockdesc">Adds a new log entry to this project</p>        </div></div>';
@@ -125,7 +138,8 @@ document.addEventListener("DOMContentLoaded", function(){
             //TODO null check as appropriate
             for(let j=0; j < pathMethods.length; j++) {
                 let pathMethod = pathMethods[j];
-                generateBlock("api", pathMethod + " " + path, swaggerJson.paths[path][pathMethod]["summary"], "assets/arrow.svg", "", [{name: "method", value: pathMethod}, {name: "path", value: path}]);
+                let blockHtml = generateBlock(pathMethod + " " + path, swaggerJson.paths[path][pathMethod]["summary"], "assets/arrow.svg", "", [{name: "method", value: pathMethod}, {name: "path", value: path}]);
+                addBlockToBlockList("api", blockHtml);
             }
 
             //Models
@@ -150,14 +164,16 @@ document.addEventListener("DOMContentLoaded", function(){
     }
 
     //id = which blocklist to add block to. api, logic, loggers
-    function generateBlock(id, title, description, iconPath, properties, data=[]) {
-        let dataFields = data.map(d => `<input type="hidden" name="${d.name}" class="${d.name}" value="${d.value}"></input>`);
-        let htmlToAdd = `<div class="blockelem create-flowy noselect">${dataFields.join()}<div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="${iconPath}"></div><div class="blocktext">                        <p class="blocktitle">${title}</p><p class="blockdesc">${description}</p>        </div></div></div>`
-
+    function addBlockToBlockList(id, htmlToAdd) {
         blockLists[id].push(htmlToAdd)
         if(blockLists.active == id) {
             document.getElementById("blocklist").innerHTML = blockLists[id].join("\n");
         }
+    }
+
+    function generateBlock(title, description, iconPath="assets/action.svg", properties, data=[]) {
+        let dataFields = data.map(d => `<input type="hidden" name="${d.name}" class="${d.name}" value="${d.value}"></input>`);
+        return `<div class="blockelem create-flowy noselect">${dataFields.join("\n")}<div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="${iconPath}"></div><div class="blocktext">                        <p class="blocktitle">${title}</p><p class="blockdesc">${description}</p>        </div></div></div>`
     }
 
     function filterBlocks(event) {
