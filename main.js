@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function(){
     var blockLists = {
         active: 'api',
         api: [],
-        logic: ['<div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="5"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/database.svg"></div><div class="blocktext">                        <p class="blocktitle">IF</p><p class="blockdesc">If block</p>        </div></div></div>', '<div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="6"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/database.svg"></div><div class="blocktext">                        <p class="blocktitle">FOR</p><p class="blockdesc">For loop</p>        </div></div></div>'],
+        logic: ['<div class="blockelem create-flowy noselect"><input type="hidden" name="logic" class="logic" value="if"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/database.svg"></div><div class="blocktext">                        <p class="blocktitle">IF</p><p class="blockdesc">If block</p>        </div></div></div>', '<div class="blockelem create-flowy noselect"><input type="hidden" name="logic" class="logic" value="for"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/database.svg"></div><div class="blocktext">                        <p class="blocktitle">FOR</p><p class="blockdesc">For loop</p>        </div></div></div>'],
         loggers: ['<div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="9"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/log.svg"></div><div class="blocktext">                        <p class="blocktitle">Add new log entry</p><p class="blockdesc">Adds a new log entry to this project</p>        </div></div></div>']
     }
     flowy(document.getElementById("canvas"), drag, release, snapping, rearrange);
@@ -125,7 +125,7 @@ document.addEventListener("DOMContentLoaded", function(){
             //TODO null check as appropriate
             for(let j=0; j < pathMethods.length; j++) {
                 let pathMethod = pathMethods[j];
-                generateBlock("api", pathMethod + " " + path, swaggerJson.paths[path][pathMethod]["summary"], "assets/arrow.svg", "")
+                generateBlock("api", pathMethod + " " + path, swaggerJson.paths[path][pathMethod]["summary"], "assets/arrow.svg", "", [{name: "method", value: pathMethod}, {name: "path", value: path}]);
             }
 
             //Models
@@ -150,8 +150,9 @@ document.addEventListener("DOMContentLoaded", function(){
     }
 
     //id = which blocklist to add block to. api, logic, loggers
-    function generateBlock(id, title, description, iconPath, properties) {
-        htmlToAdd = `<div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="9"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="${iconPath}"></div><div class="blocktext">                        <p class="blocktitle">${title}</p><p class="blockdesc">${description}</p>        </div></div></div>`
+    function generateBlock(id, title, description, iconPath, properties, data=[]) {
+        let dataFields = data.map(d => `<input type="hidden" name="${d.name}" class="${d.name}" value="${d.value}"></input>`);
+        let htmlToAdd = `<div class="blockelem create-flowy noselect">${dataFields.join()}<div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="${iconPath}"></div><div class="blocktext">                        <p class="blocktitle">${title}</p><p class="blockdesc">${description}</p>        </div></div></div>`
 
         blockLists[id].push(htmlToAdd)
         if(blockLists.active == id) {
@@ -171,6 +172,12 @@ document.addEventListener("DOMContentLoaded", function(){
     const searchInput = document.querySelector("#search input");
     searchInput.addEventListener("input", filterBlocks, false);
     
-    const importBtn = document.querySelector("#import");
+    const importBtn = document.querySelector("#importInput");
     importBtn.addEventListener("change", importSwagger, false);
+
+    let runScript = function() {
+        executeScript(flowy.output());
+    }
+    const runBtn = document.querySelector("#publish");
+    runBtn.addEventListener("click", runScript, false);
 });
