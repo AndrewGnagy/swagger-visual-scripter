@@ -5,13 +5,13 @@ body, html {
     background-image: url(assets/tile.png);
     background-repeat: repeat;
     background-size: 30px 30px;
-    background-color: #FBFBFB;
+    background-color: #FFF;
     height: 100%;
 }
 #navigation {
     height: 71px;
-    background-color: #FFF;
-    border: 1px solid #E8E8EF;
+    background-color: #000;
+    border: none;
     width: 100%;
     display: table;
     box-sizing: border-box;
@@ -23,7 +23,7 @@ body, html {
     width: 40px;
     height: 40px;
     border-radius: 100px;
-    background-color: #F1F4FC;
+    background-color: #E3F4F4;
     text-align: center;
     display: inline-block;
     vertical-align: top;
@@ -38,15 +38,16 @@ body, html {
     vertical-align: top;
 }
 #title {
-    font-family: Roboto;
-    font-weight: 500;
-    font-size: 16px;
-    color: #393C44;
+    font-family:Tahoma;
+    font-weight: 600;
+    font-size: 20px;
+    color: #FFF;
     margin-bottom: 0px;
 }
 #subtitle {
     font-family: Roboto;
-    color: #808292;
+    font-weight: 600;
+    color: #159895;
     font-size: 14px;
     margin-top: 5px;
 }
@@ -60,27 +61,29 @@ body, html {
     width: 222px;
     left: 50%;
     margin-left: -111px;
-    top: 15px;
+    /* top: 18px; */
+    margin-top: 10px;
 }
 #leftswitch {
     border: 1px solid #E8E8EF;
-    background-color: #FBFBFB;
+    background-color: #159895;
     width: 111px;
-    height: 39px;
+    height: 35px;
     line-height: 39px;
     border-radius: 5px 0px 0px 5px;
     font-family: Roboto;
-    color: #393C44;
+    color: #F1F6F9;
     display: inline-block;
     font-size: 14px;
     text-align: center;
 }
 #rightswitch {
     font-family: Roboto;
-    color: #808292;
+    color: #159895;
+    background-color: #FFF;
     border-radius: 0px 5px 5px 0px;
     border: 1px solid #E8E8EF;
-    height: 39px;
+    height: 35px;
     width: 102px;
     display: inline-block;
     font-size: 14px;
@@ -94,8 +97,8 @@ body, html {
     font-family: Roboto;
     font-weight: 500;
     font-size: 14px;
-    color: #000000;
-    background-color: #E8E8EF;
+    color: #000;
+    background-color: #F1F6F9;
     border-radius: 5px;
     border: none;
     width: 143px;
@@ -107,6 +110,7 @@ body, html {
     line-height: 38px;
     margin-right: 20px;
     transition: all .2s cubic-bezier(.05,.03,.35,1);
+    margin-top: 6px;
 }
 
 #importInput{
@@ -117,16 +121,17 @@ body, html {
     opacity: .7;
 }
 
-#publish {
+#runscript {
     font-family: Roboto;
     font-weight: 500;
     font-size: 14px;
     color: #FFF;
-    background-color: #217CE8;
+    background-color: #159895;
     border-radius: 5px;
     width: 143px;
     height: 38px;
     margin-left: 10px;
+    margin-top: 6px;
     display: inline-block;
     vertical-align: top;
     text-align: center;
@@ -134,7 +139,7 @@ body, html {
     margin-right: 20px;
     transition: all .2s cubic-bezier(.05,.03,.35,1);
 }
-#publish:hover {
+#runscript:hover {
     cursor: pointer;
     opacity: .7;
 }
@@ -144,7 +149,7 @@ body, html {
 }
 #leftcard {
     width: 363px;
-    background-color: #FFF;
+    background-color: #F1F6F9;
     border: 1px solid #E8E8EF;
     box-sizing: border-box;
     padding-top: 85px;
@@ -198,7 +203,7 @@ input {
     font-size: 20px;
     font-family: Roboto;
     font-weight: bold;
-    color: #393C44;
+    color: #000;
 }
 #subnav {
     border-bottom: 1px solid #E8E8EF;
@@ -222,7 +227,7 @@ input {
     font-weight: 500;
     font-size: 14px;
     text-align: center;
-    color: #808292;
+    color: #000;
     width: calc(88% / 3);
     height: 48px;
     line-height: 48px;
@@ -234,14 +239,14 @@ input {
     content: "";
     width:  100%;
     height: 4px;
-    background-color: #217CE8;
+    background-color: #159895;
     margin-top: -4px;
 }
 #logic {
     display: inline-block;
     font-family: Roboto;
     font-weight: 500;
-    color: #808292;
+    color: #000;
     font-size: 14px;
     height: 48px;
     line-height: 48px;
@@ -254,7 +259,7 @@ input {
     display: inline-block;
     font-family: Roboto;
     font-weight: 500;
-    color: #808292;
+    color: #000;
     font-size: 14px;
     height: 48px;
     line-height: 48px;
@@ -326,7 +331,7 @@ input {
     height: calc(100% - 220px);
     overflow: auto;
 }
-#proplist {
+#parameterinputs {
     height: calc(100% - 305px);
     overflow: auto;
     margin-top: -30px;
@@ -416,6 +421,8 @@ input {
     padding-left: 20px;
     overflow: hidden;
     z-index: -2;
+    overflow-y:auto;
+    border-left: #E8E8EF solid 0.1px;
 }
 #properties {
     position: absolute;
@@ -439,12 +446,14 @@ input {
     box-shadow: -4px 0px 40px rgba(26, 26, 73, 0.05);
         z-index: 2;
 }
-#header2 {
+#parameterheader {
     font-size: 20px;
     font-family: Roboto;
     font-weight: bold;
-    color: #393C44;
+    color: #000;
+    background-color: #FFF;
     margin-top: 101px;
+    padding-bottom: 20px;
 }
 #close {
     margin-top: 100px;
@@ -482,7 +491,7 @@ input {
     content: "";
     width: 100%;
     height: 4px;
-    background-color: #217CE8;
+    background-color: #159895;
     margin-top: -4px;
 }
 #alertprop {
@@ -517,6 +526,7 @@ input {
     background-color: #FFF;
     border-radius: 5px;
     border: 1px solid #E8E8EF;
+    padding-right: 15px !important;
     box-shadow: 0px 2px 8px rgba(34, 34, 87, 0.05);
     font-family: Roboto;
     font-size: 14px;
@@ -524,14 +534,19 @@ input {
     text-indent: 20px;
     height: 40px;
     line-height: 40px;
-    width: 287px;
+    width: 285px;
     margin-bottom: 25px;
 }
-.dropme img {
-    margin-top: 17px;
-    float: right;
-    margin-right: 15px;
+
+SELECT {
+    background: url("data:image/svg+xml,<svg height='10px' width='10px' viewBox='0 0 16 16' fill='%23000000' xmlns='http://www.w3.org/2000/svg'><path d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/></svg>") no-repeat;
+    background-position: calc(100% - 0.75rem) center !important;
+    -moz-appearance:none !important;
+    -webkit-appearance: none !important; 
+    appearance: none !important;
+    padding-right: 2rem !important;
 }
+
 .checkus {
     margin-bottom: 10px;
 }
@@ -546,30 +561,40 @@ input {
     vertical-align: middle;
     margin-left: 10px;
 }
-#divisionthing {
-    height: 1px;
-    width: 100%;
-    background-color: #E8E8EF;
-    position: absolute;
-    right: 0px;
-    bottom: 80;
-}
 .btn {
     border-radius: 5px;
     bottom: 20px;
     font-family: Roboto;
     font-size: 14px;
     text-align: center;
-    width: 287px;
+    width: 240px;
     height: 38px;
     line-height: 38px;
-    color: #253134;
+    color: #FFF;
     border: 1px solid #E8E8EF;
     transition: all .3s cubic-bezier(.05,.03,.35,1);
+    margin-top: 5px;
+    margin-right: 10px;
+    
 }
 .btn:hover {
     cursor: pointer;
     opacity: .5;
+}
+
+#addblock {
+    background-color: #03C988;
+}
+
+#removeblock {
+    background-color: #FE6244;
+}
+
+#adddelsection {
+    background-color: #F1F6F9;
+    padding: 20px;
+    border-radius: 5px;
+    width: 240px;
 }
 .rmvbtn {
     border-radius: 5px;
@@ -578,7 +603,7 @@ input {
     font-family: Roboto;
     font-size: 14px;
     text-align: center;
-    width: 287px;
+    width: 240px;
     height: 38px;
     line-height: 38px;
     color: #253134;
@@ -663,7 +688,7 @@ input {
     box-shadow: 0px 4px 30px rgba(22, 33, 74, 0.05);
 }
 .selectedblock {
-    border: 2px solid #217CE8;
+    border: 2px solid #159895;
     box-shadow: 0px 4px 30px rgba(22, 33, 74, 0.08);
 }
 
