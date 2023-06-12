@@ -5,9 +5,18 @@ document.addEventListener("DOMContentLoaded", function(){
     var tempblock2;
     var blockLists = {
         active: 'api',
-        api: '<div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="1"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/eye.svg"></div><div class="blocktext">                        <p class="blocktitle">GET /users</p><p class="blockdesc">Get users</p>        </div></div></div><div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="2"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                    <div class="blockico"><span></span><img src="assets/action.svg"></div><div class="blocktext">                        <p class="blocktitle">PUT /users/{id}</p><p class="blockdesc">Updates a user</p></div></div></div>',
-        logic: '<div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="5"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/database.svg"></div><div class="blocktext">                        <p class="blocktitle">IF</p><p class="blockdesc">If block</p>        </div></div></div><div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="6"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/database.svg"></div><div class="blocktext">                        <p class="blocktitle">FOR</p><p class="blockdesc">For loop</p>        </div></div></div>',
-        loggers: '<div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="9"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/log.svg"></div><div class="blocktext">                        <p class="blocktitle">Add new log entry</p><p class="blockdesc">Adds a new log entry to this project</p>        </div></div></div><div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="10"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/log.svg"></div><div class="blocktext">                        <p class="blocktitle">Update logs</p><p class="blockdesc">Edits and deletes log entries in this project</p>        </div></div></div><div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="11"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/error.svg"></div><div class="blocktext">                        <p class="blocktitle">Prompt an error</p><p class="blockdesc">Triggers a specified error</p>        </div></div></div>'
+        api: {
+            block: '<div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="1"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/eye.svg"></div><div class="blocktext">                        <p class="blocktitle">GET /users</p><p class="blockdesc">Get users</p>        </div></div></div><div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="2"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                    <div class="blockico"><span></span><img src="assets/action.svg"></div><div class="blocktext">                        <p class="blocktitle">PUT /users/{id}</p><p class="blockdesc">Updates a user</p></div></div></div>', 
+            properties: ''
+        },
+        logic: {
+            block: '<div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="5"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/database.svg"></div><div class="blocktext">                        <p class="blocktitle">IF</p><p class="blockdesc">If block</p>        </div></div></div><div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="6"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/database.svg"></div><div class="blocktext">                        <p class="blocktitle">FOR</p><p class="blockdesc">For loop</p>        </div></div></div>',
+            properties: ''
+        },
+        loggers: {
+            block: '<div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="9"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/log.svg"></div><div class="blocktext">                        <p class="blocktitle">Add new log entry</p><p class="blockdesc">Adds a new log entry to this project</p>        </div></div></div><div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="10"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/log.svg"></div><div class="blocktext">                        <p class="blocktitle">Update logs</p><p class="blockdesc">Edits and deletes log entries in this project</p>        </div></div></div><div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="11"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/error.svg"></div><div class="blocktext">                        <p class="blocktitle">Prompt an error</p><p class="blockdesc">Triggers a specified error</p>        </div></div></div>',
+            properties: ''
+        }
     }
     flowy(document.getElementById("canvas"), drag, release, snapping, rearrange);
     function snapping(block, first, parent) {
@@ -117,11 +126,17 @@ document.addEventListener("DOMContentLoaded", function(){
         reader.readAsText(event.target.files[0]);
     }
     let populateBlocks = function () {
+        console.log(swaggerJson)
         apiPaths = Object.keys(swaggerJson.paths);
         for(let i = 0; i < apiPaths.length; i++) {
             let path = apiPaths[i];
+            console.log(swaggerJson.paths[path])
             //Build a block for each path
-            generateBlock("api", path, swaggerJson[path], "assets/arrow.svg", "")
+            let methods = Object.keys(swaggerJson.paths[path])
+
+            methods.forEach(method => {
+                generateBlock("api", method.toUpperCase() + " " + path, swaggerJson[path], "assets/arrow.svg", path[method].parameters)
+            })
 
             //Models
             let models;
@@ -131,6 +146,9 @@ document.addEventListener("DOMContentLoaded", function(){
             } else if (swaggerJson["openapi"]) { //If swagger v3
                 models = swaggerJson.components.schemas;
             }
+
+            // console.log(swaggerJson.definitions)
+            // setProperties("api", models.Request)
         }
     }
     addEventListener("mousedown", beginTouch, false);
@@ -147,11 +165,31 @@ document.addEventListener("DOMContentLoaded", function(){
     //id = which blocklist to add block to. api, logic, loggers
     function generateBlock(id, title, description, iconPath, properties) {
         htmlToAdd = `<div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="9"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="${iconPath}"></div><div class="blocktext">                        <p class="blocktitle">${title}</p><p class="blockdesc">${description}</p>        </div></div></div>`
-
+        console.log(title)
         blockLists[id] += htmlToAdd
         if(blockLists.active == id) {
             document.getElementById("blocklist").innerHTML = blockLists[id]
         }
+    }
+
+    // "properties" is actually "parameters" in the Swagger JSON
+    function setProperties(path, properties) {
+        let propList
+        for (let i = 0; i < properties.length; i++) {
+            propList[i] = {
+                'Name': properties[i].name,
+                'Description': properties[i].description,
+                'Required': properties[i].required,
+                'Format': properties[i].in,
+                'Type': properties[i].type
+            }
+        }
+
+    }
+
+    // todo: this is done somewhere else
+    function openProperties() {
+        document.getElementById("properties").innerHTML = blockLists[id].properties
     }
     
     const importBtn = document.querySelector("#import");
