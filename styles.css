@@ -88,25 +88,34 @@ body, html {
     text-align: center;
     margin-left: -5px;
 }
-/* #import {
+
+/* Import Button */
+input[type=file]::file-selector-button {
     font-family: Roboto;
     font-weight: 500;
     font-size: 14px;
-    color: #A6A6B3;
-    width: 95px;
-    height: 38px;
-    border: 1px solid #E8E8EF;
+    color: #FFF;
+    background-color: #217CE8;
     border-radius: 5px;
-    text-align: center;
-    line-height: 38px;
+    border: none;
+    width: 143px;
+    height: 38px;
+    margin-left: 10px;
     display: inline-block;
     vertical-align: top;
+    text-align: center;
+    line-height: 38px;
+    margin-right: 20px;
     transition: all .2s cubic-bezier(.05,.03,.35,1);
 }
-#import:hover {
+
+input[type=file]{
+    border: none;
+}
+input[type=file]::file-selector-button::hover {
     cursor: pointer;
     opacity: .7;
-} */
+}
 #publish {
     font-family: Roboto;
     font-weight: 500;
