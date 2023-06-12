@@ -10,8 +10,10 @@ document.addEventListener("DOMContentLoaded", function(){
         loggers: '<div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="9"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/log.svg"></div><div class="blocktext">                        <p class="blocktitle">Add new log entry</p><p class="blockdesc">Adds a new log entry to this project</p>        </div></div></div><div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="10"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/log.svg"></div><div class="blocktext">                        <p class="blocktitle">Update logs</p><p class="blockdesc">Edits and deletes log entries in this project</p>        </div></div></div><div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="11"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/error.svg"></div><div class="blocktext">                        <p class="blocktitle">Prompt an error</p><p class="blockdesc">Triggers a specified error</p>        </div></div></div>'
     }
     flowy(document.getElementById("canvas"), drag, release, snapping, rearrange);
-    function snapping(drag, first) {
+    function snapping(block, first, parent) {
         //Element can be modified here
+
+        //TODO Conditionally allow new block to snap
         return true;
     }
     function rearrange(block, parent) {
@@ -98,10 +100,11 @@ document.addEventListener("DOMContentLoaded", function(){
 
         reader.onload = function(event) {
             try {
-                fileJson = JSON.parse(event.target.result);
+                let fileJson = JSON.parse(event.target.result);
                 //TODO do better input validation
                 if (fileJson.info) {
                     swaggerJson = fileJson;
+                    populateBlocks();
                 } else {
                     throw new Error("Not a real swagger json file?");
                 }
@@ -109,6 +112,24 @@ document.addEventListener("DOMContentLoaded", function(){
                 //TODO
                 console.log("Error reading swagger json");
                 console.error(e);
+            }
+        }
+        reader.readAsText(event.target.files[0]);
+    }
+    let populateBlocks = function () {
+        apiPaths = Object.keys(swaggerJson.paths);
+        for(let i = 0; i < apiPaths.length; i++) {
+            let path = apiPaths[i];
+            //Build a block for each path
+            generateBlock("api", path, swaggerJson[path], "assets/arrow.svg", "")
+
+            //Models
+            let models;
+            //If swagger v2
+            if(swaggerJson["swagger"]) {
+                models = swaggerJson.definitions;
+            } else if (swaggerJson["openapi"]) { //If swagger v3
+                models = swaggerJson.components.schemas;
             }
         }
     }
@@ -123,6 +144,7 @@ document.addEventListener("DOMContentLoaded", function(){
         document.getElementById("blocklist").innerHTML = blockLists[id]
     }
 
+    //id = which blocklist to add block to. api, logic, loggers
     function generateBlock(id, title, description, iconPath, properties) {
         htmlToAdd = `<div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="9"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="${iconPath}"></div><div class="blocktext">                        <p class="blocktitle">${title}</p><p class="blockdesc">${description}</p>        </div></div></div>`
 
