@@ -118,7 +118,8 @@ document.addEventListener("DOMContentLoaded", function () {
     };
     var checkTouch = function (event) {
         aclick = false;
-    };
+    }
+
     var doneTouch = function (event) {
         if (event.type === "mouseup" && aclick && !noinfo) {
             document.querySelectorAll(".selectedblock").forEach((el) => el.classList.remove("selectedblock"));
@@ -194,24 +195,18 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                     });
 
-                    if (property.type != null) {
-                        if (property.enum) {
-                            let options = property.enum.map((val) => `<option value="${val}">${val}</option>`);
-                            document
-                                .getElementById("parameterinputs")
-                                .insertAdjacentHTML(
-                                    "beforeend",
-                                    `<select class="dropme">${options.join("\n")}</select>`
-                                );
-                        } else if (property.type == "string" || property.type == "integer") {
-                            document
-                                .getElementById("parameterinputs")
-                                .insertAdjacentHTML("beforeend", `<input type="text">`);
+                    if(property.type != null) {
+                        let htmlToAdd
+                        if(property.enum) {
+                            let options = property.enum.map(val => `<option value="${val}">${val}</option>`);
+                            htmlToAdd = `<select class="dropme" data-id="${blockId} ${property.name}">${options.join("\n")}</select>`
+                        } else if(property.type == "string" || property.type == "integer") {
+                            htmlToAdd = `<input type="text" data-id="${blockId} ${property.name}">`
                         } else if (property.type == "boolean") {
-                            document
-                                .getElementById("parameterinputs")
-                                .insertAdjacentHTML("beforeend", `<input type="checkbox">`);
+                            htmlToAdd = `<input type="checkbox" data-id="${blockId} ${property.name}">`
                         }
+                        document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", htmlToAdd)
+                        document.querySelector(`[data-id='${blockId} ${property.name}']`).addEventListener("change", event => propertyChanged(event, blockId, property.name))
                     } else if (property.schema != null) {
                     }
                 });
@@ -225,6 +220,23 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     };
+
+    function propertyChanged(event, blockId, propertyName) {
+        let value
+        if(event.target.type == "checkbox") {
+            value = event.currentTarget.checked
+        } else {
+            value = event.target.value
+        }
+
+        let properties = chartProperties[blockId].properties
+        for(let i = 0; i < properties.length; i++) {
+            if(properties[i].name == propertyName) {
+                properties[i].value = value
+                break;
+            }
+        }
+    }
 
     let importSwagger = function (event) {
         var reader = new FileReader();
