@@ -250,7 +250,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     if(fileJsonKeys.includes("swagger") || (fileJsonKeys.includes("openapi") && parseInt(fileJson["openapi"].charAt(0)) < 3)) {
                         // Swagger JSON is outdated.  Convert to openAPI V3 standard
                         console.log("AAADFSDFDSFDSDSFSD")
-                        swaggerJson = convertV2ToV3(swaggerJson)
+                        console.log(fileJson)
+                        swaggerJson = convertV2ToV3(fileJson)
+                        console.log("SWAG:")
+                        console.log(swaggerJson)
                     } else if (!fileJsonKeys.includes("openapi")) {
                         // The first line in a valid Swagger JSON file should be the version (i.e. swagger or openapi)
                         throw new Error("Not a real swagger json file?");
