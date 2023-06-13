@@ -221,11 +221,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    function convertJson() {
-        console.log("AAAAHHHH")
-        swaggerJson = convertV2ToV3(swaggerJson)
-    }
-
     function propertyChanged(event, blockId, propertyName) {
         let value
         if(event.target.type == "checkbox") {
@@ -344,6 +339,12 @@ document.addEventListener("DOMContentLoaded", function () {
     let runScript = function () {
         executeScript(flowy.output());
     };
-    const runBtn = document.querySelector("#runscript");
-    runBtn.addEventListener("click", runScript, false);
+
+    function convertJson() {
+        console.log("AAAAHHHH")
+        swaggerJson = convertV2ToV3(swaggerJson)
+    }
+
+    const convertBtn = document.querySelector("#convertv2tov3");
+    convertBtn.addEventListener("click", convertJson, false);
 });
