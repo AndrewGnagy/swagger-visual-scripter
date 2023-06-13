@@ -149,7 +149,7 @@ body, html {
 }
 #leftcard {
     width: 363px;
-    background-color: #f3f4f9;
+    background-color: #f1f2f4;
     border: 1px solid #E8E8EF;
     box-sizing: border-box;
     padding-top: 85px;
@@ -373,14 +373,70 @@ input {
     vertical-align: top;
     margin-left: 12px
 }
+
 .blocktitle {
     margin: 0px!important;
     padding: 0px!important;
     font-family: Roboto;
     font-weight: 500;
     font-size: 16px;
-    color: #393C44;
+    color: #7149C6;
 }
+
+.get {
+    margin: 0px!important;
+    padding: 0px!important;
+    font-family: Roboto;
+    font-weight: 500;
+    font-size: 16px;
+    color: #379237;
+}
+
+.True {
+    margin: 0px!important;
+    padding: 0px!important;
+    font-family: Roboto;
+    font-weight: 500;
+    font-size: 16px;
+    color: #379237;
+}
+
+.delete {
+    margin: 0px!important;
+    padding: 0px!important;
+    font-family: Roboto;
+    font-weight: 500;
+    font-size: 16px;
+    color: #e83612;
+}
+
+.False {
+    margin: 0px!important;
+    padding: 0px!important;
+    font-family: Roboto;
+    font-weight: 500;
+    font-size: 16px;
+    color: #e83612;
+}
+
+.post {
+    margin: 0px!important;
+    padding: 0px!important;
+    font-family: Roboto;
+    font-weight: 500;
+    font-size: 16px;
+    color: #f7c325;
+}
+
+.servers {
+    margin: 0px!important;
+    padding: 0px!important;
+    font-family: Roboto;
+    font-weight: 500;
+    font-size: 16px;
+    color: #3a8ccb;
+}
+
 .blockdesc {
     margin-top: 5px;
     font-family: Roboto;
@@ -719,6 +775,10 @@ SELECT {
 }
 .selectedblock {
     border: 2px solid #7149C6;
+    box-shadow: 0px 4px 30px rgba(22, 33, 74, 0.08);
+}
+.errorblock {
+    border: 2px solid #c64949;
     box-shadow: 0px 4px 30px rgba(22, 33, 74, 0.08);
 }
 

@@ -6,12 +6,12 @@ document.addEventListener("DOMContentLoaded", function () {
     var blockLists = {
         active: "api",
         api: [],
-        logic: [ //TODO Use generateBlock function for the below
-            '<div class="blockelem create-flowy noselect"><input type="hidden" name="logic" class="logic" value="if"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/database.svg"></div><div class="blocktext">                        <p class="blocktitle">IF</p><p class="blockdesc">If block</p>        </div></div></div>',
-            '<div class="blockelem create-flowy noselect"><input type="hidden" name="logic" class="logic" value="for"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/database.svg"></div><div class="blocktext">                        <p class="blocktitle">FOR</p><p class="blockdesc">For loop</p>        </div></div></div>'
+        logic: [
+            generateBlock("IF", "if block", undefined, [{ name: "logic", value: "if" }]),
+            generateBlock("FOR", "for block", undefined, [{ name: "logic", value: "for" }])
         ],
         loggers: [
-            '<div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="9"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/log.svg"></div><div class="blocktext">                        <p class="blocktitle">Add new log entry</p><p class="blockdesc">Adds a new log entry to this project</p>        </div></div></div>'
+            generateBlock("Add log", "Logs a given input")
         ]
     };
 
@@ -319,7 +319,7 @@ document.addEventListener("DOMContentLoaded", function () {
         );
         return `<div class="blockelem create-flowy noselect blockroot">${dataFields.join(
             "\n"
-        )}<div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="${iconPath}"></div><div class="blocktext">                        <p class="blocktitle">${title}</p><p class="blockdesc">${description}</p>        </div></div></div>`;
+        )}<div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="${iconPath}"></div><div class="blocktext">                        <p class="${title}">${title}</p><p class="blockdesc">${description}</p>        </div></div></div>`;
     }
 
     function filterBlocks(event) {
