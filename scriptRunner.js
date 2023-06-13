@@ -1,9 +1,11 @@
 let flowVariables = {};
-let baseUrl = "https://nuthatch.lastelm.software";
+let chartProperties;
+let baseUrl = "https://nuthatch.lastelm.software/";
 
-function executeScript() {
+function executeScript(chartProperties) {
     //Start with root block
     //Kicks off depth-first tree traversal
+    chartProperties = chartProperties
     executeBlock(0);
 }
 
@@ -50,18 +52,22 @@ function executeApiBlock(block) {
     let path = getDataProperty(block["data"], "path");
     let data = undefined; //TODO gather params and such
     //Get query and path properties
-    chartProperties[block.id].properties.forEach(property => {
-        if(property.in && property.in == "query") {
-            let separator = path.indexOf("?") == -1 ? "?" : "&";
-            path += separator + property.value;
-        } else if(property.in && property.in == "path") {
-            path = path.replace(`{${property.name}}`, property.value);
-        }
-    });
+    if (chartProperties[block.id] !== undefined && chartProperties[block.id] !== undefined) {
+      chartProperties[block.id].properties.forEach(property => {
+          if(property.in && property.in == "query") {
+              let separator = path.indexOf("?") == -1 ? "?" : "&";
+              path += separator + property.value;
+          } else if(property.in && property.in == "path") {
+              path = path.replace(`{${property.name}}`, property.value);
+          }
+      });
+    }
     console.log("Making " + method + " request to: " + path);
     //TODO uncomment when complete
-    makeRequest(method, path, data);
-    flowVariables['lastResult'] = {}
+    makeRequest(method, path, data).then(response => {
+      console.log("response: " + response)
+      flowVariables['lastResult'] = response
+    });
 }
 
 function resolveVariable(myvar) {

@@ -338,7 +338,7 @@ document.addEventListener("DOMContentLoaded", function () {
     importBtn.addEventListener("change", importSwagger, false);
 
     let runScript = function () {
-        executeScript(flowy.output());
+        executeScript(chartProperties);
     };
     const runBtn = document.querySelector("#runscript");
     runBtn.addEventListener("click", runScript, false);
