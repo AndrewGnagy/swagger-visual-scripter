@@ -315,13 +315,13 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function generateBlock(title, description="", iconPath = "assets/action.svg", data = []) {
+    function generateBlock(title, description="-", iconPath = "assets/action.svg", data = []) {
         let dataFields = data.map(
             (d) => `<input type="hidden" name="${d.name}" class="${d.name}" value="${d.value}"></input>`
         );
         return `<div class="blockelem create-flowy noselect blockroot">${dataFields.join(
             "\n"
-        )}<div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="${iconPath}"></div><div class="blocktext">                        <p class="${title}">${title}</p><p class="blockdesc">${description}</p>        </div></div></div>`;
+        )}<div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="${iconPath}"></div><div class="blocktext">                        <p class="blocktitle ${title.split(" ")[0]}">${title}</p><p class="blockdesc">${description}</p>        </div></div></div>`;
     }
 
     function filterBlocks(event) {
