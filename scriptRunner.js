@@ -49,10 +49,26 @@ function executeApiBlock(block) {
     let method = getDataProperty(block["data"], "method");
     let path = getDataProperty(block["data"], "path");
     let data = undefined; //TODO gather params and such
+    //Get query and path properties
+    chartProperties[block.id].properties.forEach(property => {
+        if(property.in && property.in == "query") {
+            let separator = path.indexOf("?") == -1 ? "?" : "&";
+            path += separator + property.value;
+        } else if(property.in && property.in == "path") {
+            path = path.replace(`{${property.name}}`, property.value);
+        }
+    });
     console.log("Making " + method + " request to: " + path);
     //TODO uncomment when complete
     makeRequest(method, path, data);
     flowVariables['lastResult'] = {}
+}
+
+function resolveVariable(myvar) {
+    // myvar.split(".").reduce(o, k => {
+    //  //Something to account for []
+    //   return o && o[k];
+    // }, flowVariables);
 }
 
 let makeRequest = async (method, path, data) => {

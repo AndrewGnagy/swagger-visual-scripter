@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var blockLists = {
         active: "api",
         api: [],
-        logic: [
+        logic: [ //TODO Use generateBlock function for the below
             '<div class="blockelem create-flowy noselect"><input type="hidden" name="logic" class="logic" value="if"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/database.svg"></div><div class="blocktext">                        <p class="blocktitle">IF</p><p class="blockdesc">If block</p>        </div></div></div>',
             '<div class="blockelem create-flowy noselect"><input type="hidden" name="logic" class="logic" value="for"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/database.svg"></div><div class="blocktext">                        <p class="blocktitle">FOR</p><p class="blockdesc">For loop</p>        </div></div></div>'
         ],
@@ -132,6 +132,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     let path = getDataProperty(flowyBlock["data"], "path");
                     let logic = getDataProperty(flowyBlock["data"], "logic");
 
+                    //Properties for Swagger methods
                     if (method) {
                         //Set chartProperties to match block
                         Object.keys(swaggerJson.paths).forEach((swaggerPath) => {
@@ -147,7 +148,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 });
                             }
                         });
-                    } else if (logic) {
+                    } else if(logic) { //Properties for if, for, etc
                         chartProperties[blockId] = {
                             logic: logic,
                             properties: [
