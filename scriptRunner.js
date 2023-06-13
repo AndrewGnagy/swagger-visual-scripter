@@ -1,5 +1,4 @@
 let flowVariables = {};
-let baseUrl = "https://nuthatch.lastelm.software";
 
 function executeScript() {
     //Start with root block
@@ -51,55 +50,32 @@ function executeApiBlock(block) {
     let data = undefined; //TODO gather params and such
     console.log("Making " + method + " request to: " + path);
     //TODO uncomment when complete
-    makeRequest(method, path, data);
+
+    let baseUrl = "https://nuthatch.lastelm.software";
+    let httpRequest = new XMLHttpRequest();
+    httpRequest.open(method, baseUrl + path);
+    httpRequest.setRequestHeader("Content-Type", "application/json");
+    httpRequest.setRequestHeader("api-key", "130eff77-4b97-41d2-9198-d8e52e5dc96c");
+
+    makeRequest(httpRequest);
     flowVariables['lastResult'] = {}
 }
 
-let convertV2ToV3 = async (jsonToConvert) => {
+function convertV2ToV3(jsonToConvert) {
   let url = "https://converter.swagger.io/api/convert"
-  console.log("Making POST request to: " + url)
   method = "POST"
   data = JSON.stringify(jsonToConvert)
 
-  return await new Promise((resolve, reject) => {
-    let httpRequest = new XMLHttpRequest();
-    httpRequest.onreadystatechange = () => {
-      if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-        console.log("responseText:" + httpRequest.responseText);
-        try {
-          if(httpRequest.responseText) {
-            resolve(JSON.parse(httpRequest.responseText));
-          } else {
-            resolve();
-          }
-        } catch (err) {
-          reject(Error(err.message + " in " + httpRequest.responseText, err));
-        }
-      } else if (httpRequest.readyState == 4) {
-        reject("Request returned status code" + httpRequest.status);
-      }
-    };
-    httpRequest.onerror = () => {
-      reject(Error("There was a network error."));
-    };
-    httpRequest.open(method, url);
-    httpRequest.setRequestHeader("Content-Type", "application/json");
-    // httpRequest.setRequestHeader("api-key", "130eff77-4b97-41d2-9198-d8e52e5dc96c");
-    httpRequest.send(data);
-  });
-
-
-
-
-
-  // let result = makeRequest("POST", url, jsonToConvert)
-  // console.log(result)
-  // return result
+  console.log("Making" + method + " request to: " + url)
+  
+  let httpRequest = new XMLHttpRequest();
+  httpRequest.open(method, url);
+  httpRequest.setRequestHeader("Content-Type", "application/json");
+  return makeRequest(httpRequest)
 }
 
-let makeRequest = async (method, path, data) => {
+let makeRequest = async (httpRequest) => {
     return await new Promise((resolve, reject) => {
-      let httpRequest = new XMLHttpRequest();
       httpRequest.onreadystatechange = () => {
         if (httpRequest.readyState == 4 && httpRequest.status == 200) {
           console.log("responseText:" + httpRequest.responseText);
@@ -119,9 +95,6 @@ let makeRequest = async (method, path, data) => {
       httpRequest.onerror = () => {
         reject(Error("There was a network error."));
       };
-      httpRequest.open(method, baseUrl + path);
-      httpRequest.setRequestHeader("Content-Type", "application/json");
-      httpRequest.setRequestHeader("api-key", "130eff77-4b97-41d2-9198-d8e52e5dc96c");
       httpRequest.send(data);
     });
   };
