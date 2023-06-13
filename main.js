@@ -319,7 +319,7 @@ document.addEventListener("DOMContentLoaded", function () {
         );
         return `<div class="blockelem create-flowy noselect blockroot">${dataFields.join(
             "\n"
-        )}<div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="${iconPath}"></div><div class="blocktext">                        <p class="blocktitle">${title}</p><p class="blockdesc">${description}</p>        </div></div></div>`;
+        )}<div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="${iconPath}"></div><div class="blocktext">                        <p class="${title}">${title}</p><p class="blockdesc">${description}</p>        </div></div></div>`;
     }
 
     function filterBlocks(event) {

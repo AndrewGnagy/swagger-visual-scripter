@@ -373,14 +373,70 @@ input {
     vertical-align: top;
     margin-left: 12px
 }
+
 .blocktitle {
     margin: 0px!important;
     padding: 0px!important;
     font-family: Roboto;
     font-weight: 500;
     font-size: 16px;
-    color: #393C44;
+    color: #7149C6;
 }
+
+.get {
+    margin: 0px!important;
+    padding: 0px!important;
+    font-family: Roboto;
+    font-weight: 500;
+    font-size: 16px;
+    color: #379237;
+}
+
+.True {
+    margin: 0px!important;
+    padding: 0px!important;
+    font-family: Roboto;
+    font-weight: 500;
+    font-size: 16px;
+    color: #379237;
+}
+
+.delete {
+    margin: 0px!important;
+    padding: 0px!important;
+    font-family: Roboto;
+    font-weight: 500;
+    font-size: 16px;
+    color: #e83612;
+}
+
+.False {
+    margin: 0px!important;
+    padding: 0px!important;
+    font-family: Roboto;
+    font-weight: 500;
+    font-size: 16px;
+    color: #e83612;
+}
+
+.post {
+    margin: 0px!important;
+    padding: 0px!important;
+    font-family: Roboto;
+    font-weight: 500;
+    font-size: 16px;
+    color: #f0bb1a;
+}
+
+.servers {
+    margin: 0px!important;
+    padding: 0px!important;
+    font-family: Roboto;
+    font-weight: 500;
+    font-size: 16px;
+    color: #3a8ccb;
+}
+
 .blockdesc {
     margin-top: 5px;
     font-family: Roboto;
