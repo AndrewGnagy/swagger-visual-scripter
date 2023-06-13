@@ -10,10 +10,23 @@ function executeScript() {
 function executeBlock(id) {
     let block = getBlock(id);
     //If it's an API block, do a thing
-    if (getDataProperty(block["data"], "method")) {
-        executeApiBlock(block);
-    } else if (getDataProperty(block["data"], "logic")) { //Handle if or for blocks
-        console.log("Logic");
+
+    try {
+        if (getDataProperty(block["data"], "method")) {
+            executeApiBlock(block);
+        } else if (getDataProperty(block["data"], "logic")) { //Handle if or for blocks
+            console.log("Logic");
+        }
+    } catch (e) {
+        //Highlight block in error for 5sec
+        let blockEl = document.querySelector(".blockid[value='" + id + "']").parentElement;
+        blockEl.classList.add("errorblock");
+        setTimeout(function () {
+            blockEl.classList.remove("errorblock");
+        }, 5000);
+        console.log(`Error running block: ${id}`);
+        console.log(e);
+        return;
     }
 
     let children = getChildBlocks(id);
