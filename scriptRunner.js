@@ -66,7 +66,7 @@ function convertV2ToV3(jsonToConvert) {
   method = "POST"
   data = JSON.stringify(jsonToConvert)
 
-  console.log("Making" + method + " request to: " + url)
+  console.log("Making " + method + " request to: " + url)
   
   let httpRequest = new XMLHttpRequest();
   httpRequest.open(method, url);
