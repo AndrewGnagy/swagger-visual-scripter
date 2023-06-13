@@ -270,6 +270,9 @@ document.addEventListener("DOMContentLoaded", function () {
             //TODO null check as appropriate
             for (let j = 0; j < pathMethods.length; j++) {
                 let pathMethod = pathMethods[j];
+                if(pathMethod=="servers") {
+                    continue;
+                }
                 let blockHtml = generateBlock(
                     pathMethod + " " + path,
                     swaggerJson.paths[path][pathMethod]["summary"],
@@ -312,8 +315,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function generateBlock(title, description, iconPath = "assets/action.svg", data = []) {
-        console.log(title);
+    function generateBlock(title, description="", iconPath = "assets/action.svg", data = []) {
         let dataFields = data.map(
             (d) => `<input type="hidden" name="${d.name}" class="${d.name}" value="${d.value}"></input>`
         );
