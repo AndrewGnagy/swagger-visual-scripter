@@ -119,14 +119,11 @@ document.addEventListener("DOMContentLoaded", function(){
                     let method = event.target.closest(".blockroot").getAttribute("data-method")
                     let path = event.target.closest(".blockroot").getAttribute("data-path")
 
-                    console.log(path)
-                    console.log(method)
                     Object.keys(swaggerJson.paths).forEach(swaggerPath => {
                         if(swaggerPath == path) {
                             pathMethods = Object.keys(swaggerJson.paths[swaggerPath])
                             pathMethods.forEach(pathMethod => {
                                 if(pathMethod == method) {
-                                    console.log(flowy.getActiveBlockId())
                                     chartProperties[flowy.getActiveBlockId()] = {
                                         path: method + " " + path,
                                         properties: swaggerJson.paths[swaggerPath][pathMethod].parameters
@@ -148,7 +145,33 @@ document.addEventListener("DOMContentLoaded", function(){
                     // }
                 }
                 
-                document.getElementById("parameterinputs").innerHTML = JSON.stringify(chartProperties[flowy.getActiveBlockId()])
+                document.getElementById("parameterinputs").innerHTML = ""
+
+                chartProperties[flowy.getActiveBlockId()].properties.forEach(property => {
+                    // render the name first and with unique formatting from the rest of the data
+                    document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<h3>Name: ${property.name}</h3>`)
+                    Object.keys(property).forEach(propertyKey => {
+                        if(propertyKey != "name") {
+                            if (propertyKey == "schema") {
+                                document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<p class="inputlabel">${propertyKey}: ${JSON.stringify(property[propertyKey])}</p>`)
+                            } else {
+                                document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<p class="inputlabel">${propertyKey}: ${property[propertyKey]}</p>`)
+                            }
+                        }
+                    })
+
+                    if(property.type != null) {
+                        if(property.type == "string") {
+                            document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<input type="text">`)
+                        } else if (property.type == "boolean") {
+                            document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<input type="checkbox">`)
+                        }
+                    } else if (property.schema != null) {
+
+                    }
+                })
+
+                // document.getElementById("parameterinputs").innerHTML = JSON.stringify(chartProperties[flowy.getActiveBlockId()])
 
                 tempblock = event.target.closest(".block");
                 rightcard = true;
