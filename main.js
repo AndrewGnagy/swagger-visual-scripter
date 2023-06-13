@@ -173,7 +173,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     // render the name first and with unique formatting from the rest of the data
                     document
                         .getElementById("parameterinputs")
-                        .insertAdjacentHTML("beforeend", `<h3>Name: ${property.name}</h3>`);
+                        .insertAdjacentHTML("beforeend", `<h3 class="propheader">Name: ${property.name}</h3>`);
                     Object.keys(property).forEach((propertyKey) => {
                         if (propertyKey != "name") {
                             if (propertyKey == "schema") {
@@ -181,7 +181,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                     .getElementById("parameterinputs")
                                     .insertAdjacentHTML(
                                         "beforeend",
-                                        `<p class="inputlabel">${propertyKey}: ${JSON.stringify(
+                                        `<p class="propdata">${propertyKey.toUpperCase()}: ${JSON.stringify(
                                             property[propertyKey]
                                         )}</p>`
                                     );
@@ -190,7 +190,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                     .getElementById("parameterinputs")
                                     .insertAdjacentHTML(
                                         "beforeend",
-                                        `<p class="inputlabel">${propertyKey}: ${property[propertyKey]}</p>`
+                                        `<p class="propdata">${propertyKey.toUpperCase()}: ${property[propertyKey]}</p>`
                                     );
                             }
                         }
@@ -202,7 +202,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             let options = property.enum.map(val => `<option value="${val}">${val}</option>`);
                             htmlToAdd = `<select class="dropme" data-id="${blockId} ${property.name}">${options.join("\n")}</select>`
                         } else if(property.type == "string" || property.type == "integer") {
-                            htmlToAdd = `<input type="text" data-id="${blockId} ${property.name}">`
+                            htmlToAdd = `<input class="propinput" type="text" data-id="${blockId} ${property.name}">`
                         } else if (property.type == "boolean") {
                             htmlToAdd = `<input type="checkbox" data-id="${blockId} ${property.name}">`
                         }

@@ -11,7 +11,7 @@ body, html {
 #navigation {
     height: 71px;
     background-color: #FFF;
-    border: none;
+    border-bottom: #E8E8EF solid 0.5px;
     width: 100%;
     display: table;
     box-sizing: border-box;
@@ -332,10 +332,15 @@ input {
     overflow: auto;
 }
 #parameterinputs {
-    height: calc(100% - 305px);
+    height: calc(100% - 230px);
     overflow: auto;
-    margin-top: -30px;
-    padding-top: 30px;
+    margin-top: 5px;
+    margin-bottom: 0px;
+    margin-right: 30px;
+    border-radius: 5px;
+    padding-top: 5px;
+    padding-right: 15px;
+    background-color: #FFF;
 }
 .blockin {
     display: inline-block;
@@ -428,7 +433,8 @@ input {
     position: absolute;
     height: 100%;
     width: 311px;
-    background-color: #FFF;
+    background-color: #f3f4f9;
+    border-left: #E8E8EF solid 0.5px;
     right: -150px;
     opacity: 0;
     z-index: 2;
@@ -450,11 +456,11 @@ input {
     font-size: 20px;
     font-family: Roboto;
     font-weight: bold;
-    color: #000;
-    background-color: #FFF;
+    color: #7149C6;
     margin-top: 101px;
-    padding-bottom: 20px;
+    padding-bottom: 5px;
 }
+
 #close {
     margin-top: 100px;
     position: absolute;
@@ -517,11 +523,37 @@ input {
     line-height: 48px;
     text-align: center;
 }
-.inputlabel {
-    font-family: Roboto;
-    font-size: 14px;
-    color: #253134;
+
+.propdata {
+    font-family:'Courier New', Courier, monospace;
+    font-size: 12px;
+    color: #393C44;
+    margin-left: 20px;
+    margin-top: 0px;
 }
+
+.propinput {
+    margin-left: 20px;
+    font-family:'Courier New', Courier, monospace;
+    font-size: 15px;
+    color: #393C44;
+    text-indent: 15px;
+    height: 35px;
+
+}
+
+.propinput:focus-visible {
+    outline: #7149C6 1px solid;
+}
+
+.propheader {
+    font-family:'Courier New', Courier, monospace;
+    font-size: 15px;
+    color: #393C44;
+    margin-left: 20px;
+    margin-top: 20px;
+}
+
 .dropme {
     background-color: #FFF;
     border-radius: 5px;
@@ -587,17 +619,12 @@ SELECT {
 }
 
 #removeblock {
-    background-color: #f95635;
+    background-color: #e83612;
     font-family: Roboto;
     font-weight: 500;
     font-size: 14px;
-}
-
-#adddelsection {
-    background-color: #F1F6F9;
-    padding: 20px;
-    border-radius: 5px;
-    width: 240px;
+    margin-top: 20px;
+    margin-left: 25px;
 }
 .rmvbtn {
     border-radius: 5px;
