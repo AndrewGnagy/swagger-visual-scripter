@@ -115,19 +115,25 @@ document.addEventListener("DOMContentLoaded", function(){
         if (event.type === "mouseup" && aclick && !noinfo) {
             document.querySelectorAll(".selectedblock").forEach((el) => el.classList.remove("selectedblock"));
             if (event.target.closest(".block") && !event.target.closest(".block").classList.contains("dragging")) {
-                console.log("AHHHHHH")
                 if(chartProperties[flowy.getActiveBlockId()] == null) {
-                    let blockPath = event.target.closest(".blockroot").getAttribute("id")
-                    let method = blockPath.split(' ')[0]
-                    let path = blockPath.split(' ')[1]
+                    let method = event.target.closest(".blockroot").getAttribute("data-method")
+                    let path = event.target.closest(".blockroot").getAttribute("data-path")
 
+                    console.log(path)
+                    console.log(method)
                     Object.keys(swaggerJson.paths).forEach(swaggerPath => {
                         if(swaggerPath == path) {
                             pathMethods = Object.keys(swaggerJson.paths[swaggerPath])
                             pathMethods.forEach(pathMethod => {
                                 if(pathMethod == method) {
-                                    chartProperties[flowy.getActiveBlockId()].path = blockPath
-                                    chartProperties[flowy.getActiveBlockId()].properties = swaggerJson.paths[swaggerPath][pathMethod].parameters
+                                    console.log(flowy.getActiveBlockId())
+                                    chartProperties[flowy.getActiveBlockId()] = {
+                                        path: method + " " + path,
+                                        properties: swaggerJson.paths[swaggerPath][pathMethod].parameters
+                                    }
+
+                                    // chartProperties[flowy.getActiveBlockId()][path] = method + " " + path
+                                    // chartProperties[flowy.getActiveBlockId()][properties] = swaggerJson.paths[swaggerPath][pathMethod].parameters
                                 }
                             })
                         }
@@ -142,7 +148,7 @@ document.addEventListener("DOMContentLoaded", function(){
                     // }
                 }
                 
-                document.getElementById("proplist").innerHTML = chartProperties[flowy.getActiveBlockId()]
+                document.getElementById("parameterinputs").innerHTML = JSON.stringify(chartProperties[flowy.getActiveBlockId()])
 
                 tempblock = event.target.closest(".block");
                 rightcard = true;
@@ -175,11 +181,9 @@ document.addEventListener("DOMContentLoaded", function(){
         reader.readAsText(event.target.files[0]);
     }
     let populateBlocks = function () {
-        console.log(swaggerJson)
         apiPaths = Object.keys(swaggerJson.paths);
         for(let i = 0; i < apiPaths.length; i++) {
             let path = apiPaths[i];
-            console.log(swaggerJson.paths[path])
 
             //Build a block for each path
             pathMethods = Object.keys(swaggerJson.paths[path]);
@@ -198,9 +202,6 @@ document.addEventListener("DOMContentLoaded", function(){
             } else if (swaggerJson["openapi"]) { //If swagger v3
                 models = swaggerJson.components.schemas;
             }
-
-            // console.log(swaggerJson.definitions)
-            // setProperties("api", models.Request)
         }
     }
     addEventListener("mousedown", beginTouch, false);
@@ -237,9 +238,11 @@ document.addEventListener("DOMContentLoaded", function(){
     // }
 
     function generateBlock(title, description, iconPath="assets/action.svg", data=[]) {
-        console.log("AHHHHHHH")
+        console.log(title)
+        let method = title.split(' ')[0]
+        let path = title.split(' ')[1]
         let dataFields = data.map(d => `<input type="hidden" name="${d.name}" class="${d.name}" value="${d.value}"></input>`);
-        return `<div id=${title} class="blockelem create-flowy noselect blockroot">${dataFields.join("\n")}<div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="${iconPath}"></div><div class="blocktext">                        <p class="blocktitle">${title}</p><p class="blockdesc">${description}</p>        </div></div></div>`
+        return `<div data-method=${method} data-path=${path} class="blockelem create-flowy noselect blockroot">${dataFields.join("\n")}<div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="${iconPath}"></div><div class="blocktext">                        <p class="blocktitle">${title}</p><p class="blockdesc">${description}</p>        </div></div></div>`
     }
 
     function filterBlocks(event) {
