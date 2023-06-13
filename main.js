@@ -9,6 +9,17 @@ document.addEventListener("DOMContentLoaded", function(){
         logic: ['<div class="blockelem create-flowy noselect"><input type="hidden" name="logic" class="logic" value="if"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/database.svg"></div><div class="blocktext">                        <p class="blocktitle">IF</p><p class="blockdesc">If block</p>        </div></div></div>', '<div class="blockelem create-flowy noselect"><input type="hidden" name="logic" class="logic" value="for"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/database.svg"></div><div class="blocktext">                        <p class="blocktitle">FOR</p><p class="blockdesc">For loop</p>        </div></div></div>'],
         loggers: ['<div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="9"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/log.svg"></div><div class="blocktext">                        <p class="blocktitle">Add new log entry</p><p class="blockdesc">Adds a new log entry to this project</p>        </div></div></div>']
     }
+
+    /**
+     * {
+     *  flowyId: {
+     *      path: "",
+     *      properties: []
+     *  }
+     * }
+     */
+    var chartProperties = {}
+
     flowy(document.getElementById("canvas"), drag, release, snapping, rearrange);
     function snapping(block, first, parent) {
         //Element can be modified here
@@ -99,6 +110,51 @@ document.addEventListener("DOMContentLoaded", function(){
         if (event.type === "mouseup" && aclick && !noinfo) {
             document.querySelectorAll(".selectedblock").forEach((el) => el.classList.remove("selectedblock"));
             if (event.target.closest(".block") && !event.target.closest(".block").classList.contains("dragging")) {
+                if(chartProperties[flowy.getActiveBlockId()] == null) {
+                    let method = event.target.closest(".blockroot").getAttribute("data-method")
+                    let path = event.target.closest(".blockroot").getAttribute("data-path")
+
+                    Object.keys(swaggerJson.paths).forEach(swaggerPath => {
+                        if(swaggerPath == path) {
+                            pathMethods = Object.keys(swaggerJson.paths[swaggerPath])
+                            pathMethods.forEach(pathMethod => {
+                                if(pathMethod == method) {
+                                    chartProperties[flowy.getActiveBlockId()] = {
+                                        path: method + " " + path,
+                                        properties: swaggerJson.paths[swaggerPath][pathMethod].parameters
+                                    }
+                                }
+                            })
+                        }
+                    })
+                }
+                
+                document.getElementById("parameterinputs").innerHTML = ""
+
+                chartProperties[flowy.getActiveBlockId()].properties.forEach(property => {
+                    // render the name first and with unique formatting from the rest of the data
+                    document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<h3>Name: ${property.name}</h3>`)
+                    Object.keys(property).forEach(propertyKey => {
+                        if(propertyKey != "name") {
+                            if (propertyKey == "schema") {
+                                document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<p class="inputlabel">${propertyKey}: ${JSON.stringify(property[propertyKey])}</p>`)
+                            } else {
+                                document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<p class="inputlabel">${propertyKey}: ${property[propertyKey]}</p>`)
+                            }
+                        }
+                    })
+
+                    if(property.type != null) {
+                        if(property.type == "string") {
+                            document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<input type="text">`)
+                        } else if (property.type == "boolean") {
+                            document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<input type="checkbox">`)
+                        }
+                    } else if (property.schema != null) {
+
+                    }
+                })
+
                 tempblock = event.target.closest(".block");
                 rightcard = true;
                 document.getElementById("properties").classList.add("expanded");
@@ -133,12 +189,13 @@ document.addEventListener("DOMContentLoaded", function(){
         apiPaths = Object.keys(swaggerJson.paths);
         for(let i = 0; i < apiPaths.length; i++) {
             let path = apiPaths[i];
+
             //Build a block for each path
             pathMethods = Object.keys(swaggerJson.paths[path]);
             //TODO null check as appropriate
             for(let j=0; j < pathMethods.length; j++) {
                 let pathMethod = pathMethods[j];
-                let blockHtml = generateBlock(pathMethod + " " + path, swaggerJson.paths[path][pathMethod]["summary"], "assets/arrow.svg", "", [{name: "method", value: pathMethod}, {name: "path", value: path}]);
+                let blockHtml = generateBlock(pathMethod + " " + path, swaggerJson.paths[path][pathMethod]["summary"], "assets/arrow.svg", [{name: "method", value: pathMethod}, {name: "path", value: path}]);
                 addBlockToBlockList("api", blockHtml);
             }
 
@@ -171,9 +228,12 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     }
 
-    function generateBlock(title, description, iconPath="assets/action.svg", properties, data=[]) {
+    function generateBlock(title, description, iconPath="assets/action.svg", data=[]) {
+        console.log(title)
+        let method = title.split(' ')[0]
+        let path = title.split(' ')[1]
         let dataFields = data.map(d => `<input type="hidden" name="${d.name}" class="${d.name}" value="${d.value}"></input>`);
-        return `<div class="blockelem create-flowy noselect">${dataFields.join("\n")}<div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="${iconPath}"></div><div class="blocktext">                        <p class="blocktitle">${title}</p><p class="blockdesc">${description}</p>        </div></div></div>`
+        return `<div data-method=${method} data-path=${path} class="blockelem create-flowy noselect blockroot">${dataFields.join("\n")}<div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="${iconPath}"></div><div class="blocktext">                        <p class="blocktitle">${title}</p><p class="blockdesc">${description}</p>        </div></div></div>`
     }
 
     function filterBlocks(event) {
