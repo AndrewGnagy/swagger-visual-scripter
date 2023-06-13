@@ -126,9 +126,9 @@ document.addEventListener("DOMContentLoaded", function(){
                     //     'Format': properties[i].in,
                     //     'Type': properties[i].type
                     // }
-                } else {
-                    document.getElementById("proplist").innerHTML = chartProperties[flowy.getActiveBlockId()]
                 }
+                
+                document.getElementById("proplist").innerHTML = chartProperties[flowy.getActiveBlockId()]
 
                 tempblock = event.target.closest(".block");
                 rightcard = true;
