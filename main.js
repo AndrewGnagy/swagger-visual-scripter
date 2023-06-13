@@ -171,8 +171,8 @@ document.addEventListener("DOMContentLoaded", function(){
                             let options = property.enum.map(val => `<option value="${val}">${val}</option>`);
                             document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<select class="dropme">${options.join("\n")}</select>`)
                         } else if(property.type == "string" || property.type == "integer") {
-                            document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<input type="text" data-id="${blockId}">`)
-                            document.querySelector(`[data-id='${blockId}']`).addEventListener("input", event => textPropertyChanged(event, blockId, property.name))
+                            document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<input type="text" data-id="${blockId} ${property.name}">`)
+                            document.querySelector(`[data-id='${blockId} ${property.name}']`).addEventListener("input", event => textPropertyChanged(event, blockId, property.name))
                         } else if (property.type == "boolean") {
                             document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<input type="checkbox" id=${blockId}>`)
                         }
