@@ -166,7 +166,10 @@ document.addEventListener("DOMContentLoaded", function(){
                     })
 
                     if(property.type != null) {
-                        if(property.type == "string" || property.type == "integer") {
+                        if(property.enum) {
+                            let options = property.enum.map(val => `<option value="${val}">${val}</option>`);
+                            document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<select class="dropme">${options.join("\n")}</select>`)
+                        } else if(property.type == "string" || property.type == "integer") {
                             document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<input type="text">`)
                         } else if (property.type == "boolean") {
                             document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<input type="checkbox">`)
