@@ -95,7 +95,7 @@ function resolveVariable(myvar) {
     // }, flowVariables);
 }
 
-function convertV2ToV3(jsonToConvert) {
+let convertV2ToV3 = async (jsonToConvert) => {
   let url = "https://converter.swagger.io/api/convert"
   method = "POST"
   data = JSON.stringify(jsonToConvert)
@@ -105,7 +105,11 @@ function convertV2ToV3(jsonToConvert) {
   let httpRequest = new XMLHttpRequest();
   httpRequest.open(method, url);
   httpRequest.setRequestHeader("Content-Type", "application/json");
-  return makeRequest(httpRequest)
+  makeRequest(httpRequest).then(response => {
+    console.log("response: ")
+    console.log(response)
+    return response
+  })
 }
 
 let makeRequest = async (httpRequest) => {
