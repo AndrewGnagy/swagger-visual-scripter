@@ -96,16 +96,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("removeblock").addEventListener("click", function () {
         flowy.deleteBranch(flowy.getActiveBlockId());
     });
-    // document.getElementById("addblock").addEventListener("click", function(){
-    //generateBlock("api", "blah", "a very good block", "assets/arrow.svg", "")
-    // let newBlock = document.createElement("div");
-    // newBlock.classList = "blockelem noselect block";
-    // newBlock.innerHTML = '<input type="hidden" name="blockelemtype" class="blockelemtype" value="9"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/log.svg"></div><div class="blocktext">                        <p class="blocktitle">Add new log entry</p><p class="blockdesc">Adds a new log entry to this project</p>        </div></div>';
-    // flowy.addBlock(newBlock, 1);
-    // });
-    // document.getElementById("removeblocks").addEventListener("click", function(){
-    //     flowy.deleteBlocks();
-    // });
+
     //Block click events
     var aclick = false;
     var noinfo = false;
