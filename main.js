@@ -167,17 +167,17 @@ document.addEventListener("DOMContentLoaded", function(){
                     })
 
                     if(property.type != null) {
+                        let htmlToAdd
                         if(property.enum) {
                             let options = property.enum.map(val => `<option value="${val}">${val}</option>`);
-                            document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<select class="dropme" data-id="${blockId} ${property.name}">${options.join("\n")}</select>`)
-                            document.querySelector(`[data-id='${blockId} ${property.name}']`).addEventListener("change", event => selectPropertyChanged(event, blockId, property.name))
+                            htmlToAdd = `<select class="dropme" data-id="${blockId} ${property.name}">${options.join("\n")}</select>`
                         } else if(property.type == "string" || property.type == "integer") {
-                            document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<input type="text" data-id="${blockId} ${property.name}">`)
-                            document.querySelector(`[data-id='${blockId} ${property.name}']`).addEventListener("input", event => textPropertyChanged(event, blockId, property.name))
+                            htmlToAdd = `<input type="text" data-id="${blockId} ${property.name}">`
                         } else if (property.type == "boolean") {
-                            document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<input type="checkbox" data-id="${blockId} ${property.name}">`)
-                            document.querySelector(`[data-id='${blockId} ${property.name}']`).addEventListener("change", event => checkBoxPropertyChanged(event, blockId, property.name))
+                            htmlToAdd = `<input type="checkbox" data-id="${blockId} ${property.name}">`
                         }
+                        document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", htmlToAdd)
+                        document.querySelector(`[data-id='${blockId} ${property.name}']`).addEventListener("change", event => propertyChanged(event, blockId, property.name))
                     } else if (property.schema != null) {
 
                     }
@@ -193,34 +193,18 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     }
 
-    function selectPropertyChanged(event, blockId, propertyName) {
-        let value = event.value
+    function propertyChanged(event, blockId, propertyName) {
+        let value
+        if(event.target.type == "checkbox") {
+            value = event.currentTarget.checked
+        } else {
+            value = event.target.value
+        }
+
         let properties = chartProperties[blockId].properties
         for(let i = 0; i < properties.length; i++) {
             if(properties[i].name == propertyName) {
                 properties[i].value = value
-                break;
-            }
-        }
-    }
-
-    function textPropertyChanged(event, blockId, propertyName) {
-        let value = event.target.value
-        let properties = chartProperties[blockId].properties
-        for(let i = 0; i < properties.length; i++) {
-            if(properties[i].name == propertyName) {
-                properties[i].value = value
-                break;
-            }
-        }
-    }
-
-    function checkBoxPropertyChanged(event, blockId, propertyName) {
-        let checked = event.currentTarget.checked
-        let properties = chartProperties[blockId].properties
-        for(let i = 0; i < properties.length; i++) {
-            if(properties[i].name == propertyName) {
-                properties[i].value = checked
                 break;
             }
         }
