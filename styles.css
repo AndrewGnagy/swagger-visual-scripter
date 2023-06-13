@@ -339,6 +339,7 @@ input {
     margin-right: 30px;
     border-radius: 5px;
     padding-top: 5px;
+    padding-right: 15px;
     background-color: #FFF;
 }
 .blockin {
@@ -522,30 +523,33 @@ input {
     line-height: 48px;
     text-align: center;
 }
-/* .inputlabel {
-    font-family:Roboto;
-    font-size: 14px;
-    color: #000;
-    margin-left: 20px;
-    margin-top: 0px;
-} */
 
 .propdata {
     font-family:'Courier New', Courier, monospace;
     font-size: 12px;
-    color: #000;
+    color: #393C44;
     margin-left: 20px;
     margin-top: 0px;
 }
 
-.propdata input {
-    margin-left: 40px !important;
+.propinput {
+    margin-left: 20px;
+    font-family:'Courier New', Courier, monospace;
+    font-size: 15px;
+    color: #393C44;
+    text-indent: 15px;
+    height: 35px;
+
+}
+
+.propinput:focus-visible {
+    outline: #7149C6 1px solid;
 }
 
 .propheader {
     font-family:'Courier New', Courier, monospace;
     font-size: 15px;
-    color: #000;
+    color: #393C44;
     margin-left: 20px;
     margin-top: 20px;
 }

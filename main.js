@@ -202,7 +202,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             let options = property.enum.map(val => `<option value="${val}">${val}</option>`);
                             htmlToAdd = `<select class="dropme" data-id="${blockId} ${property.name}">${options.join("\n")}</select>`
                         } else if(property.type == "string" || property.type == "integer") {
-                            htmlToAdd = `<input type="text" data-id="${blockId} ${property.name}">`
+                            htmlToAdd = `<input class="propinput" type="text" data-id="${blockId} ${property.name}">`
                         } else if (property.type == "boolean") {
                             htmlToAdd = `<input type="checkbox" data-id="${blockId} ${property.name}">`
                         }
