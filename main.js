@@ -110,30 +110,49 @@ document.addEventListener("DOMContentLoaded", function(){
         if (event.type === "mouseup" && aclick && !noinfo) {
             document.querySelectorAll(".selectedblock").forEach((el) => el.classList.remove("selectedblock"));
             let blockEl = event.target.closest(".block");
+            let blockId = flowy.getActiveBlockId();
             if (blockEl && !blockEl.classList.contains("dragging")) {
-                if(chartProperties[flowy.getActiveBlockId()] == null) {
-                    flowyBlock = getBlock(flowy.getActiveBlockId());
+                if(chartProperties[blockId] == null) {
+                    flowyBlock = getBlock(blockId);
                     let method = getDataProperty(flowyBlock["data"], "method");
                     let path = getDataProperty(flowyBlock["data"], "path");
+                    let logic = getDataProperty(flowyBlock["data"], "logic");
 
-                    Object.keys(swaggerJson.paths).forEach(swaggerPath => {
-                        if(swaggerPath == path) {
-                            pathMethods = Object.keys(swaggerJson.paths[swaggerPath])
-                            pathMethods.forEach(pathMethod => {
-                                if(pathMethod == method) {
-                                    chartProperties[flowy.getActiveBlockId()] = {
-                                        path: method + " " + path,
-                                        properties: swaggerJson.paths[swaggerPath][pathMethod].parameters
+                    if (method) {
+                        //Set chartProperties to match block
+                        Object.keys(swaggerJson.paths).forEach(swaggerPath => {
+                            if(swaggerPath == path) {
+                                pathMethods = Object.keys(swaggerJson.paths[swaggerPath])
+                                pathMethods.forEach(pathMethod => {
+                                    if(pathMethod == method) {
+                                        chartProperties[blockId] = {
+                                            path: method + " " + path,
+                                            properties: swaggerJson.paths[swaggerPath][pathMethod].parameters
+                                        }
                                     }
-                                }
-                            })
+                                });
+                            }
+                        });
+                    } else if(logic) {
+                        chartProperties[blockId] = {
+                            logic: logic,
+                            properties: [{
+                                name: "expression",
+                                description: "what to evaluate",
+                                required: "true",
+                                type: "string"
+                            }]
                         }
-                    })
+                    } else {
+                        chartProperties[blockId] = {
+                            properties: []
+                        }
+                    }
                 }
                 
                 document.getElementById("parameterinputs").innerHTML = ""
-
-                chartProperties[flowy.getActiveBlockId()].properties.forEach(property => {
+                //Add properties to the right card
+                chartProperties[blockId].properties.forEach(property => {
                     // render the name first and with unique formatting from the rest of the data
                     document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<h3>Name: ${property.name}</h3>`)
                     Object.keys(property).forEach(propertyKey => {
@@ -157,6 +176,7 @@ document.addEventListener("DOMContentLoaded", function(){
                     }
                 });
 
+                //Pop the right card and highlight the block
                 tempblock = event.target.closest(".block");
                 rightcard = true;
                 document.getElementById("properties").classList.add("expanded");
