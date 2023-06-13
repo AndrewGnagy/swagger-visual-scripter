@@ -169,12 +169,14 @@ document.addEventListener("DOMContentLoaded", function(){
                     if(property.type != null) {
                         if(property.enum) {
                             let options = property.enum.map(val => `<option value="${val}">${val}</option>`);
-                            document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<select class="dropme">${options.join("\n")}</select>`)
+                            document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<select class="dropme" data-id="${blockId} ${property.name}">${options.join("\n")}</select>`)
+                            document.querySelector(`[data-id='${blockId} ${property.name}']`).addEventListener("change", event => selectPropertyChanged(event, blockId, property.name))
                         } else if(property.type == "string" || property.type == "integer") {
                             document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<input type="text" data-id="${blockId} ${property.name}">`)
                             document.querySelector(`[data-id='${blockId} ${property.name}']`).addEventListener("input", event => textPropertyChanged(event, blockId, property.name))
                         } else if (property.type == "boolean") {
-                            document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<input type="checkbox" id=${blockId}>`)
+                            document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<input type="checkbox" data-id="${blockId} ${property.name}">`)
+                            document.querySelector(`[data-id='${blockId} ${property.name}']`).addEventListener("change", event => checkBoxPropertyChanged(event, blockId, property.name))
                         }
                     } else if (property.schema != null) {
 
@@ -191,6 +193,17 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     }
 
+    function selectPropertyChanged(event, blockId, propertyName) {
+        let value = event.value
+        let properties = chartProperties[blockId].properties
+        for(let i = 0; i < properties.length; i++) {
+            if(properties[i].name == propertyName) {
+                properties[i].value = value
+                break;
+            }
+        }
+    }
+
     function textPropertyChanged(event, blockId, propertyName) {
         let value = event.target.value
         let properties = chartProperties[blockId].properties
@@ -200,8 +213,17 @@ document.addEventListener("DOMContentLoaded", function(){
                 break;
             }
         }
+    }
 
-        console.log(chartProperties)
+    function checkBoxPropertyChanged(event, blockId, propertyName) {
+        let checked = event.currentTarget.checked
+        let properties = chartProperties[blockId].properties
+        for(let i = 0; i < properties.length; i++) {
+            if(properties[i].name == propertyName) {
+                properties[i].value = checked
+                break;
+            }
+        }
     }
 
     let importSwagger = function (event) {
