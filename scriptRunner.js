@@ -1,8 +1,7 @@
-let flowchart;
 let flowVariables = {};
+let baseUrl = "https://nuthatch.lastelm.software";
 
-function executeScript(fc) {
-    flowchart = fc;
+function executeScript() {
     //Start with root block
     //Kicks off depth-first tree traversal
     executeBlock(0);
@@ -23,16 +22,21 @@ function executeBlock(id) {
     }
 }
 
-function getBlock(id, chart=flowchart) {
-    return chart ? chart.blocks.filter(b => {
+function getBlock(id) {
+    let chart = flowy.output();
+    if(typeof id == "string") {
+        id = parseInt(id);
+    }
+    return chart.blocks.filter(b => {
         return b.id == id;
-    })[0] : undefined;
+    })[0];
 }
 
-function getChildBlocks(parentId, chart=flowchart) {
-    return chart ? chart.blocks.filter(b => {
+function getChildBlocks(parentId) {
+    let chart = flowy.output();
+    return chart.blocks.filter(b => {
         return b.parent == parentId;
-    }) : [];
+    });
 }
 
 function getDataProperty(dataAry, name) {
@@ -47,12 +51,12 @@ function executeApiBlock(block) {
     let data = undefined; //TODO gather params and such
     console.log("Making " + method + " request to: " + path);
     //TODO uncomment when complete
-    //makeRequest(method, path, data);
+    makeRequest(method, path, data);
     flowVariables['lastResult'] = {}
 }
 
-let makeRequest = (method, path, data) => {
-    return new Promise((resolve, reject) => {
+let makeRequest = async (method, path, data) => {
+    return await new Promise((resolve, reject) => {
       let httpRequest = new XMLHttpRequest();
       httpRequest.onreadystatechange = () => {
         if (httpRequest.readyState == 4 && httpRequest.status == 200) {
@@ -73,8 +77,9 @@ let makeRequest = (method, path, data) => {
       httpRequest.onerror = () => {
         reject(Error("There was a network error."));
       };
-      httpRequest.open(method, path);
+      httpRequest.open(method, baseUrl + path);
       httpRequest.setRequestHeader("Content-Type", "application/json");
+      httpRequest.setRequestHeader("api-key", "130eff77-4b97-41d2-9198-d8e52e5dc96c");
       httpRequest.send(data);
     });
   };

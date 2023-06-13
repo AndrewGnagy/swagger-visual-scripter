@@ -109,10 +109,12 @@ document.addEventListener("DOMContentLoaded", function(){
     var doneTouch = function (event) {
         if (event.type === "mouseup" && aclick && !noinfo) {
             document.querySelectorAll(".selectedblock").forEach((el) => el.classList.remove("selectedblock"));
-            if (event.target.closest(".block") && !event.target.closest(".block").classList.contains("dragging")) {
+            let blockEl = event.target.closest(".block");
+            if (blockEl && !blockEl.classList.contains("dragging")) {
                 if(chartProperties[flowy.getActiveBlockId()] == null) {
-                    let method = event.target.closest(".blockroot").getAttribute("data-method")
-                    let path = event.target.closest(".blockroot").getAttribute("data-path")
+                    flowyBlock = getBlock(flowy.getActiveBlockId());
+                    let method = getDataProperty(flowyBlock["data"], "method");
+                    let path = getDataProperty(flowyBlock["data"], "path");
 
                     Object.keys(swaggerJson.paths).forEach(swaggerPath => {
                         if(swaggerPath == path) {
@@ -153,7 +155,7 @@ document.addEventListener("DOMContentLoaded", function(){
                     } else if (property.schema != null) {
 
                     }
-                })
+                });
 
                 tempblock = event.target.closest(".block");
                 rightcard = true;
@@ -230,10 +232,8 @@ document.addEventListener("DOMContentLoaded", function(){
 
     function generateBlock(title, description, iconPath="assets/action.svg", data=[]) {
         console.log(title)
-        let method = title.split(' ')[0]
-        let path = title.split(' ')[1]
         let dataFields = data.map(d => `<input type="hidden" name="${d.name}" class="${d.name}" value="${d.value}"></input>`);
-        return `<div data-method=${method} data-path=${path} class="blockelem create-flowy noselect blockroot">${dataFields.join("\n")}<div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="${iconPath}"></div><div class="blocktext">                        <p class="blocktitle">${title}</p><p class="blockdesc">${description}</p>        </div></div></div>`
+        return `<div class="blockelem create-flowy noselect blockroot">${dataFields.join("\n")}<div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="${iconPath}"></div><div class="blocktext">                        <p class="blocktitle">${title}</p><p class="blockdesc">${description}</p>        </div></div></div>`
     }
 
     function filterBlocks(event) {
@@ -254,6 +254,6 @@ document.addEventListener("DOMContentLoaded", function(){
     let runScript = function() {
         executeScript(flowy.output());
     }
-    const runBtn = document.querySelector("#publish");
+    const runBtn = document.querySelector("#runscript");
     runBtn.addEventListener("click", runScript, false);
 });
