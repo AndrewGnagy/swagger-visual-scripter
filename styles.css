@@ -10,7 +10,7 @@ body, html {
 }
 #navigation {
     height: 71px;
-    background-color: #000;
+    background-color: #FFF;
     border: none;
     width: 100%;
     display: table;
@@ -41,13 +41,13 @@ body, html {
     font-family:Tahoma;
     font-weight: 600;
     font-size: 20px;
-    color: #FFF;
+    color: #000;
     margin-bottom: 0px;
 }
 #subtitle {
     font-family: Roboto;
     font-weight: 600;
-    color: #159895;
+    color: #7149C6;
     font-size: 14px;
     margin-top: 5px;
 }
@@ -66,7 +66,7 @@ body, html {
 }
 #leftswitch {
     border: 1px solid #E8E8EF;
-    background-color: #159895;
+    background-color: #7149C6;
     width: 111px;
     height: 35px;
     line-height: 39px;
@@ -79,7 +79,7 @@ body, html {
 }
 #rightswitch {
     font-family: Roboto;
-    color: #159895;
+    color: #7149C6;
     background-color: #FFF;
     border-radius: 0px 5px 5px 0px;
     border: 1px solid #E8E8EF;
@@ -97,8 +97,8 @@ body, html {
     font-family: Roboto;
     font-weight: 500;
     font-size: 14px;
-    color: #000;
-    background-color: #F1F6F9;
+    color: #FFF;
+    background-color: #7149C6;
     border-radius: 5px;
     border: none;
     width: 143px;
@@ -126,7 +126,7 @@ body, html {
     font-weight: 500;
     font-size: 14px;
     color: #FFF;
-    background-color: #159895;
+    background-color: #379237;
     border-radius: 5px;
     width: 143px;
     height: 38px;
@@ -149,7 +149,7 @@ body, html {
 }
 #leftcard {
     width: 363px;
-    background-color: #F1F6F9;
+    background-color: #f3f4f9;
     border: 1px solid #E8E8EF;
     box-sizing: border-box;
     padding-top: 85px;
@@ -239,7 +239,7 @@ input {
     content: "";
     width:  100%;
     height: 4px;
-    background-color: #159895;
+    background-color: #7149C6;
     margin-top: -4px;
 }
 #logic {
@@ -491,7 +491,7 @@ input {
     content: "";
     width: 100%;
     height: 4px;
-    background-color: #159895;
+    background-color: #7149C6;
     margin-top: -4px;
 }
 #alertprop {
@@ -587,7 +587,10 @@ SELECT {
 }
 
 #removeblock {
-    background-color: #FE6244;
+    background-color: #f95635;
+    font-family: Roboto;
+    font-weight: 500;
+    font-size: 14px;
 }
 
 #adddelsection {
@@ -688,7 +691,7 @@ SELECT {
     box-shadow: 0px 4px 30px rgba(22, 33, 74, 0.05);
 }
 .selectedblock {
-    border: 2px solid #159895;
+    border: 2px solid #7149C6;
     box-shadow: 0px 4px 30px rgba(22, 33, 74, 0.08);
 }
 

@@ -1,14 +1,19 @@
-document.addEventListener("DOMContentLoaded", function(){
+document.addEventListener("DOMContentLoaded", function () {
     let swaggerJson;
     var rightcard = false;
     var tempblock;
     var tempblock2;
     var blockLists = {
-        active: 'api',
+        active: "api",
         api: [],
-        logic: ['<div class="blockelem create-flowy noselect"><input type="hidden" name="logic" class="logic" value="if"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/database.svg"></div><div class="blocktext">                        <p class="blocktitle">IF</p><p class="blockdesc">If block</p>        </div></div></div>', '<div class="blockelem create-flowy noselect"><input type="hidden" name="logic" class="logic" value="for"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/database.svg"></div><div class="blocktext">                        <p class="blocktitle">FOR</p><p class="blockdesc">For loop</p>        </div></div></div>'],
-        loggers: ['<div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="9"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/log.svg"></div><div class="blocktext">                        <p class="blocktitle">Add new log entry</p><p class="blockdesc">Adds a new log entry to this project</p>        </div></div></div>']
-    }
+        logic: [
+            '<div class="blockelem create-flowy noselect"><input type="hidden" name="logic" class="logic" value="if"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/database.svg"></div><div class="blocktext">                        <p class="blocktitle">IF</p><p class="blockdesc">If block</p>        </div></div></div>',
+            '<div class="blockelem create-flowy noselect"><input type="hidden" name="logic" class="logic" value="for"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/database.svg"></div><div class="blocktext">                        <p class="blocktitle">FOR</p><p class="blockdesc">For loop</p>        </div></div></div>'
+        ],
+        loggers: [
+            '<div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="9"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/log.svg"></div><div class="blocktext">                        <p class="blocktitle">Add new log entry</p><p class="blockdesc">Adds a new log entry to this project</p>        </div></div></div>'
+        ]
+    };
 
     /**
      * {
@@ -18,23 +23,31 @@ document.addEventListener("DOMContentLoaded", function(){
      *  }
      * }
      */
-    var chartProperties = {}
+    var chartProperties = {};
 
     flowy(document.getElementById("canvas"), drag, release, snapping, rearrange);
     function snapping(block, first, parent) {
         //Element can be modified here
-        let specialBlockCheck = block.querySelector("[name=\"logic\"]");
+        let specialBlockCheck = block.querySelector('[name="logic"]');
         if (specialBlockCheck && specialBlockCheck.value == "if") {
             let blockId = parseInt(block.querySelector(".blockid").value);
             //This seems hacky???
-            setTimeout(function() {
-                flowy.addBlock(new DOMParser().parseFromString(generateBlock("True", "executes if true"), "text/html").body.childNodes[0], blockId);
-                flowy.addBlock(new DOMParser().parseFromString(generateBlock("False", "executes if false"), "text/html").body.childNodes[0], blockId);
+            setTimeout(function () {
+                flowy.addBlock(
+                    new DOMParser().parseFromString(generateBlock("True", "executes if true"), "text/html").body
+                        .childNodes[0],
+                    blockId
+                );
+                flowy.addBlock(
+                    new DOMParser().parseFromString(generateBlock("False", "executes if false"), "text/html").body
+                        .childNodes[0],
+                    blockId
+                );
             }, 250);
         }
 
         //Don't allow multiple children to be attached to the same block
-        if(first) {
+        if (first) {
             return true;
         }
         let parentId = parseInt(parent.querySelector(".blockid").value);
@@ -59,36 +72,36 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     }
     //Block Nav
-    var blockNavClick = function(){
+    var blockNavClick = function () {
         document.querySelector(".navactive").classList.add("navdisabled");
         document.querySelector(".navactive").classList.remove("navactive");
         this.classList.add("navactive");
         this.classList.remove("navdisabled");
 
-        switchActiveBlockList(this.getAttribute("id"))
-    }
+        switchActiveBlockList(this.getAttribute("id"));
+    };
     addEventListenerMulti("click", blockNavClick, false, ".side");
     //Right menu
-    document.getElementById("close").addEventListener("click", function(){
+    document.getElementById("close").addEventListener("click", function () {
         if (rightcard) {
             rightcard = false;
             document.getElementById("properties").classList.remove("expanded");
-            setTimeout(function(){
-                document.getElementById("propwrap").classList.remove("itson"); 
+            setTimeout(function () {
+                document.getElementById("propwrap").classList.remove("itson");
             }, 300);
             tempblock.classList.remove("selectedblock");
         }
     });
     //Delete buttons
-    document.getElementById("removeblock").addEventListener("click", function(){
+    document.getElementById("removeblock").addEventListener("click", function () {
         flowy.deleteBranch(flowy.getActiveBlockId());
     });
     // document.getElementById("addblock").addEventListener("click", function(){
-        //generateBlock("api", "blah", "a very good block", "assets/arrow.svg", "")
-        // let newBlock = document.createElement("div");
-        // newBlock.classList = "blockelem noselect block";
-        // newBlock.innerHTML = '<input type="hidden" name="blockelemtype" class="blockelemtype" value="9"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/log.svg"></div><div class="blocktext">                        <p class="blocktitle">Add new log entry</p><p class="blockdesc">Adds a new log entry to this project</p>        </div></div>';
-        // flowy.addBlock(newBlock, 1);
+    //generateBlock("api", "blah", "a very good block", "assets/arrow.svg", "")
+    // let newBlock = document.createElement("div");
+    // newBlock.classList = "blockelem noselect block";
+    // newBlock.innerHTML = '<input type="hidden" name="blockelemtype" class="blockelemtype" value="9"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/log.svg"></div><div class="blocktext">                        <p class="blocktitle">Add new log entry</p><p class="blockdesc">Adds a new log entry to this project</p>        </div></div>';
+    // flowy.addBlock(newBlock, 1);
     // });
     // document.getElementById("removeblocks").addEventListener("click", function(){
     //     flowy.deleteBlocks();
@@ -102,7 +115,7 @@ document.addEventListener("DOMContentLoaded", function(){
         if (event.target.closest(".create-flowy")) {
             noinfo = true;
         }
-    }
+    };
     var checkTouch = function (event) {
         aclick = false;
     }
@@ -113,7 +126,7 @@ document.addEventListener("DOMContentLoaded", function(){
             let blockEl = event.target.closest(".block");
             let blockId = flowy.getActiveBlockId();
             if (blockEl && !blockEl.classList.contains("dragging")) {
-                if(chartProperties[blockId] == null) {
+                if (chartProperties[blockId] == null) {
                     flowyBlock = getBlock(blockId);
                     let method = getDataProperty(flowyBlock["data"], "method");
                     let path = getDataProperty(flowyBlock["data"], "path");
@@ -121,50 +134,66 @@ document.addEventListener("DOMContentLoaded", function(){
 
                     if (method) {
                         //Set chartProperties to match block
-                        Object.keys(swaggerJson.paths).forEach(swaggerPath => {
-                            if(swaggerPath == path) {
-                                pathMethods = Object.keys(swaggerJson.paths[swaggerPath])
-                                pathMethods.forEach(pathMethod => {
-                                    if(pathMethod == method) {
+                        Object.keys(swaggerJson.paths).forEach((swaggerPath) => {
+                            if (swaggerPath == path) {
+                                pathMethods = Object.keys(swaggerJson.paths[swaggerPath]);
+                                pathMethods.forEach((pathMethod) => {
+                                    if (pathMethod == method) {
                                         chartProperties[blockId] = {
                                             path: method + " " + path,
                                             properties: swaggerJson.paths[swaggerPath][pathMethod].parameters
-                                        }
+                                        };
                                     }
                                 });
                             }
                         });
-                    } else if(logic) {
+                    } else if (logic) {
                         chartProperties[blockId] = {
                             logic: logic,
-                            properties: [{
-                                name: "expression",
-                                description: "what to evaluate",
-                                required: "true",
-                                type: "string"
-                            }]
-                        }
+                            properties: [
+                                {
+                                    name: "expression",
+                                    description: "what to evaluate",
+                                    required: "true",
+                                    type: "string"
+                                }
+                            ]
+                        };
                     } else {
                         chartProperties[blockId] = {
                             properties: []
-                        }
+                        };
                     }
                 }
-                
-                document.getElementById("parameterinputs").innerHTML = ""
+
+                document.getElementById("parameterinputs").innerHTML = "";
                 //Add properties to the right card
-                chartProperties[blockId].properties.forEach(property => {
+                chartProperties[blockId].properties.forEach((property) => {
                     // render the name first and with unique formatting from the rest of the data
-                    document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<h3>Name: ${property.name}</h3>`)
-                    Object.keys(property).forEach(propertyKey => {
-                        if(propertyKey != "name") {
+                    document
+                        .getElementById("parameterinputs")
+                        .insertAdjacentHTML("beforeend", `<h3>Name: ${property.name}</h3>`);
+                    Object.keys(property).forEach((propertyKey) => {
+                        if (propertyKey != "name") {
                             if (propertyKey == "schema") {
-                                document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<p class="inputlabel">${propertyKey}: ${JSON.stringify(property[propertyKey])}</p>`)
+                                document
+                                    .getElementById("parameterinputs")
+                                    .insertAdjacentHTML(
+                                        "beforeend",
+                                        `<p class="inputlabel">${propertyKey}: ${JSON.stringify(
+                                            property[propertyKey]
+                                        )}</p>`
+                                    );
                             } else {
-                                document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<p class="inputlabel">${propertyKey}: ${property[propertyKey]}</p>`)
+                                document
+                                    .getElementById("parameterinputs")
+                                    .insertAdjacentHTML(
+                                        "beforeend",
+                                        `<p class="inputlabel">${propertyKey}: ${property[propertyKey]}</p>`
+                                    );
                             }
                         }
-                    })
+                    });
 
                     if(property.type != null) {
                         let htmlToAdd
@@ -179,7 +208,6 @@ document.addEventListener("DOMContentLoaded", function(){
                         document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", htmlToAdd)
                         document.querySelector(`[data-id='${blockId} ${property.name}']`).addEventListener("change", event => propertyChanged(event, blockId, property.name))
                     } else if (property.schema != null) {
-
                     }
                 });
 
@@ -191,7 +219,7 @@ document.addEventListener("DOMContentLoaded", function(){
                 tempblock.classList.add("selectedblock");
             }
         }
-    }
+    };
 
     function propertyChanged(event, blockId, propertyName) {
         let value
@@ -213,7 +241,7 @@ document.addEventListener("DOMContentLoaded", function(){
     let importSwagger = function (event) {
         var reader = new FileReader();
 
-        reader.onload = function(event) {
+        reader.onload = function (event) {
             try {
                 let fileJson = JSON.parse(event.target.result);
                 //TODO do better input validation
@@ -223,38 +251,47 @@ document.addEventListener("DOMContentLoaded", function(){
                 } else {
                     throw new Error("Not a real swagger json file?");
                 }
-            } catch(e) {
+            } catch (e) {
                 //TODO
                 console.log("Error reading swagger json");
                 console.error(e);
             }
-        }
+        };
         reader.readAsText(event.target.files[0]);
-    }
+    };
     let populateBlocks = function () {
         apiPaths = Object.keys(swaggerJson.paths);
-        for(let i = 0; i < apiPaths.length; i++) {
+        for (let i = 0; i < apiPaths.length; i++) {
             let path = apiPaths[i];
 
             //Build a block for each path
             pathMethods = Object.keys(swaggerJson.paths[path]);
             //TODO null check as appropriate
-            for(let j=0; j < pathMethods.length; j++) {
+            for (let j = 0; j < pathMethods.length; j++) {
                 let pathMethod = pathMethods[j];
-                let blockHtml = generateBlock(pathMethod + " " + path, swaggerJson.paths[path][pathMethod]["summary"], "assets/arrow.svg", [{name: "method", value: pathMethod}, {name: "path", value: path}]);
+                let blockHtml = generateBlock(
+                    pathMethod + " " + path,
+                    swaggerJson.paths[path][pathMethod]["summary"],
+                    "assets/arrow.svg",
+                    [
+                        { name: "method", value: pathMethod },
+                        { name: "path", value: path }
+                    ]
+                );
                 addBlockToBlockList("api", blockHtml);
             }
 
             //Models
             let models;
             //If swagger v2
-            if(swaggerJson["swagger"]) {
+            if (swaggerJson["swagger"]) {
                 models = swaggerJson.definitions;
-            } else if (swaggerJson["openapi"]) { //If swagger v3
+            } else if (swaggerJson["openapi"]) {
+                //If swagger v3
                 models = swaggerJson.components.schemas;
             }
         }
-    }
+    };
     addEventListener("mousedown", beginTouch, false);
     addEventListener("mousemove", checkTouch, false);
     addEventListener("mouseup", doneTouch, false);
@@ -262,42 +299,46 @@ document.addEventListener("DOMContentLoaded", function(){
 
     // Utility functions
     function switchActiveBlockList(id) {
-        blockLists.active = id
+        blockLists.active = id;
         document.getElementById("blocklist").innerHTML = blockLists[id].join("\n");
     }
 
     //id = which blocklist to add block to. api, logic, loggers
     function addBlockToBlockList(id, htmlToAdd) {
-        blockLists[id].push(htmlToAdd)
-        if(blockLists.active == id) {
+        blockLists[id].push(htmlToAdd);
+        if (blockLists.active == id) {
             document.getElementById("blocklist").innerHTML = blockLists[id].join("\n");
         }
     }
 
-    function generateBlock(title, description, iconPath="assets/action.svg", data=[]) {
-        console.log(title)
-        let dataFields = data.map(d => `<input type="hidden" name="${d.name}" class="${d.name}" value="${d.value}"></input>`);
-        return `<div class="blockelem create-flowy noselect blockroot">${dataFields.join("\n")}<div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="${iconPath}"></div><div class="blocktext">                        <p class="blocktitle">${title}</p><p class="blockdesc">${description}</p>        </div></div></div>`
+    function generateBlock(title, description, iconPath = "assets/action.svg", data = []) {
+        console.log(title);
+        let dataFields = data.map(
+            (d) => `<input type="hidden" name="${d.name}" class="${d.name}" value="${d.value}"></input>`
+        );
+        return `<div class="blockelem create-flowy noselect blockroot">${dataFields.join(
+            "\n"
+        )}<div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="${iconPath}"></div><div class="blocktext">                        <p class="blocktitle">${title}</p><p class="blockdesc">${description}</p>        </div></div></div>`;
     }
 
     function filterBlocks(event) {
         let filter = event.target.value;
         let activeBl = blockLists[blockLists.active];
-        document.getElementById("blocklist").innerHTML = activeBl.filter(b => {
+        document.getElementById("blocklist").innerHTML = activeBl.filter((b) => {
             let parser = new DOMParser();
-            let title = parser.parseFromString(b, "text/html").querySelector('.blocktitle');
+            let title = parser.parseFromString(b, "text/html").querySelector(".blocktitle");
             return title.innerHTML.toLowerCase().indexOf(filter.toLowerCase()) != -1;
         });
     }
     const searchInput = document.querySelector("#search input");
     searchInput.addEventListener("input", filterBlocks, false);
-    
+
     const importBtn = document.querySelector("#importinput");
     importBtn.addEventListener("change", importSwagger, false);
 
-    let runScript = function() {
+    let runScript = function () {
         executeScript(flowy.output());
-    }
+    };
     const runBtn = document.querySelector("#runscript");
     runBtn.addEventListener("click", runScript, false);
 });
