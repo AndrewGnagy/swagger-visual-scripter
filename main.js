@@ -106,6 +106,7 @@ document.addEventListener("DOMContentLoaded", function(){
     var checkTouch = function (event) {
         aclick = false;
     }
+
     var doneTouch = function (event) {
         if (event.type === "mouseup" && aclick && !noinfo) {
             document.querySelectorAll(".selectedblock").forEach((el) => el.classList.remove("selectedblock"));
@@ -170,9 +171,10 @@ document.addEventListener("DOMContentLoaded", function(){
                             let options = property.enum.map(val => `<option value="${val}">${val}</option>`);
                             document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<select class="dropme">${options.join("\n")}</select>`)
                         } else if(property.type == "string" || property.type == "integer") {
-                            document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<input type="text">`)
+                            document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<input type="text" data-id="${blockId}">`)
+                            document.querySelector(`[data-id='${blockId}']`).addEventListener("input", event => textPropertyChanged(event, blockId, property.name))
                         } else if (property.type == "boolean") {
-                            document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<input type="checkbox">`)
+                            document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", `<input type="checkbox" id=${blockId}>`)
                         }
                     } else if (property.schema != null) {
 
@@ -187,6 +189,19 @@ document.addEventListener("DOMContentLoaded", function(){
                 tempblock.classList.add("selectedblock");
             }
         }
+    }
+
+    function textPropertyChanged(event, blockId, propertyName) {
+        let value = event.target.value
+        let properties = chartProperties[blockId].properties
+        for(let i = 0; i < properties.length; i++) {
+            if(properties[i].name == propertyName) {
+                properties[i].value = value
+                break;
+            }
+        }
+
+        console.log(chartProperties)
     }
 
     let importSwagger = function (event) {
