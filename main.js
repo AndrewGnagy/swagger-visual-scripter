@@ -221,6 +221,11 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
+    function convertJson() {
+        console.log("AAAAHHHH")
+        swaggerJson = convertV2ToV3(swaggerJson)
+    }
+
     function propertyChanged(event, blockId, propertyName) {
         let value
         if(event.target.type == "checkbox") {

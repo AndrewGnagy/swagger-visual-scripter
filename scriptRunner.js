@@ -55,6 +55,14 @@ function executeApiBlock(block) {
     flowVariables['lastResult'] = {}
 }
 
+function convertV2ToV3(jsonToConvert) {
+  let url = "https://converter.swagger.io/api/convert"
+  console.log("Making POST request to: " + url)
+  let result = makeRequest("POST", url, jsonToConvert)
+  console.log(result)
+  return result
+}
+
 let makeRequest = async (method, path, data) => {
     return await new Promise((resolve, reject) => {
       let httpRequest = new XMLHttpRequest();
