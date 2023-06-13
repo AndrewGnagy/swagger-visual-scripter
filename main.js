@@ -11,11 +11,6 @@ document.addEventListener("DOMContentLoaded", function(){
     }
 
     /**
-     * THE ASSIGNMENT:
-     * When you add a new block from the toolbox to the chart, pull the properties from the swaggerJson.  chartProperties will just store these properties for existing entries on the flow chart
-     */
-
-    /**
      * {
      *  flowyId: {
      *      path: "",
@@ -128,21 +123,10 @@ document.addEventListener("DOMContentLoaded", function(){
                                         path: method + " " + path,
                                         properties: swaggerJson.paths[swaggerPath][pathMethod].parameters
                                     }
-
-                                    // chartProperties[flowy.getActiveBlockId()][path] = method + " " + path
-                                    // chartProperties[flowy.getActiveBlockId()][properties] = swaggerJson.paths[swaggerPath][pathMethod].parameters
                                 }
                             })
                         }
                     })
-
-                    // chartProperties[flowy.getActiveBlockId()] = {
-                    //     'Name': properties[i].name,
-                    //     'Description': properties[i].description,
-                    //     'Required': properties[i].required,
-                    //     'Format': properties[i].in,
-                    //     'Type': properties[i].type
-                    // }
                 }
                 
                 document.getElementById("parameterinputs").innerHTML = ""
@@ -170,8 +154,6 @@ document.addEventListener("DOMContentLoaded", function(){
 
                     }
                 })
-
-                // document.getElementById("parameterinputs").innerHTML = JSON.stringify(chartProperties[flowy.getActiveBlockId()])
 
                 tempblock = event.target.closest(".block");
                 rightcard = true;
@@ -245,20 +227,6 @@ document.addEventListener("DOMContentLoaded", function(){
             document.getElementById("blocklist").innerHTML = blockLists[id].join("\n");
         }
     }
-
-    // // "properties" is actually "parameters" in the Swagger JSON
-    // function setProperties(path, properties) {
-    //     let propList
-    //     for (let i = 0; i < properties.length; i++) {
-    //         propList[i] = {
-    //             'Name': properties[i].name,
-    //             'Description': properties[i].description,
-    //             'Required': properties[i].required,
-    //             'Format': properties[i].in,
-    //             'Type': properties[i].type
-    //         }
-    //     }
-    // }
 
     function generateBlock(title, description, iconPath="assets/action.svg", data=[]) {
         console.log(title)
