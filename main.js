@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
             generateBlock("FOR", "for block", undefined, [{ name: "logic", value: "for" }])
         ],
         loggers: [
-            generateBlock("Add log", "Logs a given input")
+            generateBlock("Add log", "Logs a given input", undefined, [{ name: "logic", value: "log" }])
         ]
     };
 

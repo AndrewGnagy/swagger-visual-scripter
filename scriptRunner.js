@@ -1,5 +1,5 @@
 let flowVariables = {};
-let chartProperties;
+let chartProperties = {};
 let baseUrl = "https://nuthatch.lastelm.software/";
 
 function executeScript(chartProperties) {
@@ -11,13 +11,29 @@ function executeScript(chartProperties) {
 
 function executeBlock(id) {
     let block = getBlock(id);
+    let children = getChildBlocks(id);
     //If it's an API block, do a thing
-
     try {
         if (getDataProperty(block["data"], "method")) {
             executeApiBlock(block);
         } else if (getDataProperty(block["data"], "logic")) { //Handle if or for blocks
-            console.log("Logic");
+            let blockType = getDataProperty(block["data"], "logic");
+            console.log(blockType);
+            switch(blockType) {
+                case "if":
+                    let expressionResult = true; //TODO how to safely evaluate the expression? https://silentmatt.com/javascript-expression-evaluator/
+                    let trueFalseBlock = expressionResult ? 0 : 1;
+                    executeBlock(children[trueFalseBlock].id);
+                    return;
+                case "for":
+                    // code block
+                    break;
+                case "log":
+                    console.log(chartProperties[id].properties.value);
+                    break;
+                default:
+                    // code block
+            }
         }
     } catch (e) {
         //Highlight block in error for 5sec
@@ -31,7 +47,6 @@ function executeBlock(id) {
         return;
     }
 
-    let children = getChildBlocks(id);
     for(let i = 0; i < children.length; i++) {
         executeBlock(children[i].id);
     }
