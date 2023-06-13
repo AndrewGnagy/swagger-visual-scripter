@@ -7,11 +7,11 @@ document.addEventListener("DOMContentLoaded", function () {
         active: "api",
         api: [],
         logic: [
-            '<div class="blockelem create-flowy noselect"><input type="hidden" name="logic" class="logic" value="if"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/database.svg"></div><div class="blocktext">                        <p class="blocktitle">IF</p><p class="blockdesc">If block</p>        </div></div></div>',
-            '<div class="blockelem create-flowy noselect"><input type="hidden" name="logic" class="logic" value="for"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/database.svg"></div><div class="blocktext">                        <p class="blocktitle">FOR</p><p class="blockdesc">For loop</p>        </div></div></div>'
+            generateBlock("IF", "if block", undefined, [{ name: "logic", value: "if" }]),
+            generateBlock("FOR", "for block", undefined, [{ name: "logic", value: "for" }])
         ],
         loggers: [
-            '<div class="blockelem create-flowy noselect"><input type="hidden" name="blockelemtype" class="blockelemtype" value="9"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/log.svg"></div><div class="blocktext">                        <p class="blocktitle">Add new log entry</p><p class="blockdesc">Adds a new log entry to this project</p>        </div></div></div>'
+            generateBlock("Add log", "Logs a given input")
         ]
     };
 
@@ -132,6 +132,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     let path = getDataProperty(flowyBlock["data"], "path");
                     let logic = getDataProperty(flowyBlock["data"], "logic");
 
+                    //Properties for Swagger methods
                     if (method) {
                         //Set chartProperties to match block
                         Object.keys(swaggerJson.paths).forEach((swaggerPath) => {
@@ -147,7 +148,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 });
                             }
                         });
-                    } else if (logic) {
+                    } else if(logic) { //Properties for if, for, etc
                         chartProperties[blockId] = {
                             logic: logic,
                             properties: [
@@ -172,7 +173,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     // render the name first and with unique formatting from the rest of the data
                     document
                         .getElementById("parameterinputs")
-                        .insertAdjacentHTML("beforeend", `<h3>Name: ${property.name}</h3>`);
+                        .insertAdjacentHTML("beforeend", `<h3 class="propheader">Name: ${property.name}</h3>`);
                     Object.keys(property).forEach((propertyKey) => {
                         if (propertyKey != "name") {
                             if (propertyKey == "schema") {
@@ -180,7 +181,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                     .getElementById("parameterinputs")
                                     .insertAdjacentHTML(
                                         "beforeend",
-                                        `<p class="inputlabel">${propertyKey}: ${JSON.stringify(
+                                        `<p class="propdata">${propertyKey.toUpperCase()}: ${JSON.stringify(
                                             property[propertyKey]
                                         )}</p>`
                                     );
@@ -189,7 +190,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                     .getElementById("parameterinputs")
                                     .insertAdjacentHTML(
                                         "beforeend",
-                                        `<p class="inputlabel">${propertyKey}: ${property[propertyKey]}</p>`
+                                        `<p class="propdata">${propertyKey.toUpperCase()}: ${property[propertyKey]}</p>`
                                     );
                             }
                         }
@@ -201,7 +202,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             let options = property.enum.map(val => `<option value="${val}">${val}</option>`);
                             htmlToAdd = `<select class="dropme" data-id="${blockId} ${property.name}">${options.join("\n")}</select>`
                         } else if(property.type == "string" || property.type == "integer") {
-                            htmlToAdd = `<input type="text" data-id="${blockId} ${property.name}">`
+                            htmlToAdd = `<input class="propinput" type="text" data-id="${blockId} ${property.name}">`
                         } else if (property.type == "boolean") {
                             htmlToAdd = `<input type="checkbox" data-id="${blockId} ${property.name}">`
                         }
@@ -318,7 +319,7 @@ document.addEventListener("DOMContentLoaded", function () {
         );
         return `<div class="blockelem create-flowy noselect blockroot">${dataFields.join(
             "\n"
-        )}<div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="${iconPath}"></div><div class="blocktext">                        <p class="blocktitle">${title}</p><p class="blockdesc">${description}</p>        </div></div></div>`;
+        )}<div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="${iconPath}"></div><div class="blocktext">                        <p class="${title}">${title}</p><p class="blockdesc">${description}</p>        </div></div></div>`;
     }
 
     function filterBlocks(event) {
@@ -337,7 +338,7 @@ document.addEventListener("DOMContentLoaded", function () {
     importBtn.addEventListener("change", importSwagger, false);
 
     let runScript = function () {
-        executeScript(flowy.output());
+        executeScript(chartProperties);
     };
 
     function convertJson() {

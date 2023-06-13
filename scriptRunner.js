@@ -1,18 +1,33 @@
 let flowVariables = {};
+let chartProperties;
 
-function executeScript() {
+function executeScript(chartProperties) {
     //Start with root block
     //Kicks off depth-first tree traversal
+    chartProperties = chartProperties
     executeBlock(0);
 }
 
 function executeBlock(id) {
     let block = getBlock(id);
     //If it's an API block, do a thing
-    if (getDataProperty(block["data"], "method")) {
-        executeApiBlock(block);
-    } else if (getDataProperty(block["data"], "logic")) { //Handle if or for blocks
-        console.log("Logic");
+
+    try {
+        if (getDataProperty(block["data"], "method")) {
+            executeApiBlock(block);
+        } else if (getDataProperty(block["data"], "logic")) { //Handle if or for blocks
+            console.log("Logic");
+        }
+    } catch (e) {
+        //Highlight block in error for 5sec
+        let blockEl = document.querySelector(".blockid[value='" + id + "']").parentElement;
+        blockEl.classList.add("errorblock");
+        setTimeout(function () {
+            blockEl.classList.remove("errorblock");
+        }, 5000);
+        console.log(`Error running block: ${id}`);
+        console.log(e);
+        return;
     }
 
     let children = getChildBlocks(id);
@@ -48,17 +63,36 @@ function executeApiBlock(block) {
     let method = getDataProperty(block["data"], "method");
     let path = getDataProperty(block["data"], "path");
     let data = undefined; //TODO gather params and such
+    //Get query and path properties
+    if (chartProperties[block.id] !== undefined && chartProperties[block.id] !== undefined) {
+      chartProperties[block.id].properties.forEach(property => {
+          if(property.in && property.in == "query") {
+              let separator = path.indexOf("?") == -1 ? "?" : "&";
+              path += separator + property.value;
+          } else if(property.in && property.in == "path") {
+              path = path.replace(`{${property.name}}`, property.value);
+          }
+      });
+    }
     console.log("Making " + method + " request to: " + path);
     //TODO uncomment when complete
-
     let baseUrl = "https://nuthatch.lastelm.software";
     let httpRequest = new XMLHttpRequest();
     httpRequest.open(method, baseUrl + path);
     httpRequest.setRequestHeader("Content-Type", "application/json");
     httpRequest.setRequestHeader("api-key", "130eff77-4b97-41d2-9198-d8e52e5dc96c");
 
-    makeRequest(httpRequest);
-    flowVariables['lastResult'] = {}
+    makeRequest(httpRequest).then(response => {
+      console.log("response: " + response)
+      flowVariables['lastResult'] = response
+    });
+}
+
+function resolveVariable(myvar) {
+    // myvar.split(".").reduce(o, k => {
+    //  //Something to account for []
+    //   return o && o[k];
+    // }, flowVariables);
 }
 
 function convertV2ToV3(jsonToConvert) {
