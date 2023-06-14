@@ -143,6 +143,28 @@ body, html {
     cursor: pointer;
     opacity: .7;
 }
+#settingsBtn {
+    font-family: Roboto;
+    font-weight: 500;
+    font-size: 14px;
+    color: #FFF;
+    background-color: #379237;
+    border-radius: 5px;
+    width: 143px;
+    height: 38px;
+    margin-left: 10px;
+    margin-top: 6px;
+    display: inline-block;
+    vertical-align: top;
+    text-align: center;
+    line-height: 38px;
+    margin-right: 20px;
+    transition: all .2s cubic-bezier(.05,.03,.35,1);
+}
+#settingsBtn:hover {
+    cursor: pointer;
+    opacity: .7;
+}
 #buttonsright {
     float: right;
     margin-top: 15px;
@@ -448,6 +470,13 @@ input {
     background-color: #F0F2F9;
     opacity: .5;
 }
+#propertiesClose {
+    margin-top: 100px;
+    position: absolute;
+    right: 20px;
+    z-index: 9999;
+    transition: all .25s cubic-bezier(.05,.03,.35,1);
+}
 #closecard {
     position: absolute;
     margin-left: 340px;
@@ -515,18 +544,6 @@ input {
     color: #7149C6;
     margin-top: 101px;
     padding-bottom: 5px;
-}
-
-#close {
-    margin-top: 100px;
-    position: absolute;
-    right: 20px;
-    z-index: 9999;
-    transition: all .25s cubic-bezier(.05,.03,.35,1);
-}
-#close:hover {
-    cursor: pointer;
-    opacity: .7;
 }
 #propswitch {
     border-bottom: 1px solid #E8E8EF;
@@ -781,7 +798,30 @@ SELECT {
     border: 2px solid #c64949;
     box-shadow: 0px 4px 30px rgba(22, 33, 74, 0.08);
 }
-
+.close:hover {
+    cursor: pointer;
+    opacity: .7;
+}
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  }
+.modal-content {
+  background-color: #ffffffe6;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 60%;
+}
 @media only screen and (max-width: 832px) {
     #centerswitch {
         display: none;

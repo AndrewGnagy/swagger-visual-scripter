@@ -356,10 +356,14 @@ var flowy = function(canvas, grab, release, snapping, rearrange, spacing_x, spac
                         if (checkAttach(blocko[i])) {
                             active = false;
                             drag.classList.remove("dragging");
-                            snap(drag, i, blocko);
+                            if (blockSnap(drag, false, getBlock(blocko[i]))) {
+                                snap(drag, i, blocko);
+                            } else {
+                                snap(drag, blocko.indexOf(prevblock), blocko);
+                            }
                             break;
                         } else if (i == blocks.length - 1) {
-                            if (beforeDelete(drag, blocks.filter(id => id.id == blocko[i])[0])) {
+                            if (beforeDelete(drag, getBlock(blocko[i]))) {
                                 active = false;
                                 drag.classList.remove("dragging");
                                 snap(drag, blocko.indexOf(prevblock), blocko);

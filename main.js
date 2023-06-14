@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
             generateBlock("FOR", "for block", undefined, [{ name: "logic", value: "for" }])
         ],
         loggers: [
-            generateBlock("Add log", "Logs a given input")
+            generateBlock("Add log", "Logs a given input", undefined, [{ name: "logic", value: "log" }])
         ]
     };
 
@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };
     addEventListenerMulti("click", blockNavClick, false, ".side");
     //Right menu
-    document.getElementById("close").addEventListener("click", function () {
+    document.getElementById("propertiesClose").addEventListener("click", function () {
         if (rightcard) {
             rightcard = false;
             document.getElementById("properties").classList.remove("expanded");
@@ -96,16 +96,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("removeblock").addEventListener("click", function () {
         flowy.deleteBranch(flowy.getActiveBlockId());
     });
-    // document.getElementById("addblock").addEventListener("click", function(){
-    //generateBlock("api", "blah", "a very good block", "assets/arrow.svg", "")
-    // let newBlock = document.createElement("div");
-    // newBlock.classList = "blockelem noselect block";
-    // newBlock.innerHTML = '<input type="hidden" name="blockelemtype" class="blockelemtype" value="9"><div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="assets/log.svg"></div><div class="blocktext">                        <p class="blocktitle">Add new log entry</p><p class="blockdesc">Adds a new log entry to this project</p>        </div></div>';
-    // flowy.addBlock(newBlock, 1);
-    // });
-    // document.getElementById("removeblocks").addEventListener("click", function(){
-    //     flowy.deleteBlocks();
-    // });
+
     //Block click events
     var aclick = false;
     var noinfo = false;
@@ -282,6 +273,9 @@ document.addEventListener("DOMContentLoaded", function () {
             //TODO null check as appropriate
             for (let j = 0; j < pathMethods.length; j++) {
                 let pathMethod = pathMethods[j];
+                if(pathMethod=="servers") {
+                    continue;
+                }
                 let blockHtml = generateBlock(
                     pathMethod + " " + path,
                     swaggerJson.paths[path][pathMethod]["summary"],
@@ -324,14 +318,13 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function generateBlock(title, description, iconPath = "assets/action.svg", data = []) {
-        console.log(title);
+    function generateBlock(title, description="-", iconPath = "assets/action.svg", data = []) {
         let dataFields = data.map(
             (d) => `<input type="hidden" name="${d.name}" class="${d.name}" value="${d.value}"></input>`
         );
         return `<div class="blockelem create-flowy noselect blockroot">${dataFields.join(
             "\n"
-        )}<div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="${iconPath}"></div><div class="blocktext">                        <p class="${title}">${title}</p><p class="blockdesc">${description}</p>        </div></div></div>`;
+        )}<div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="${iconPath}"></div><div class="blocktext">                        <p class="blocktitle ${title.split(" ")[0]}">${title}</p><p class="blockdesc">${description}</p>        </div></div></div>`;
     }
 
     function filterBlocks(event) {
@@ -352,4 +345,23 @@ document.addEventListener("DOMContentLoaded", function () {
     let runScript = function () {
         executeScript(chartProperties);
     };
+    const runBtn = document.querySelector("#runscript");
+    runBtn.addEventListener("click", runScript, false);
+
+    // Settings Modal
+    const settingsModal = document.querySelector("#settingsModal")
+
+    let openSettingsModal = function () {
+        settingsModal.style.display = "block";
+    };
+
+    let closeSettingsModal = function () {
+        settingsModal.style.display = "none";
+    };
+
+    const settingsBtn = document.querySelector("#settingsBtn");
+    settingsBtn.addEventListener("click", openSettingsModal, false);
+
+    const settingsCloseBtn = document.querySelector("#settingsClose")
+    settingsCloseBtn.addEventListener("click", closeSettingsModal, false);
 });
