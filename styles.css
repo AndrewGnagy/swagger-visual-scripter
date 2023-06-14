@@ -928,8 +928,9 @@ SELECT {
     color: #f3f4f9;
     background-color: #FFF;
     height: 99%;
-    width: 98.5%;
-    margin-left: 3px;
+    width: 99%;
+    margin-left: 5px;
+    margin-right: 5px;
     margin-bottom: 20px;
     overflow-y: auto;
     overflow-x: hidden;
