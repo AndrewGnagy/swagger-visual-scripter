@@ -226,6 +226,18 @@ input {
     font-family: Roboto;
     font-size: 16px;
 }
+
+textarea {
+    margin-left: 20px;
+    border: #dbdbe4 1px solid;
+    border-radius: 5px;
+    font-size: 12px;
+    resize: none;
+    height: 115px;
+    width: 235px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
 ::-webkit-input-placeholder { /* Edge */
   color: #C9C9D5;
 }
