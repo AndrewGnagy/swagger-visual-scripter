@@ -199,8 +199,17 @@ document.addEventListener("DOMContentLoaded", function () {
                         } else if (propertyType == "boolean") {
                             htmlToAdd = `<input type="checkbox" data-id="${blockId} ${property.name}">`
                         }
-                        document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", htmlToAdd)
-                        document.querySelector(`[data-id='${blockId} ${property.name}']`).addEventListener("change", event => propertyChanged(event, blockId, property.name))
+                        let parser = new DOMParser();
+                        let propertyElement = parser.parseFromString(htmlToAdd, "text/html").body.childNodes[0];
+                        if (property.value) {
+                            if(property.schema.enum || propertyType == "string" || propertyType == "integer") {
+                                propertyElement.value = property.value;
+                            } else if (propertyType == "boolean") {
+                                propertyElement.checked = property.value;
+                            }
+                        }
+                        document.getElementById("parameterinputs").insertAdjacentElement("beforeend", propertyElement);
+                        document.querySelector(`[data-id='${blockId} ${property.name}']`).addEventListener("change", event => propertyChanged(event, blockId, property.name));
                     }
                 });
 
@@ -290,15 +299,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 addBlockToBlockList("api", blockHtml);
             }
 
-            //Models
-            let models;
-            //If swagger v2
-            if (swaggerJson["swagger"]) {
-                models = swaggerJson.definitions;
-            } else if (swaggerJson["openapi"]) {
-                //If swagger v3
-                models = swaggerJson.components.schemas;
-            }
+            // //Models
+            // let models;
+            // //If swagger v2
+            // if (swaggerJson["swagger"]) {
+            //     models = swaggerJson.definitions;
+            // } else if (swaggerJson["openapi"]) {
+            //     //If swagger v3
+            //     models = swaggerJson.components.schemas;
+            // }
         }
     };
     addEventListener("mousedown", beginTouch, false);

@@ -20,7 +20,7 @@ function executeBlock(id) {
             console.log(blockType);
             switch(blockType) {
                 case "if":
-                    let expressionResult = true; //TODO how to safely evaluate the expression? https://silentmatt.com/javascript-expression-evaluator/
+                    let expressionResult = Parser.evaluate(chartProperties[id].properties.value);
                     let trueFalseBlock = expressionResult ? 0 : 1;
                     executeBlock(children[trueFalseBlock].id);
                     return;
