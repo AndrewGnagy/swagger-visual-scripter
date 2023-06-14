@@ -34,18 +34,23 @@
             <input id="importinput" class="btn" type="file" />
             <div id="runscript">Run Script</div>
             <div id="settingsBtn">Settings</div>
+            <button id="consoleOpen">Open Console</button>
         </div>
     </div>
     <div id="settingsModal" class="modal">
 
         <!-- Modal content -->
         <div class="modal-content">
-            <div id="settingsClose" class="close">
-                <img src="assets/close.svg">
-            </div>
+            <div id="settingsClose" class="close"><img src="assets/close.svg"></div>
+            <h3 class="propheader">Settings</h3>
+            <p class="">Base URL</p>
+            <input type="text" id="baseUrl"></input>
+            <h3 class="propheader">Authorization</h3>
+            <p class="">API Key</p>
+            <input type="text" id="baseUrl"></input>
         </div>
       
-      </div>
+    </div>
     <div id="leftcard">
         <p id="header">Blocks</p>
         <div id="search">
@@ -73,6 +78,11 @@
             <div class="btn" id="removeblock">Delete Block</div>
             <!-- <div class="rmvbtn" id="removeblocks">Delete all</div> -->
         </div>
+    </div>
+    <div id="bottomcard" class="bottompanel">
+        <div id="consoleClose" class="close"><img src="assets/close.svg"></div>
+        <h3>Console</h3>
+        <div id="consoleBody"></div>
     </div>
     <div id="canvas">
     </div>

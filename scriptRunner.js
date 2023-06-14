@@ -27,7 +27,7 @@ function executeBlock(id) {
                     // code block
                     break;
                 case "log":
-                    console.log(chartProperties[id].properties.value);
+                    swagLog(chartProperties[id].properties.value);
                     break;
                 default:
                     // code block
@@ -94,7 +94,7 @@ function executeApiBlock(block) {
             }
         });
     }
-    console.log("Making " + method + " request to: " + path);
+    swagLog("Making " + method + " request to: " + path);
     let baseUrl = "https://nuthatch.lastelm.software";
     let httpRequest = new XMLHttpRequest();
     httpRequest.open(method, baseUrl + path);
@@ -129,7 +129,7 @@ let convertV2ToV3 = async (jsonToConvert) => {
     method = "POST"
     data = JSON.stringify(jsonToConvert)
 
-    console.log("Making " + method + " request to: " + url)
+    console.log("Making " + method + " request to: " + url);
 
     let httpRequest = new XMLHttpRequest();
     httpRequest.open(method, url);
@@ -141,13 +141,14 @@ let makeRequest = async (httpRequest) => {
     return await new Promise((resolve, reject) => {
         httpRequest.onreadystatechange = () => {
         if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-            console.log("responseText:" + httpRequest.responseText);
+            swagLog("responseText:" + httpRequest.responseText);
             try {
-            if(httpRequest.responseText) {
-                resolve(JSON.parse(httpRequest.responseText));
-            } else {
-                resolve();
-            }
+                flowVariables['lastStatus'] = httpRequest.status;
+                if(httpRequest.responseText) {
+                    resolve(JSON.parse(httpRequest.responseText));
+                } else {
+                    resolve();
+                }
             } catch (err) {
             reject(Error(err.message + " in " + httpRequest.responseText, err));
             }
@@ -160,4 +161,10 @@ let makeRequest = async (httpRequest) => {
       };
       httpRequest.send(data);
     });
-  };
+};
+
+let swagLog = function(log) {
+    console.log(log);
+    let logEntry = `<p>${log}</p>`;
+    document.querySelector("#consoleBody").insertAdjacentHTML("beforeend", logEntry);
+}
