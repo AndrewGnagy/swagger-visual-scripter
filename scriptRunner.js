@@ -1,9 +1,12 @@
 let flowVariables = {};
-let baseUrl = "https://nuthatch.lastelm.software/";
+let baseUrl;
 
 function executeScript() {
     //Start with root block
     //Kicks off depth-first tree traversal
+    if (baseUrl === undefined && baseUrl === null && baseUrl !== "") {
+      throw new Error("Invalid Base URL");
+    }
     executeBlock(0);
     openBottom();
 }
@@ -109,7 +112,6 @@ function executeApiBlock(block) {
         });
     }
     swagLog("Making " + method + " request to: " + path);
-    let baseUrl = "https://nuthatch.lastelm.software";
     let httpRequest = new XMLHttpRequest();
     httpRequest.open(method, baseUrl + path);
     httpRequest.setRequestHeader("Content-Type", "application/json");
@@ -166,13 +168,16 @@ let makeRequest = async (httpRequest, doLog=true) => {
                     resolve();
                 }
             } catch (err) {
-            reject(Error(err.message + " in " + httpRequest.responseText, err));
+              reject(Error(err.message + " in " + httpRequest.responseText, err));
             }
         } else if (httpRequest.readyState == 4) {
             reject("Request returned status code " + httpRequest.status);
         }
       };
       httpRequest.onerror = () => {
+        if (doLog) {
+          swagLog("Error occured while making the request")
+        }
         reject(Error("There was a network error."));
       };
       httpRequest.send(data);

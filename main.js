@@ -356,7 +356,7 @@ document.addEventListener("DOMContentLoaded", function () {
     importBtn.addEventListener("change", importSwagger, false);
 
     let runScript = function () {
-        executeScript(chartProperties);
+        executeScript(baseUrl, chartProperties);
     };
     const runBtn = document.querySelector("#runscript");
     runBtn.addEventListener("click", runScript, false);
@@ -372,14 +372,32 @@ document.addEventListener("DOMContentLoaded", function () {
         settingsModal.style.display = "none";
     };
 
+    let updateBaseUrl = function (event) {
+        baseUrl = event.target.value;
+    }
+
     const settingsBtn = document.querySelector("#settingsBtn");
     settingsBtn.addEventListener("click", openSettingsModal, false);
 
     const settingsCloseBtn = document.querySelector("#settingsClose");
     settingsCloseBtn.addEventListener("click", closeSettingsModal, false);
 
-    const consoleOpenBtn = document.querySelector("#consoleOpen");
-    consoleOpenBtn.addEventListener("click", openBottom, false);
+    const baseUrlInput = document.querySelector("#baseUrl");
+    baseUrlInput.addEventListener("input", updateBaseUrl, false)
+
+    let setBaseUrlAtStartup = function () {
+        let inputValue = baseUrlInput.value
+        if (inputValue !== undefined && inputValue !== null && inputValue !== "") {
+            baseUrl = inputValue
+        } else {
+            baseUrl = "https://nuthatch.lastelm.software/";
+        }
+    }
+
+    setBaseUrlAtStartup()
+
+    // const consoleOpenBtn = document.querySelector("#consoleOpen");
+    // consoleOpenBtn.addEventListener("click", openBottom, false);
 
     const consoleCloseBtn = document.querySelector("#consoleClose");
     consoleCloseBtn.addEventListener("click", closeBottom, false);
