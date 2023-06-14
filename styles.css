@@ -518,7 +518,7 @@ input {
     position: absolute;
     height: 100%;
     width: 311px;
-    background-color: #f3f4f9;
+    background-color: #f1f2f4;
     border-left: #E8E8EF solid 0.5px;
     right: -150px;
     opacity: 0;
@@ -541,7 +541,7 @@ input {
     font-size: 20px;
     font-family: Roboto;
     font-weight: bold;
-    color: #7149C6;
+    color: #000;
     margin-top: 101px;
     padding-bottom: 5px;
 }
@@ -599,7 +599,7 @@ input {
 
 .propdata {
     font-family:Arial, Helvetica, sans-serif;
-    font-size: 13px;
+    font-size: 11px;
     color: #393C44;
     margin-left: 20px;
     margin-top: 0px;
@@ -609,7 +609,7 @@ input {
     margin-left: 20px;
     margin-bottom: 13px;
     font-family:Arial, Helvetica, sans-serif;
-    font-size: 15px;
+    font-size: 12px;
     color: #393C44;
     text-indent: 15px;
     height: 30px;
@@ -622,7 +622,7 @@ input {
 
 .propheader {
     font-family:Arial, Helvetica, sans-serif;
-    font-size: 15px;
+    font-size: 14px;
     color: #393C44;
     margin-left: 20px;
     margin-top: 20px;
@@ -834,7 +834,7 @@ SELECT {
   border: 0.5px solid #E8E8EF;
   border-radius: 5px;
   width: 60%;
-  height: 40%;
+  height: 35%;
   z-index: 12;
 }
 
@@ -888,10 +888,43 @@ SELECT {
     z-index: 12;
     bottom: 0;
     right: 0;
-    background-color: #111;
-    overflow-x: hidden;
+    border-radius: 5px;
+    background-color: #f1f2f4;
     transition: 0.5s;
+    border-top: #f1f2f4 5px solid;
+    border-left: #f1f2f4 5px solid;
 }
 .bottompanel p {
-    color: #C9C9D5;
+    color: #393C44;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 13px;
+    margin-left: 15px;
+}
+
+#consoleBody {
+    color: #f3f4f9;
+    background-color: #FFF;
+    height: 99%;
+    width: 98.5%;
+    margin-left: 3px;
+    margin-bottom: 20px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-radius: 5px;
+}
+
+#consoleClose {
+    margin-left: 5px;
+    margin-top: 5px;
+    margin-right: 10px;
+    margin-bottom: 5px;
+}
+
+.consoleheader {
+    color: #393C44;
+    font-family:Arial, Helvetica, sans-serif;
+    font-style: normal !important;
+    font-weight: 800;
+    font-size: 15px;
+    word-spacing: 5px;
 }

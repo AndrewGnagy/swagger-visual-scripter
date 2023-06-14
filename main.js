@@ -420,9 +420,9 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function openBottom() {
-    document.getElementById("bottomcard").style.height = "250px";
+    document.getElementById("bottomcard").style.height = "280px";
 }
 
 function closeBottom() {
-    document.getElementById("bottomcard").style.height = "0";
+    document.getElementById("bottomcard").style.height = "0px";
 }
