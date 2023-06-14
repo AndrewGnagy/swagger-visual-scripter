@@ -70,13 +70,26 @@ body, html {
     width: 222px;
     left: 50%;
     margin-left: -70px;
-    top: 40px;
+    top: 20px;
     margin-top: 10px;
     font-family: Roboto;
     font-weight: bold;
     color: #7149C6;
+}
+
+#swaggerVersion {
+    position: absolute;
+    width: 222px;
+    left: 50%;
+    margin-left: -65px;
+    top: 40px;
+    margin-top: 10px;
+    font-family: Roboto;
+    font-size: 14px;
+    color: #393C44;
 
 }
+
 #leftswitch {
     border: 1px solid #E8E8EF;
     background-color: #7149C6;
