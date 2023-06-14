@@ -29,8 +29,10 @@ document.addEventListener("DOMContentLoaded", function () {
     function snapping(block, first, parent) {
         //Element can be modified here
         let specialBlockCheck = block.querySelector('[name="logic"]');
+        let blockId = parseInt(block.querySelector(".blockid").value);
+        chartProperties[blockId] = {}
+
         if (specialBlockCheck && specialBlockCheck.value == "if") {
-            let blockId = parseInt(block.querySelector(".blockid").value);
             //This seems hacky???
             setTimeout(function () {
                 flowy.addBlock(
@@ -51,6 +53,12 @@ document.addEventListener("DOMContentLoaded", function () {
             return true;
         }
         let parentId = parseInt(parent.querySelector(".blockid").value);
+        //Highlight FOR loop and child
+        let forBlockCheck = parent.querySelector('[name="logic"]');
+        if (forBlockCheck && forBlockCheck.value == "for") {
+            block.classList.add("forhighlight");
+            parent.classList.add("forhighlight");
+        }
         return getChildBlocks(parentId, flowy.output()).length == 0;
     }
     function rearrange(block, parent) {
@@ -94,7 +102,16 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     //Delete buttons
     document.getElementById("removeblock").addEventListener("click", function () {
-        flowy.deleteBranch(flowy.getActiveBlockId());
+        chartPropertiesKeys = Object.keys(chartProperties)
+
+        if(chartPropertiesKeys.includes(flowy.getActiveBlockId())) {
+            flowy.deleteBranch(flowy.getActiveBlockId())
+            chartPropertiesKeys.forEach(key => {
+                if (!getBlock(key)) {
+                    delete chartProperties[key]
+                }
+            })
+        }
     });
 
     //Block click events
@@ -117,103 +134,105 @@ document.addEventListener("DOMContentLoaded", function () {
             let blockEl = event.target.closest(".block");
             let blockId = flowy.getActiveBlockId();
             if (blockEl && !blockEl.classList.contains("dragging")) {
-                if (chartProperties[blockId] == null) {
-                    flowyBlock = getBlock(blockId);
-                    let method = getDataProperty(flowyBlock["data"], "method");
-                    let path = getDataProperty(flowyBlock["data"], "path");
-                    let logic = getDataProperty(flowyBlock["data"], "logic");
+                if(chartProperties[blockId]) {
+                    if (Object.keys(chartProperties[blockId]).length == 0) {
+                        flowyBlock = getBlock(blockId);
+                        let method = getDataProperty(flowyBlock["data"], "method");
+                        let path = getDataProperty(flowyBlock["data"], "path");
+                        let logic = getDataProperty(flowyBlock["data"], "logic");
 
-                    //Properties for Swagger methods
-                    if (method) {
-                        //Set chartProperties to match block
-                        Object.keys(swaggerJson.paths).forEach((swaggerPath) => {
-                            if (swaggerPath == path) {
-                                pathMethods = Object.keys(swaggerJson.paths[swaggerPath]);
-                                pathMethods.forEach((pathMethod) => {
-                                    if (pathMethod == method) {
-                                        chartProperties[blockId] = {
-                                            path: method + " " + path,
-                                            properties: swaggerJson.paths[swaggerPath][pathMethod].parameters
-                                        };
+                        //Properties for Swagger methods
+                        if (method) {
+                            //Set chartProperties to match block
+                            Object.keys(swaggerJson.paths).forEach((swaggerPath) => {
+                                if (swaggerPath == path) {
+                                    pathMethods = Object.keys(swaggerJson.paths[swaggerPath]);
+                                    pathMethods.forEach((pathMethod) => {
+                                        if (pathMethod == method) {
+                                            chartProperties[blockId] = {
+                                                path: method + " " + path,
+                                                properties: swaggerJson.paths[swaggerPath][pathMethod].parameters
+                                            };
+                                        }
+                                    });
+                                }
+                            });
+                        } else if(logic) { //Properties for if, for, etc
+                            chartProperties[blockId] = {
+                                logic: logic,
+                                properties: [
+                                    {
+                                        name: "expression",
+                                        description: "what to evaluate",
+                                        required: "true",
+                                        schema: {
+                                            type: "string"
+                                        }
                                     }
-                                });
+                                ]
+                            };
+                        } else {
+                            chartProperties[blockId] = {
+                                properties: []
+                            };
+                        }
+                    }
+
+                    document.getElementById("parameterinputs").innerHTML = "";
+                    //Add properties to the right card
+                    chartProperties[blockId].properties.forEach((property) => {
+                        // render the name first and with unique formatting from the rest of the data
+                        document
+                            .getElementById("parameterinputs")
+                            .insertAdjacentHTML("beforeend", `<h3 class="propheader">Name: ${property.name}</h3>`);
+                        
+                        // Populate the property text fields
+                        Object.keys(property).forEach((propertyKey) => {
+                            if (propertyKey == "schema") {
+                                document
+                                    .getElementById("parameterinputs")
+                                    .insertAdjacentHTML(
+                                        "beforeend",
+                                        `<p class="propdata">${propertyKey.toUpperCase()}: ${JSON.stringify(
+                                            property[propertyKey]
+                                        )}</p>`
+                                    );
+                            } else if (propertyKey != "name" && propertyKey != "value") {
+                                document
+                                    .getElementById("parameterinputs")
+                                    .insertAdjacentHTML(
+                                        "beforeend",
+                                        `<p class="propdata">${propertyKey.toUpperCase()}: ${property[propertyKey]}</p>`
+                                    );
                             }
                         });
-                    } else if(logic) { //Properties for if, for, etc
-                        chartProperties[blockId] = {
-                            logic: logic,
-                            properties: [
-                                {
-                                    name: "expression",
-                                    description: "what to evaluate",
-                                    required: "true",
-                                    schema: {
-                                        type: "string"
-                                    }
-                                }
-                            ]
-                        };
-                    } else {
-                        chartProperties[blockId] = {
-                            properties: []
-                        };
-                    }
-                }
 
-                document.getElementById("parameterinputs").innerHTML = "";
-                //Add properties to the right card
-                chartProperties[blockId].properties.forEach((property) => {
-                    // render the name first and with unique formatting from the rest of the data
-                    document
-                        .getElementById("parameterinputs")
-                        .insertAdjacentHTML("beforeend", `<h3 class="propheader">Name: ${property.name}</h3>`);
-                    
-                    // Populate the property text fields
-                    Object.keys(property).forEach((propertyKey) => {
-                        if (propertyKey == "schema") {
-                            document
-                                .getElementById("parameterinputs")
-                                .insertAdjacentHTML(
-                                    "beforeend",
-                                    `<p class="propdata">${propertyKey.toUpperCase()}: ${JSON.stringify(
-                                        property[propertyKey]
-                                    )}</p>`
-                                );
-                        } else if (propertyKey != "name") {
-                            document
-                                .getElementById("parameterinputs")
-                                .insertAdjacentHTML(
-                                    "beforeend",
-                                    `<p class="propdata">${propertyKey.toUpperCase()}: ${property[propertyKey]}</p>`
-                                );
+                        // Populate the input fields
+                        if(property.schema != null) {
+                            let propertyType = property.schema.type // Might be null if property.schema.enum
+                            let htmlToAdd
+                            if(property.schema.enum) {
+                                let options = property.schema.enum.map(val => `<option value="${val}">${val}</option>`);
+                                htmlToAdd = `<select class="dropme" data-id="${blockId} ${property.name}">${options.join("\n")}</select>`
+                            } else if(propertyType == "string" || propertyType == "integer") {
+                                htmlToAdd = `<input class="propinput" type="text" data-id="${blockId} ${property.name}">`
+                            } else if (propertyType == "boolean") {
+                                htmlToAdd = `<input type="checkbox" data-id="${blockId} ${property.name}">`
+                            }
+                            let parser = new DOMParser();
+                            let propertyElement = parser.parseFromString(htmlToAdd, "text/html").body.childNodes[0];
+                            if (property.value) {
+                                if(property.schema.enum || propertyType == "string" || propertyType == "integer") {
+                                    propertyElement.value = property.value;
+                                } else if (propertyType == "boolean") {
+                                    propertyElement.checked = property.value;
+                                }
+                            }
+                            document.getElementById("parameterinputs").insertAdjacentElement("beforeend", propertyElement)
+                            document.querySelector(`[data-id='${blockId} ${property.name}']`).addEventListener("change", event => propertyChanged(event, blockId, property.name))
                         }
                     });
-
-                    // Populate the input fields
-                    if(property.schema != null) {
-                        let propertyType = property.schema.type // Might be null if property.schema.enum
-                        let htmlToAdd
-                        if(property.schema.enum) {
-                            let options = property.schema.enum.map(val => `<option value="${val}">${val}</option>`);
-                            htmlToAdd = `<select class="dropme" data-id="${blockId} ${property.name}">${options.join("\n")}</select>`
-                        } else if(propertyType == "string" || propertyType == "integer") {
-                            htmlToAdd = `<input class="propinput" type="text" data-id="${blockId} ${property.name}">`
-                        } else if (propertyType == "boolean") {
-                            htmlToAdd = `<input type="checkbox" data-id="${blockId} ${property.name}">`
-                        }
-                        let parser = new DOMParser();
-                        let propertyElement = parser.parseFromString(htmlToAdd, "text/html").body.childNodes[0];
-                        if (property.value) {
-                            if(property.schema.enum || propertyType == "string" || propertyType == "integer") {
-                                propertyElement.value = property.value;
-                            } else if (propertyType == "boolean") {
-                                propertyElement.checked = property.value;
-                            }
-                        }
-                        document.getElementById("parameterinputs").insertAdjacentElement("beforeend", propertyElement);
-                        document.querySelector(`[data-id='${blockId} ${property.name}']`).addEventListener("change", event => propertyChanged(event, blockId, property.name));
-                    }
-                });
+                }
 
                 //Pop the right card and highlight the block
                 tempblock = event.target.closest(".block");
@@ -378,8 +397,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const settingsCloseBtn = document.querySelector("#settingsClose");
     settingsCloseBtn.addEventListener("click", closeSettingsModal, false);
 
-    const consoleOpenBtn = document.querySelector("#consoleOpen");
-    consoleOpenBtn.addEventListener("click", openBottom, false);
+    // const consoleOpenBtn = document.querySelector("#consoleOpen");
+    // consoleOpenBtn.addEventListener("click", openBottom, false);
 
     const consoleCloseBtn = document.querySelector("#consoleClose");
     consoleCloseBtn.addEventListener("click", closeBottom, false);

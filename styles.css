@@ -799,6 +799,10 @@ SELECT {
     border: 2px solid #c64949;
     box-shadow: 0px 4px 30px rgba(22, 33, 74, 0.08);
 }
+.forhighlight {
+    border: 2px solid #f7c325;
+    box-shadow: 0px 4px 30px rgba(22, 33, 74, 0.08);
+}
 
 .close{
     color: #393C44;
