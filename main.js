@@ -51,6 +51,12 @@ document.addEventListener("DOMContentLoaded", function () {
             return true;
         }
         let parentId = parseInt(parent.querySelector(".blockid").value);
+        //Highlight FOR loop and child
+        let forBlockCheck = parent.querySelector('[name="logic"]');
+        if (forBlockCheck && forBlockCheck.value == "for") {
+            block.classList.add("forhighlight");
+            parent.classList.add("forhighlight");
+        }
         return getChildBlocks(parentId, flowy.output()).length == 0;
     }
     function rearrange(block, parent) {
@@ -378,8 +384,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const settingsCloseBtn = document.querySelector("#settingsClose");
     settingsCloseBtn.addEventListener("click", closeSettingsModal, false);
 
-    const consoleOpenBtn = document.querySelector("#consoleOpen");
-    consoleOpenBtn.addEventListener("click", openBottom, false);
+    // const consoleOpenBtn = document.querySelector("#consoleOpen");
+    // consoleOpenBtn.addEventListener("click", openBottom, false);
 
     const consoleCloseBtn = document.querySelector("#consoleClose");
     consoleCloseBtn.addEventListener("click", closeBottom, false);

@@ -1,4 +1,6 @@
-let flowVariables = {};
+let flowVariables = {
+    loop: []
+};
 let baseUrl = "https://nuthatch.lastelm.software/";
 
 function executeScript() {
@@ -8,39 +10,34 @@ function executeScript() {
     openBottom();
 }
 
-function executeBlock(id) {
+function executeBlock(id, iterableItems) {
     let block = getBlock(id);
     let children = getChildBlocks(id);
     //If it's an API block, do a thing
     try {
         if (getDataProperty(block["data"], "method")) {
-            return executeApiBlock(block);
+            if (iterableItems) { //Set var value for loop
+                flowVariables["loopItem"] = iterableItems.pop();
+            }
+            return executeApiBlock(block, iterableItems);
         } else if (getDataProperty(block["data"], "logic")) { //Handle if or for blocks
             let blockType = getDataProperty(block["data"], "logic");
             console.log(blockType);
             switch(blockType) {
                 case "if":
-                    let expression = chartProperties[id].properties[0].value;
-                    //Replace variables with literals
-                    expression = expression.split(" ").map(symb => {
-                        if(symb.startsWith("$")) {
-                            let res = resolveVariable(symb);
-                            if(typeof res == "string") {
-                                return `"${res}"`;
-                            }
-                            return res;
-                        }
-                        return symb;
-                    }).join(" ");
-                    // let expressionResult = Parser.evaluate(chartProperties[id].properties[0].value);
-                    let expressionResult = eval(expression);
+                    let ifResult = processExpression(chartProperties[id].properties[0].value);
                     swagLog(`If result: ${!!expressionResult}`);
-                    let trueFalseBlock = expressionResult ? 0 : 1;
+                    let trueFalseBlock = ifResult ? 0 : 1;
                     executeBlock(children[trueFalseBlock].id);
                     return;
                 case "for":
-                    // code block
-                    break;
+                    let loopExpressionResult = processExpression(chartProperties[id].properties[0].value);
+                    if(Array.isArray(loopExpressionResult)) {
+                        executeBlock(children[0].id, loopExpressionResult);
+                    } else {
+                        throw new Error("For loop result was not iterable");
+                    }
+                    return;
                 case "log":
                     swagLog(chartProperties[id].properties.value);
                     break;
@@ -65,6 +62,19 @@ function executeBlock(id) {
     }
 }
 
+function processExpression(expression) {
+    //Replace variables with literals
+    expression = expression.split(" ").map(symb => {
+        if(symb.startsWith("$")) {
+            let res = resolveVariable(symb);
+            return JSON.stringify(res);
+        }
+        return symb;
+    }).join(" ");
+    // let expressionResult = Parser.evaluate(chartProperties[id].properties[0].value);
+    return eval(expression);
+}
+
 function getBlock(id) {
     let chart = flowy.output();
     if(typeof id == "string") {
@@ -87,7 +97,7 @@ function getDataProperty(dataAry, name) {
     return prop.length ? prop[0]["value"] : undefined;
 }
 
-function executeApiBlock(block) {
+function executeApiBlock(block, iterableItems) {
     console.log("Api");
     let method = getDataProperty(block["data"], "method");
     let path = getDataProperty(block["data"], "path");
@@ -115,10 +125,16 @@ function executeApiBlock(block) {
     httpRequest.setRequestHeader("Content-Type", "application/json");
     httpRequest.setRequestHeader("api-key", "130eff77-4b97-41d2-9198-d8e52e5dc96c");
     makeRequest(httpRequest).then(result => {
+        if(iterableItems != undefined) {
+            flowVariables['loop'][iterableItems.length] = result;
+            if(iterableItems.length > 0) {
+                return executeBlock(block.id, iterableItems);
+            }
+        }
         flowVariables['lastResult'] = result;
         let children = getChildBlocks(block.id);
         if (children.length > 0) {
-            executeBlock(children[0].id);
+            executeBlock(children[0].id, iterableItems);
         }
     });
 }
