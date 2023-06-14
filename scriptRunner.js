@@ -1,11 +1,11 @@
 let flowVariables = {};
-let chartProperties = {};
+let baseUrl = "https://nuthatch.lastelm.software/";
 
-function executeScript(chartProperties) {
+function executeScript() {
     //Start with root block
     //Kicks off depth-first tree traversal
-    chartProperties = chartProperties
     executeBlock(0);
+    openBottom();
 }
 
 function executeBlock(id) {
@@ -14,13 +14,27 @@ function executeBlock(id) {
     //If it's an API block, do a thing
     try {
         if (getDataProperty(block["data"], "method")) {
-            executeApiBlock(block);
+            return executeApiBlock(block);
         } else if (getDataProperty(block["data"], "logic")) { //Handle if or for blocks
             let blockType = getDataProperty(block["data"], "logic");
             console.log(blockType);
             switch(blockType) {
                 case "if":
-                    let expressionResult = true; //TODO how to safely evaluate the expression? https://silentmatt.com/javascript-expression-evaluator/
+                    let expression = chartProperties[id].properties[0].value;
+                    //Replace variables with literals
+                    expression = expression.split(" ").map(symb => {
+                        if(symb.startsWith("$")) {
+                            let res = resolveVariable(symb);
+                            if(typeof res == "string") {
+                                return `"${res}"`;
+                            }
+                            return res;
+                        }
+                        return symb;
+                    }).join(" ");
+                    // let expressionResult = Parser.evaluate(chartProperties[id].properties[0].value);
+                    let expressionResult = eval(expression);
+                    swagLog(`If result: ${!!expressionResult}`);
                     let trueFalseBlock = expressionResult ? 0 : 1;
                     executeBlock(children[trueFalseBlock].id);
                     return;
@@ -28,7 +42,7 @@ function executeBlock(id) {
                     // code block
                     break;
                 case "log":
-                    console.log(chartProperties[id].properties.value);
+                    swagLog(chartProperties[id].properties.value);
                     break;
                 default:
                     // code block
@@ -41,13 +55,13 @@ function executeBlock(id) {
         setTimeout(function () {
             blockEl.classList.remove("errorblock");
         }, 5000);
-        console.log(`Error running block: ${id}`);
-        console.log(e);
+        swagLog(`Error running block: ${id}`);
+        swagLog(e);
         return;
     }
 
-    for(let i = 0; i < children.length; i++) {
-        executeBlock(children[i].id);
+    if(children.length > 0) {
+        executeBlock(children[0].id);
     }
 }
 
@@ -77,68 +91,85 @@ function executeApiBlock(block) {
     console.log("Api");
     let method = getDataProperty(block["data"], "method");
     let path = getDataProperty(block["data"], "path");
-    let data = undefined; //TODO gather params and such
     //Get query and path properties
     if (chartProperties[block.id] !== undefined && chartProperties[block.id] !== undefined) {
-      chartProperties[block.id].properties.forEach(property => {
-          if(property.in && property.in == "query") {
-              let separator = path.indexOf("?") == -1 ? "?" : "&";
-              path += separator + property.value;
-          } else if(property.in && property.in == "path") {
-              path = path.replace(`{${property.name}}`, property.value);
-          }
-      });
+        chartProperties[block.id].properties.forEach(property => {
+            let value = property.value;
+            if(value == undefined) {
+                return;
+            } else if(typeof value == "string" && value.startsWith("$")){
+                value = resolveVariable(value);
+            }
+            if(property.in && property.in == "query") {
+                let separator = path.indexOf("?") == -1 ? "?" : "&";
+                path += `${separator}${property.name}=${value}`;
+            } else if(property.in && property.in == "path") {
+                path = path.replace(`{${property.name}}`, value);
+            }
+        });
     }
-    console.log("Making " + method + " request to: " + path);
-    //TODO uncomment when complete
+    swagLog("Making " + method + " request to: " + path);
     let baseUrl = "https://nuthatch.lastelm.software";
     let httpRequest = new XMLHttpRequest();
     httpRequest.open(method, baseUrl + path);
     httpRequest.setRequestHeader("Content-Type", "application/json");
     httpRequest.setRequestHeader("api-key", "130eff77-4b97-41d2-9198-d8e52e5dc96c");
-
-    makeRequest(httpRequest).then(response => {
-      console.log("response: " + response)
-      flowVariables['lastResult'] = response
+    makeRequest(httpRequest).then(result => {
+        flowVariables['lastResult'] = result;
+        let children = getChildBlocks(block.id);
+        if (children.length > 0) {
+            executeBlock(children[0].id);
+        }
     });
 }
 
 function resolveVariable(myvar) {
-    // myvar.split(".").reduce(o, k => {
-    //  //Something to account for []
-    //   return o && o[k];
-    // }, flowVariables);
+    myvar = myvar.replace("$", "");
+    let result = undefined;
+    try {
+        result = myvar.split(".").reduce((o, k) => {
+        //Something to account for []
+        return o && o[k];
+        }, flowVariables);
+    } catch(e) {
+        swagLog(`Var ${myvar} couldn't be found`);
+        throw new Error(`Variable ${myvar} could not be resolved`);
+    }
+    return result;
 }
 
 let convertV2ToV3 = async (jsonToConvert) => {
-  let url = "https://converter.swagger.io/api/convert"
-  method = "POST"
-  data = JSON.stringify(jsonToConvert)
+    let url = "https://converter.swagger.io/api/convert";
+    method = "POST";
+    data = JSON.stringify(jsonToConvert);
 
-  console.log("Making " + method + " request to: " + url)
-  
-  let httpRequest = new XMLHttpRequest();
-  httpRequest.open(method, url);
-  httpRequest.setRequestHeader("Content-Type", "application/json");
-  return makeRequest(httpRequest)
+    console.log("Making " + method + " request to: " + url);
+
+    let httpRequest = new XMLHttpRequest();
+    httpRequest.open(method, url);
+    httpRequest.setRequestHeader("Content-Type", "application/json");
+    return makeRequest(httpRequest, false);
 }
 
-let makeRequest = async (httpRequest) => {
+let makeRequest = async (httpRequest, doLog=true) => {
     return await new Promise((resolve, reject) => {
-      httpRequest.onreadystatechange = () => {
+        httpRequest.onreadystatechange = () => {
         if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-          console.log("responseText:" + httpRequest.responseText);
-          try {
-            if(httpRequest.responseText) {
-              resolve(JSON.parse(httpRequest.responseText));
-            } else {
-              resolve();
+            if (doLog) {
+                swagLog("responseText:" + httpRequest.responseText);
             }
-          } catch (err) {
+            try {
+                flowVariables['lastStatus'] = httpRequest.status;
+                if(httpRequest.responseText) {
+                    resolve(JSON.parse(httpRequest.responseText));
+                } else {
+                    resolve();
+                }
+            } catch (err) {
             reject(Error(err.message + " in " + httpRequest.responseText, err));
-          }
+            }
         } else if (httpRequest.readyState == 4) {
-          reject("Request returned status code" + httpRequest.status);
+            reject("Request returned status code " + httpRequest.status);
         }
       };
       httpRequest.onerror = () => {
@@ -146,4 +177,10 @@ let makeRequest = async (httpRequest) => {
       };
       httpRequest.send(data);
     });
-  };
+};
+
+let swagLog = function(log) {
+    console.log(log);
+    let logEntry = `<p>${log}</p>`;
+    document.querySelector("#consoleBody").insertAdjacentHTML("beforeend", logEntry);
+}

@@ -1,3 +1,13 @@
+/**
+ * {
+ *  flowyId: {
+ *      path: "",
+ *      properties: []
+ *  }
+ * }
+ */
+let chartProperties = {};
+
 document.addEventListener("DOMContentLoaded", function () {
     let swaggerJson;
     var rightcard = false;
@@ -14,16 +24,6 @@ document.addEventListener("DOMContentLoaded", function () {
             generateBlock("Add log", "Logs a given input", undefined, [{ name: "logic", value: "log" }])
         ]
     };
-
-    /**
-     * {
-     *  flowyId: {
-     *      path: "",
-     *      properties: []
-     *  }
-     * }
-     */
-    let chartProperties = {};
 
     flowy(document.getElementById("canvas"), drag, release, snapping, rearrange);
     function snapping(block, first, parent) {
@@ -159,7 +159,9 @@ document.addEventListener("DOMContentLoaded", function () {
                                         name: "expression",
                                         description: "what to evaluate",
                                         required: "true",
-                                        type: "string"
+                                        schema: {
+                                            type: "string"
+                                        }
                                     }
                                 ]
                             };
@@ -189,7 +191,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                             property[propertyKey]
                                         )}</p>`
                                     );
-                            } else if (propertyKey != "name") {
+                            } else if (propertyKey != "name" && propertyKey != "value") {
                                 document
                                     .getElementById("parameterinputs")
                                     .insertAdjacentHTML(
@@ -211,7 +213,16 @@ document.addEventListener("DOMContentLoaded", function () {
                             } else if (propertyType == "boolean") {
                                 htmlToAdd = `<input type="checkbox" data-id="${blockId} ${property.name}">`
                             }
-                            document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", htmlToAdd)
+                            let parser = new DOMParser();
+                            let propertyElement = parser.parseFromString(htmlToAdd, "text/html").body.childNodes[0];
+                            if (property.value) {
+                                if(property.schema.enum || propertyType == "string" || propertyType == "integer") {
+                                    propertyElement.value = property.value;
+                                } else if (propertyType == "boolean") {
+                                    propertyElement.checked = property.value;
+                                }
+                            }
+                            document.getElementById("parameterinputs").insertAdjacentElement("beforeend", propertyElement)
                             document.querySelector(`[data-id='${blockId} ${property.name}']`).addEventListener("change", event => propertyChanged(event, blockId, property.name))
                         }
                     });
@@ -303,15 +314,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 addBlockToBlockList("api", blockHtml);
             }
 
-            //Models
-            let models;
-            //If swagger v2
-            if (swaggerJson["swagger"]) {
-                models = swaggerJson.definitions;
-            } else if (swaggerJson["openapi"]) {
-                //If swagger v3
-                models = swaggerJson.components.schemas;
-            }
+            // //Models
+            // let models;
+            // //If swagger v2
+            // if (swaggerJson["swagger"]) {
+            //     models = swaggerJson.definitions;
+            // } else if (swaggerJson["openapi"]) {
+            //     //If swagger v3
+            //     models = swaggerJson.components.schemas;
+            // }
         }
     };
     addEventListener("mousedown", beginTouch, false);
@@ -377,6 +388,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const settingsBtn = document.querySelector("#settingsBtn");
     settingsBtn.addEventListener("click", openSettingsModal, false);
 
-    const settingsCloseBtn = document.querySelector("#settingsClose")
+    const settingsCloseBtn = document.querySelector("#settingsClose");
     settingsCloseBtn.addEventListener("click", closeSettingsModal, false);
+
+    const consoleOpenBtn = document.querySelector("#consoleOpen");
+    consoleOpenBtn.addEventListener("click", openBottom, false);
+
+    const consoleCloseBtn = document.querySelector("#consoleClose");
+    consoleCloseBtn.addEventListener("click", closeBottom, false);
 });
+
+function openBottom() {
+    document.getElementById("bottomcard").style.height = "250px";
+}
+
+function closeBottom() {
+    document.getElementById("bottomcard").style.height = "0";
+}
