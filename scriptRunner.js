@@ -181,6 +181,6 @@ let makeRequest = async (httpRequest, doLog=true) => {
 
 let swagLog = function(log) {
     console.log(log);
-    let logEntry = `<p>${log}</p>`;
+    let logEntry = `<p>>> ${log}</p>`;
     document.querySelector("#consoleBody").insertAdjacentHTML("beforeend", logEntry);
 }
