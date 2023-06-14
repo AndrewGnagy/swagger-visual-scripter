@@ -149,7 +149,7 @@ function executeApiBlock(block, iterableItems) {
     }
     makeRequest(httpRequest, data).then(result => {
         if(iterableItems != undefined) {
-            flowVariables['loop'][iterableItems.length] = result;
+            //flowVariables['loop'][iterableItems.length] = result;
             if(iterableItems.length > 0) {
                 return executeBlock(block.id, iterableItems);
             }
