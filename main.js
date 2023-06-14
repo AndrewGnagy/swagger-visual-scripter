@@ -288,6 +288,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 let fileJson = JSON.parse(event.target.result);
                 //TODO do better input validation
                 if (fileJson.info) {
+                    if(fileJson.servers && fileJson.servers.length > 0) {
+                        baseUrl = fileJson.servers[0].url;
+                        document.querySelector("#baseUrl").value = baseUrl;
+                    }
                     let fileJsonKeys = Object.keys(fileJson)
                     if(fileJsonKeys.includes("swagger") || (fileJsonKeys.includes("openapi") && parseInt(fileJson["openapi"].charAt(0)) < 3)) {
                         // Swagger JSON is outdated.  Convert to openAPI V3 standard
@@ -394,7 +398,7 @@ document.addEventListener("DOMContentLoaded", function () {
     importBtn.addEventListener("change", importSwagger, false);
 
     let runScript = function () {
-        executeScript(baseUrl, chartProperties);
+        executeScript();
     };
     const runBtn = document.querySelector("#runscript");
     runBtn.addEventListener("click", runScript, false);
@@ -426,7 +430,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let setBaseUrlAtStartup = function () {
         let inputValue = baseUrlInput.value
         if (inputValue !== undefined && inputValue !== null && inputValue !== "") {
-            baseUrl = inputValue
+            baseUrl = inputValue;
         } else {
             baseUrl = "https://nuthatch.lastelm.software/";
         }
