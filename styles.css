@@ -888,6 +888,7 @@ SELECT {
     z-index: 12;
     bottom: 0;
     right: 0;
+    border-radius: 5px;
     background-color: #f1f2f4;
     transition: 0.5s;
     border-top: #f1f2f4 5px solid;
@@ -909,6 +910,7 @@ SELECT {
     margin-bottom: 20px;
     overflow-y: auto;
     overflow-x: hidden;
+    border-radius: 5px;
 }
 
 #consoleClose {
