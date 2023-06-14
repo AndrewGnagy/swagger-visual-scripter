@@ -14,8 +14,8 @@ function executeScript() {
 function executeBlock(id, iterableItems) {
     let block = getBlock(id);
     let children = getChildBlocks(id);
-    if (iterableItems) { //Set var value for loop
-        flowVariables["loopItem"] = iterableItems.pop();
+    if (iterableItems && iterableItems.length > 0) { //Set var value for loop
+        flowVariables["loopItem"] = iterableItems[0];
     }
     try {
         //If it's an API block, do a thing
@@ -59,7 +59,7 @@ function executeBlock(id, iterableItems) {
     }
 
     if(iterableItems != undefined && iterableItems.length > 0) {
-        return executeBlock(block.id, iterableItems);
+        return executeBlock(block.id, iterableItems.slice(1));
     }
     if(children.length > 0) {
         return executeBlock(children[0].id, iterableItems);
