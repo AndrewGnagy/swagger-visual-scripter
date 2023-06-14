@@ -14,12 +14,12 @@ function executeScript() {
 function executeBlock(id, iterableItems) {
     let block = getBlock(id);
     let children = getChildBlocks(id);
-    //If it's an API block, do a thing
+    if (iterableItems) { //Set var value for loop
+        flowVariables["loopItem"] = iterableItems.pop();
+    }
     try {
+        //If it's an API block, do a thing
         if (getDataProperty(block["data"], "method")) {
-            if (iterableItems) { //Set var value for loop
-                flowVariables["loopItem"] = iterableItems.pop();
-            }
             return executeApiBlock(block, iterableItems);
         } else if (getDataProperty(block["data"], "logic")) { //Handle if or for blocks
             let blockType = getDataProperty(block["data"], "logic");
@@ -40,7 +40,7 @@ function executeBlock(id, iterableItems) {
                     }
                     return;
                 case "log":
-                    swagLog(chartProperties[id].properties.value);
+                    swagLog(chartProperties[id].properties[0].value);
                     break;
                 default:
                     // code block
@@ -58,8 +58,11 @@ function executeBlock(id, iterableItems) {
         return;
     }
 
+    if(iterableItems != undefined && iterableItems.length > 0) {
+        return executeBlock(block.id, iterableItems);
+    }
     if(children.length > 0) {
-        executeBlock(children[0].id);
+        return executeBlock(children[0].id, iterableItems);
     }
 }
 
@@ -204,6 +207,9 @@ let makeRequest = async (httpRequest, doLog=true) => {
 
 let swagLog = function(log) {
     console.log(log);
+    if(log.startsWith("$")) {
+        log = resolveVariable(log);
+    }
     let logEntry = `<p>>> ${log}</p>`;
     document.querySelector("#consoleBody").insertAdjacentHTML("beforeend", logEntry);
 }

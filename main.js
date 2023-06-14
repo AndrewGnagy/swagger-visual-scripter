@@ -18,10 +18,11 @@ document.addEventListener("DOMContentLoaded", function () {
         api: [],
         logic: [
             generateBlock("IF", "if block", undefined, [{ name: "logic", value: "if" }]),
-            generateBlock("FOR", "for block", undefined, [{ name: "logic", value: "for" }])
+            generateBlock("FOR", "for block", undefined, [{ name: "logic", value: "for" }]),
+            generateBlock("Set Variable", "Set a value as a variable", "assets/log.svg", [{ name: "logic", value: "set" }])
         ],
         loggers: [
-            generateBlock("Add log", "Logs a given input", undefined, [{ name: "logic", value: "log" }])
+            generateBlock("Add log", "Logs a given input", "assets/log.svg", [{ name: "logic", value: "log" }])
         ]
     };
 
