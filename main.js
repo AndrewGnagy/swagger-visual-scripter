@@ -157,8 +157,19 @@ document.addEventListener("DOMContentLoaded", function () {
                                         if (pathMethod == method) {
                                             chartProperties[blockId] = {
                                                 path: method + " " + path,
-                                                properties: swaggerJson.paths[swaggerPath][pathMethod].parameters
+                                                properties: swaggerJson.paths[swaggerPath][pathMethod].parameters || []
                                             };
+                                            if(swaggerJson.paths[swaggerPath][pathMethod].requestBody) {
+                                                chartProperties[blockId].properties.push({
+                                                    name: "Body",
+                                                    description: "Request body",
+                                                    required: "true",
+                                                    in: "body",
+                                                    schema: {
+                                                        type: "json"
+                                                    }
+                                                });
+                                            }
                                         }
                                     });
                                 }
@@ -224,11 +235,13 @@ document.addEventListener("DOMContentLoaded", function () {
                                 htmlToAdd = `<input class="propinput" type="text" data-id="${blockId} ${property.name}">`
                             } else if (propertyType == "boolean") {
                                 htmlToAdd = `<input type="checkbox" data-id="${blockId} ${property.name}">`
+                            } else if (propertyType == "json") {
+                                htmlToAdd = `<textarea data-id="${blockId} ${property.name}">`
                             }
                             let parser = new DOMParser();
                             let propertyElement = parser.parseFromString(htmlToAdd, "text/html").body.childNodes[0];
                             if (property.value) {
-                                if(property.schema.enum || propertyType == "string" || propertyType == "integer") {
+                                if(property.schema.enum || propertyType == "string" || propertyType == "integer" || propertyType == "json") {
                                     propertyElement.value = property.value;
                                 } else if (propertyType == "boolean") {
                                     propertyElement.checked = property.value;
@@ -251,17 +264,17 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     function propertyChanged(event, blockId, propertyName) {
-        let value
+        let value;
         if(event.target.type == "checkbox") {
-            value = event.currentTarget.checked
+            value = event.currentTarget.checked;
         } else {
-            value = event.target.value
+            value = event.target.value;
         }
 
-        let properties = chartProperties[blockId].properties
+        let properties = chartProperties[blockId].properties;
         for(let i = 0; i < properties.length; i++) {
             if(properties[i].name == propertyName) {
-                properties[i].value = value
+                properties[i].value = value;
                 break;
             }
         }
