@@ -1,11 +1,12 @@
-let flowVariables = {
-    loop: []
-};
-let baseUrl = "https://nuthatch.lastelm.software/";
+let flowVariables = {};
+let baseUrl;
 
 function executeScript() {
     //Start with root block
     //Kicks off depth-first tree traversal
+    if (baseUrl === undefined && baseUrl === null && baseUrl !== "") {
+      throw new Error("Invalid Base URL");
+    }
     executeBlock(0);
     openBottom();
 }
@@ -13,12 +14,12 @@ function executeScript() {
 function executeBlock(id, iterableItems) {
     let block = getBlock(id);
     let children = getChildBlocks(id);
-    //If it's an API block, do a thing
+    if (iterableItems) { //Set var value for loop
+        flowVariables["loopItem"] = iterableItems.pop();
+    }
     try {
+        //If it's an API block, do a thing
         if (getDataProperty(block["data"], "method")) {
-            if (iterableItems) { //Set var value for loop
-                flowVariables["loopItem"] = iterableItems.pop();
-            }
             return executeApiBlock(block, iterableItems);
         } else if (getDataProperty(block["data"], "logic")) { //Handle if or for blocks
             let blockType = getDataProperty(block["data"], "logic");
@@ -39,7 +40,7 @@ function executeBlock(id, iterableItems) {
                     }
                     return;
                 case "log":
-                    swagLog(chartProperties[id].properties.value);
+                    swagLog(chartProperties[id].properties[0].value);
                     break;
                 default:
                     // code block
@@ -57,8 +58,11 @@ function executeBlock(id, iterableItems) {
         return;
     }
 
+    if(iterableItems != undefined && iterableItems.length > 0) {
+        return executeBlock(block.id, iterableItems);
+    }
     if(children.length > 0) {
-        executeBlock(children[0].id);
+        return executeBlock(children[0].id, iterableItems);
     }
 }
 
@@ -80,9 +84,13 @@ function getBlock(id) {
     if(typeof id == "string") {
         id = parseInt(id);
     }
-    return chart.blocks.filter(b => {
-        return b.id == id;
-    })[0];
+    if (!chart) {
+      return undefined;
+    } else {
+      return chart.blocks.filter(b => {
+          return b.id == id;
+      })[0];
+    }
 }
 
 function getChildBlocks(parentId) {
@@ -102,7 +110,7 @@ function executeApiBlock(block, iterableItems) {
     let method = getDataProperty(block["data"], "method");
     let path = getDataProperty(block["data"], "path");
     //Get query and path properties
-    if (chartProperties[block.id] !== undefined && chartProperties[block.id] !== undefined) {
+    if (chartProperties[block.id] !== undefined && chartProperties[block.id].properties !== undefined) {
         chartProperties[block.id].properties.forEach(property => {
             let value = property.value;
             if(value == undefined) {
@@ -119,7 +127,6 @@ function executeApiBlock(block, iterableItems) {
         });
     }
     swagLog("Making " + method + " request to: " + path);
-    let baseUrl = "https://nuthatch.lastelm.software";
     let httpRequest = new XMLHttpRequest();
     httpRequest.open(method, baseUrl + path);
     httpRequest.setRequestHeader("Content-Type", "application/json");
@@ -182,13 +189,16 @@ let makeRequest = async (httpRequest, doLog=true) => {
                     resolve();
                 }
             } catch (err) {
-            reject(Error(err.message + " in " + httpRequest.responseText, err));
+              reject(Error(err.message + " in " + httpRequest.responseText, err));
             }
         } else if (httpRequest.readyState == 4) {
             reject("Request returned status code " + httpRequest.status);
         }
       };
       httpRequest.onerror = () => {
+        if (doLog) {
+          swagLog("Error occured while making the request")
+        }
         reject(Error("There was a network error."));
       };
       httpRequest.send(data);
@@ -197,6 +207,9 @@ let makeRequest = async (httpRequest, doLog=true) => {
 
 let swagLog = function(log) {
     console.log(log);
+    if(log.startsWith("$")) {
+        log = resolveVariable(log);
+    }
     let logEntry = `<p>>> ${log}</p>`;
     document.querySelector("#consoleBody").insertAdjacentHTML("beforeend", logEntry);
 }

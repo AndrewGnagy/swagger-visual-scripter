@@ -18,10 +18,11 @@ document.addEventListener("DOMContentLoaded", function () {
         api: [],
         logic: [
             generateBlock("IF", "if block", undefined, [{ name: "logic", value: "if" }]),
-            generateBlock("FOR", "for block", undefined, [{ name: "logic", value: "for" }])
+            generateBlock("FOR", "for block", undefined, [{ name: "logic", value: "for" }]),
+            generateBlock("Set Variable", "Set a value as a variable", "assets/log.svg", [{ name: "logic", value: "set" }])
         ],
         loggers: [
-            generateBlock("Add log", "Logs a given input", undefined, [{ name: "logic", value: "log" }])
+            generateBlock("Add log", "Logs a given input", "assets/log.svg", [{ name: "logic", value: "log" }])
         ]
     };
 
@@ -73,6 +74,17 @@ document.addEventListener("DOMContentLoaded", function () {
             tempblock2.classList.remove("blockdisabled");
         }
     }
+
+    let closePropertiesPanel = function () {
+        if (rightcard) {
+            rightcard = false;
+            document.getElementById("properties").classList.remove("expanded");
+            setTimeout(function () {
+                document.getElementById("propwrap").classList.remove("itson");
+            }, 300);
+            tempblock.classList.remove("selectedblock");
+        }
+    }
     function addEventListenerMulti(type, listener, capture, selector) {
         var nodes = document.querySelectorAll(selector);
         for (var i = 0; i < nodes.length; i++) {
@@ -91,14 +103,7 @@ document.addEventListener("DOMContentLoaded", function () {
     addEventListenerMulti("click", blockNavClick, false, ".side");
     //Right menu
     document.getElementById("propertiesClose").addEventListener("click", function () {
-        if (rightcard) {
-            rightcard = false;
-            document.getElementById("properties").classList.remove("expanded");
-            setTimeout(function () {
-                document.getElementById("propwrap").classList.remove("itson");
-            }, 300);
-            tempblock.classList.remove("selectedblock");
-        }
+        closePropertiesPanel();
     });
     //Delete buttons
     document.getElementById("removeblock").addEventListener("click", function () {
@@ -112,6 +117,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             })
         }
+        closePropertiesPanel();
     });
 
     //Block click events
@@ -375,7 +381,7 @@ document.addEventListener("DOMContentLoaded", function () {
     importBtn.addEventListener("change", importSwagger, false);
 
     let runScript = function () {
-        executeScript(chartProperties);
+        executeScript(baseUrl, chartProperties);
     };
     const runBtn = document.querySelector("#runscript");
     runBtn.addEventListener("click", runScript, false);
@@ -391,14 +397,29 @@ document.addEventListener("DOMContentLoaded", function () {
         settingsModal.style.display = "none";
     };
 
+    let updateBaseUrl = function (event) {
+        baseUrl = event.target.value;
+    }
+
     const settingsBtn = document.querySelector("#settingsBtn");
     settingsBtn.addEventListener("click", openSettingsModal, false);
 
     const settingsCloseBtn = document.querySelector("#settingsClose");
     settingsCloseBtn.addEventListener("click", closeSettingsModal, false);
 
-    // const consoleOpenBtn = document.querySelector("#consoleOpen");
-    // consoleOpenBtn.addEventListener("click", openBottom, false);
+    const baseUrlInput = document.querySelector("#baseUrl");
+    baseUrlInput.addEventListener("input", updateBaseUrl, false)
+
+    let setBaseUrlAtStartup = function () {
+        let inputValue = baseUrlInput.value
+        if (inputValue !== undefined && inputValue !== null && inputValue !== "") {
+            baseUrl = inputValue
+        } else {
+            baseUrl = "https://nuthatch.lastelm.software/";
+        }
+    }
+
+    setBaseUrlAtStartup()
 
     const consoleCloseBtn = document.querySelector("#consoleClose");
     consoleCloseBtn.addEventListener("click", closeBottom, false);
