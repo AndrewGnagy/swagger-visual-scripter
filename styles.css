@@ -101,7 +101,7 @@ body, html {
     background-color: #7149C6;
     border-radius: 5px;
     border: none;
-    width: 143px;
+    width: 100px;
     height: 38px;
     margin-left: 10px;
     display: inline-block;
@@ -128,7 +128,7 @@ body, html {
     color: #FFF;
     background-color: #379237;
     border-radius: 5px;
-    width: 143px;
+    width: 100px;
     height: 38px;
     margin-left: 10px;
     margin-top: 6px;
@@ -148,9 +148,9 @@ body, html {
     font-weight: 500;
     font-size: 14px;
     color: #FFF;
-    background-color: #379237;
+    background-color: #d32525;
     border-radius: 5px;
-    width: 143px;
+    width: 100px;
     height: 38px;
     margin-left: 10px;
     margin-top: 6px;
@@ -598,8 +598,8 @@ input {
 }
 
 .propdata {
-    font-family:'Courier New', Courier, monospace;
-    font-size: 12px;
+    font-family:Arial, Helvetica, sans-serif;
+    font-size: 13px;
     color: #393C44;
     margin-left: 20px;
     margin-top: 0px;
@@ -607,12 +607,13 @@ input {
 
 .propinput {
     margin-left: 20px;
-    font-family:'Courier New', Courier, monospace;
+    margin-bottom: 13px;
+    font-family:Arial, Helvetica, sans-serif;
     font-size: 15px;
     color: #393C44;
     text-indent: 15px;
-    height: 35px;
-
+    height: 30px;
+    border: #393C44 solid 0.5px;
 }
 
 .propinput:focus-visible {
@@ -620,7 +621,7 @@ input {
 }
 
 .propheader {
-    font-family:'Courier New', Courier, monospace;
+    font-family:Arial, Helvetica, sans-serif;
     font-size: 15px;
     color: #393C44;
     margin-left: 20px;
@@ -692,7 +693,7 @@ SELECT {
 }
 
 #removeblock {
-    background-color: #e83612;
+    background-color: #d32525;
     font-family: Roboto;
     font-weight: 500;
     font-size: 14px;
@@ -798,6 +799,11 @@ SELECT {
     border: 2px solid #c64949;
     box-shadow: 0px 4px 30px rgba(22, 33, 74, 0.08);
 }
+
+.close{
+    color: #393C44;
+}
+
 .close:hover {
     cursor: pointer;
     opacity: .7;
@@ -813,16 +819,54 @@ SELECT {
     height: 100%; /* Full height */
     overflow: auto; /* Enable scroll if needed */
     background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    background-color: rgba(0,0,0,0.2); /* Black w/ opacity */
   }
 .modal-content {
   background-color: #ffffffe6;
   margin: auto;
+  margin-left: 31%;
+  margin-top: 5%;
   padding: 20px;
-  border: 1px solid #888;
+  border: 0.5px solid #E8E8EF;
+  border-radius: 5px;
   width: 60%;
+  height: 40%;
   z-index: 12;
 }
+
+.settingsheader{
+    font-family:Arial, Helvetica, sans-serif;
+    font-size: 25px;
+    color: #393C44;
+    margin-left: 20px;
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+
+.settingsinput {
+    font-family:Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    color: #393C44;
+    margin-left: 20px;
+    margin-top: 2px;
+    margin-bottom: 10px;
+    text-indent: 15px;
+    width: 95%;
+}
+
+.settingsinput:focus-visible {
+    outline: #808292;
+}
+
+.settingslabel{
+    font-family:Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    color: #393C44;
+    margin-left: 25px;
+    margin-top: 20px;
+    margin-bottom: 0px;
+}
+
 @media only screen and (max-width: 832px) {
     #centerswitch {
         display: none;
