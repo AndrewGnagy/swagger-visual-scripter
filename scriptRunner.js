@@ -109,6 +109,7 @@ function executeApiBlock(block, iterableItems) {
     console.log("Api");
     let method = getDataProperty(block["data"], "method");
     let path = getDataProperty(block["data"], "path");
+    let data;
     //Get query and path properties
     if (chartProperties[block.id] !== undefined && chartProperties[block.id].properties !== undefined) {
         chartProperties[block.id].properties.forEach(property => {
@@ -123,6 +124,16 @@ function executeApiBlock(block, iterableItems) {
                 path += `${separator}${property.name}=${value}`;
             } else if(property.in && property.in == "path") {
                 path = path.replace(`{${property.name}}`, value);
+            } else if(property.in && property.in == "body") {
+                data = property.value;
+                //Resolve any variables in the body
+                data = data.split(" ").map(symb => {
+                    if(symb.startsWith("$")) {
+                        let res = resolveVariable(symb);
+                        return JSON.stringify(res);
+                    }
+                    return symb;
+                }).join(" ");
             }
         });
     }
@@ -130,10 +141,15 @@ function executeApiBlock(block, iterableItems) {
     let httpRequest = new XMLHttpRequest();
     httpRequest.open(method, baseUrl + path);
     httpRequest.setRequestHeader("Content-Type", "application/json");
-    httpRequest.setRequestHeader("api-key", "130eff77-4b97-41d2-9198-d8e52e5dc96c");
-    makeRequest(httpRequest).then(result => {
+    let apiKey = document.getElementById("apiKey").value || "130eff77-4b97-41d2-9198-d8e52e5dc96c";
+    httpRequest.setRequestHeader("api-key", apiKey);
+    let authBearer = document.getElementById("authBearer").value;
+    if (authBearer) {
+        httpRequest.setRequestHeader("Authorization", authBearer);
+    }
+    makeRequest(httpRequest, data).then(result => {
         if(iterableItems != undefined) {
-            flowVariables['loop'][iterableItems.length] = result;
+            //flowVariables['loop'][iterableItems.length] = result;
             if(iterableItems.length > 0) {
                 return executeBlock(block.id, iterableItems);
             }
@@ -164,17 +180,17 @@ function resolveVariable(myvar) {
 let convertV2ToV3 = async (jsonToConvert) => {
     let url = "https://converter.swagger.io/api/convert";
     method = "POST";
-    data = JSON.stringify(jsonToConvert);
+    let data = JSON.stringify(jsonToConvert);
 
     console.log("Making " + method + " request to: " + url);
 
     let httpRequest = new XMLHttpRequest();
     httpRequest.open(method, url);
     httpRequest.setRequestHeader("Content-Type", "application/json");
-    return makeRequest(httpRequest, false);
+    return makeRequest(httpRequest, data, false);
 }
 
-let makeRequest = async (httpRequest, doLog=true) => {
+let makeRequest = async (httpRequest, data, doLog=true) => {
     return await new Promise((resolve, reject) => {
         httpRequest.onreadystatechange = () => {
         if (httpRequest.readyState == 4 && httpRequest.status == 200) {
@@ -194,14 +210,14 @@ let makeRequest = async (httpRequest, doLog=true) => {
         } else if (httpRequest.readyState == 4) {
             reject("Request returned status code " + httpRequest.status);
         }
-      };
-      httpRequest.onerror = () => {
-        if (doLog) {
-          swagLog("Error occured while making the request")
-        }
-        reject(Error("There was a network error."));
-      };
-      httpRequest.send(data);
+        };
+        httpRequest.onerror = () => {
+            if (doLog) {
+                swagLog("Error occured while making the request")
+            }
+            reject(Error("There was a network error."));
+        };
+        httpRequest.send(data);
     });
 };
 

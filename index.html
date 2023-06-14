@@ -14,7 +14,6 @@
     <meta name="viewport"
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <script src="lib/flowy.js"></script>
-    <script src="lib/expr-eval.min.js"></script>
     <script src="main.js"></script>
     <script src="scriptRunner.js"></script>
 </head>
@@ -27,16 +26,21 @@
                 <p id="subtitle">v1.0.0</p>
             </div>
         </div>
+        <div id="swaggerName"></div>
+        <div id="swaggerVersion"></div>
         <!-- <div id="centerswitch">
             <div id="leftswitch">Diagram View</div>
             <div id="rightswitch">Code Editor</div>
         </div> -->
         <div id="buttonsright">
-            <div id="settingsBtn"> <i class="bi bi-gear-fill"></i> Settings </div>
-            <button id="import" onclick="document.getElementById('importinput').click()"> <i class="bi bi-file-earmark-arrow-down-fill"></i> Import </button>
+            <button id="import" onclick="document.getElementById('importinput').click()"> <i
+                    class="bi bi-file-earmark-arrow-down-fill"></i> Import </button>
+            <button id="export" onclick="document.getElementById('importinput').click()"> <i
+                    class="bi bi-file-earmark-arrow-up-fill"></i> Export </button>
             <input id="importinput" class="btn" type="file" />
-            <div id="runscript"> <i class="bi bi-play-circle-fill"></i> Run </div>
-            
+            <div id="settingsBtn"> <i class="bi bi-gear-fill"></i></div>
+            <div id="runscript"> <i class="bi bi-play-circle-fill"></i></div>
+
         </div>
     </div>
     <div id="settingsModal" class="modal">
@@ -51,8 +55,10 @@
             <input type="text" class="settingsinput" id="baseUrl"></input>
             <p class="settingslabel">API Key</p>
             <input type="text" class="settingsinput" id="apiKey"></input>
+            <p class="settingslabel">Authorization Bearer</p>
+            <input type="text" class="settingsinput" id="authBearer"></input>
         </div>
-      
+
     </div>
     <div id="leftcard">
         <p id="header">Blocks</p>
@@ -75,7 +81,7 @@
             </div>
             <p id="parameterheader">Parameters</p>
             <div id="parameterinputs">
-                
+
             </div>
             <!-- <div class="btn" id="addblock">Add block</div> -->
             <div class="btn" id="removeblock">Delete Block</div>

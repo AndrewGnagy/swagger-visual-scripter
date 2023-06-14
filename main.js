@@ -157,8 +157,23 @@ document.addEventListener("DOMContentLoaded", function () {
                                         if (pathMethod == method) {
                                             chartProperties[blockId] = {
                                                 path: method + " " + path,
-                                                properties: swaggerJson.paths[swaggerPath][pathMethod].parameters
+                                                properties: swaggerJson.paths[swaggerPath][pathMethod].parameters || []
                                             };
+                                            if(swaggerJson.paths[swaggerPath][pathMethod].requestBody) {
+                                                let examples = swaggerJson.paths[swaggerPath][pathMethod].requestBody.content?.["application/json"]?.examples;
+                                                chartProperties[blockId].properties.push({
+                                                    name: "Body",
+                                                    description: "Request body",
+                                                    required: "true",
+                                                    in: "body",
+                                                    schema: {
+                                                        type: "json"
+                                                    },
+                                                    examples: (examples && Object.keys(examples).length > 0) ? 
+                                                        examples[Object.keys(examples)[0]]?.value :
+                                                        "{}"
+                                                });
+                                            }
                                         }
                                     });
                                 }
@@ -224,11 +239,13 @@ document.addEventListener("DOMContentLoaded", function () {
                                 htmlToAdd = `<input class="propinput" type="text" data-id="${blockId} ${property.name}">`
                             } else if (propertyType == "boolean") {
                                 htmlToAdd = `<input type="checkbox" data-id="${blockId} ${property.name}">`
+                            } else if (propertyType == "json") {
+                                htmlToAdd = `<textarea data-id="${blockId} ${property.name}">`
                             }
                             let parser = new DOMParser();
                             let propertyElement = parser.parseFromString(htmlToAdd, "text/html").body.childNodes[0];
                             if (property.value) {
-                                if(property.schema.enum || propertyType == "string" || propertyType == "integer") {
+                                if(property.schema.enum || propertyType == "string" || propertyType == "integer" || propertyType == "json") {
                                     propertyElement.value = property.value;
                                 } else if (propertyType == "boolean") {
                                     propertyElement.checked = property.value;
@@ -251,17 +268,17 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     function propertyChanged(event, blockId, propertyName) {
-        let value
+        let value;
         if(event.target.type == "checkbox") {
-            value = event.currentTarget.checked
+            value = event.currentTarget.checked;
         } else {
-            value = event.target.value
+            value = event.target.value;
         }
 
-        let properties = chartProperties[blockId].properties
+        let properties = chartProperties[blockId].properties;
         for(let i = 0; i < properties.length; i++) {
             if(properties[i].name == propertyName) {
-                properties[i].value = value
+                properties[i].value = value;
                 break;
             }
         }
@@ -275,6 +292,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 let fileJson = JSON.parse(event.target.result);
                 //TODO do better input validation
                 if (fileJson.info) {
+                    if(fileJson.servers && fileJson.servers.length > 0) {
+                        baseUrl = fileJson.servers[0].url;
+                        document.querySelector("#baseUrl").value = baseUrl;
+                    }
+                    document.getElementById("swaggerName").innerHTML = fileJson?.info?.title || "";
+                    document.getElementById("swaggerVersion").innerHTML = fileJson?.info?.version ? `v${fileJson?.info?.version}` : "";
                     let fileJsonKeys = Object.keys(fileJson)
                     if(fileJsonKeys.includes("swagger") || (fileJsonKeys.includes("openapi") && parseInt(fileJson["openapi"].charAt(0)) < 3)) {
                         // Swagger JSON is outdated.  Convert to openAPI V3 standard
@@ -316,7 +339,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
                 let blockHtml = generateBlock(
                     pathMethod + " " + path,
-                    swaggerJson.paths[path][pathMethod]["summary"],
+                    swaggerJson.paths[path][pathMethod]["summary"] || swaggerJson.paths[path][pathMethod]["description"],
                     "assets/arrow.svg",
                     [
                         { name: "method", value: pathMethod },
@@ -381,7 +404,7 @@ document.addEventListener("DOMContentLoaded", function () {
     importBtn.addEventListener("change", importSwagger, false);
 
     let runScript = function () {
-        executeScript(baseUrl, chartProperties);
+        executeScript();
     };
     const runBtn = document.querySelector("#runscript");
     runBtn.addEventListener("click", runScript, false);
@@ -413,7 +436,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let setBaseUrlAtStartup = function () {
         let inputValue = baseUrlInput.value
         if (inputValue !== undefined && inputValue !== null && inputValue !== "") {
-            baseUrl = inputValue
+            baseUrl = inputValue;
         } else {
             baseUrl = "https://nuthatch.lastelm.software/";
         }
