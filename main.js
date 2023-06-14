@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("removeblock").addEventListener("click", function () {
         chartPropertiesKeys = Object.keys(chartProperties)
 
-        if(chartPropertiesKeys.includes(flowy.getActiveBlockId())) {}
+        if(chartPropertiesKeys.includes(flowy.getActiveBlockId())) {
             flowy.deleteBranch(flowy.getActiveBlockId())
             Object.keys(chartProperties).forEach(key => {
                 if (flowy.getBlock(key) == null) {
