@@ -5,6 +5,7 @@ function executeScript() {
     //Start with root block
     //Kicks off depth-first tree traversal
     executeBlock(0);
+    openBottom();
 }
 
 function executeBlock(id) {
