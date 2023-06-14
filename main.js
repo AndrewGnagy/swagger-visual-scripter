@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", function () {
             flowy.deleteBranch(flowy.getActiveBlockId())
             chartPropertiesKeys.forEach(key => {
                 // TODO: this will delete more blocks than you want
-                if (key >= flowy.getActiveBlockId() && getBlock(key)) {
+                if (!getBlock(key)) {
                     delete chartProperties[flowy.getActiveBlockId()]
                 }
             })
@@ -149,7 +149,7 @@ document.addEventListener("DOMContentLoaded", function () {
             let blockEl = event.target.closest(".block");
             let blockId = flowy.getActiveBlockId();
             if (blockEl && !blockEl.classList.contains("dragging")) {
-                if (Object.keys(chartProperties[blockId]).length == 0) {
+                if (chartProperties[blockId] && Object.keys(chartProperties[blockId]).length == 0) {
                     flowyBlock = getBlock(blockId);
                     let method = getDataProperty(flowyBlock["data"], "method");
                     let path = getDataProperty(flowyBlock["data"], "path");
