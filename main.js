@@ -160,6 +160,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 properties: swaggerJson.paths[swaggerPath][pathMethod].parameters || []
                                             };
                                             if(swaggerJson.paths[swaggerPath][pathMethod].requestBody) {
+                                                let examples = swaggerJson.paths[swaggerPath][pathMethod].requestBody.content?.["application/json"]?.examples;
                                                 chartProperties[blockId].properties.push({
                                                     name: "Body",
                                                     description: "Request body",
@@ -167,7 +168,10 @@ document.addEventListener("DOMContentLoaded", function () {
                                                     in: "body",
                                                     schema: {
                                                         type: "json"
-                                                    }
+                                                    },
+                                                    examples: (examples && Object.keys(examples).length > 0) ? 
+                                                        examples[Object.keys(examples)[0]]?.value :
+                                                        "{}"
                                                 });
                                             }
                                         }

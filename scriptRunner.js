@@ -133,7 +133,12 @@ function executeApiBlock(block, iterableItems) {
     let httpRequest = new XMLHttpRequest();
     httpRequest.open(method, baseUrl + path);
     httpRequest.setRequestHeader("Content-Type", "application/json");
-    httpRequest.setRequestHeader("api-key", "130eff77-4b97-41d2-9198-d8e52e5dc96c");
+    let apiKey = document.getElementById("apiKey").value || "130eff77-4b97-41d2-9198-d8e52e5dc96c";
+    httpRequest.setRequestHeader("api-key", apiKey);
+    let authBearer = document.getElementById("authBearer").value;
+    if (authBearer) {
+        httpRequest.setRequestHeader("Authorization", authBearer);
+    }
     makeRequest(httpRequest, data).then(result => {
         if(iterableItems != undefined) {
             flowVariables['loop'][iterableItems.length] = result;
