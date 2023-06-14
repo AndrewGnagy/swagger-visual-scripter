@@ -364,6 +364,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const settingsBtn = document.querySelector("#settingsBtn");
     settingsBtn.addEventListener("click", openSettingsModal, false);
 
-    const settingsCloseBtn = document.querySelector("#settingsClose")
+    const settingsCloseBtn = document.querySelector("#settingsClose");
     settingsCloseBtn.addEventListener("click", closeSettingsModal, false);
+
+    const consoleOpenBtn = document.querySelector("#consoleOpen");
+    consoleOpenBtn.addEventListener("click", openBottom, false);
+
+    const consoleCloseBtn = document.querySelector("#consoleClose");
+    consoleCloseBtn.addEventListener("click", closeBottom, false);
 });
+
+function openBottom() {
+    document.getElementById("bottomcard").style.height = "250px";
+}
+
+function closeBottom() {
+    document.getElementById("bottomcard").style.height = "0";
+}

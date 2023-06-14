@@ -811,7 +811,7 @@ SELECT {
 .modal {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
+    z-index: 12; /* Sit on top */
     padding-top: 100px; /* Location of the box */
     left: 0;
     top: 0;
@@ -831,6 +831,7 @@ SELECT {
   border-radius: 5px;
   width: 60%;
   height: 60%;
+  z-index: 12;
 }
 
 @media only screen and (max-width: 832px) {
@@ -842,4 +843,18 @@ SELECT {
     #names {
         display: none;
     }   
+}
+.bottompanel {
+    height: 0px;
+    width: 60%;
+    position: fixed;
+    z-index: 12;
+    bottom: 0;
+    right: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    transition: 0.5s;
+}
+.bottompanel p {
+    color: #C9C9D5;
 }
