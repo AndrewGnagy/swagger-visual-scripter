@@ -238,7 +238,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    let importSwagger = function (event) {
+    let importSwagger = async function (event) {
         var reader = new FileReader();
 
         reader.onload = function (event) {
@@ -251,17 +251,23 @@ document.addEventListener("DOMContentLoaded", function () {
                         // Swagger JSON is outdated.  Convert to openAPI V3 standard
                         console.log("AAADFSDFDSFDSDSFSD")
                         console.log(fileJson)
-                        swaggerJson = convertV2ToV3(fileJson)
-                        console.log("SWAG:")
-                        console.log(swaggerJson)
+                        convertV2ToV3(fileJson).then(result => {
+                            console.log("SWAG:")
+                            console.log(result)
+                            swaggerJson = result
+                            populateBlocks();
+                            //do .then here
+                        })
+                        // console.log("SWAG:")
+                        // console.log(swaggerJson)
                     } else if (!fileJsonKeys.includes("openapi")) {
                         // The first line in a valid Swagger JSON file should be the version (i.e. swagger or openapi)
                         throw new Error("Not a real swagger json file?");
                     } else {
                         // The provided Swagger JSON is good as-is
                         swaggerJson = fileJson;
+                        populateBlocks();
                     }
-                    populateBlocks();
                 } else {
                     throw new Error("Not a real swagger json file?");
                 }
