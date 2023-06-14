@@ -108,7 +108,7 @@ document.addEventListener("DOMContentLoaded", function () {
             chartPropertiesKeys.forEach(key => {
                 // TODO: this will delete more blocks than you want
                 if (!getBlock(key)) {
-                    delete chartProperties[flowy.getActiveBlockId()]
+                    delete chartProperties[key]
                 }
             })
         }
