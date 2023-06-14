@@ -81,9 +81,13 @@ function getBlock(id) {
     if(typeof id == "string") {
         id = parseInt(id);
     }
-    return chart.blocks.filter(b => {
-        return b.id == id;
-    })[0];
+    if (!chart) {
+      return undefined;
+    } else {
+      return chart.blocks.filter(b => {
+          return b.id == id;
+      })[0];
+    }
 }
 
 function getChildBlocks(parentId) {
@@ -103,7 +107,7 @@ function executeApiBlock(block, iterableItems) {
     let method = getDataProperty(block["data"], "method");
     let path = getDataProperty(block["data"], "path");
     //Get query and path properties
-    if (chartProperties[block.id] !== undefined && chartProperties[block.id] !== undefined) {
+    if (chartProperties[block.id] !== undefined && chartProperties[block.id].properties !== undefined) {
         chartProperties[block.id].properties.forEach(property => {
             let value = property.value;
             if(value == undefined) {

@@ -73,6 +73,17 @@ document.addEventListener("DOMContentLoaded", function () {
             tempblock2.classList.remove("blockdisabled");
         }
     }
+
+    let closePropertiesPanel = function () {
+        if (rightcard) {
+            rightcard = false;
+            document.getElementById("properties").classList.remove("expanded");
+            setTimeout(function () {
+                document.getElementById("propwrap").classList.remove("itson");
+            }, 300);
+            tempblock.classList.remove("selectedblock");
+        }
+    }
     function addEventListenerMulti(type, listener, capture, selector) {
         var nodes = document.querySelectorAll(selector);
         for (var i = 0; i < nodes.length; i++) {
@@ -91,14 +102,7 @@ document.addEventListener("DOMContentLoaded", function () {
     addEventListenerMulti("click", blockNavClick, false, ".side");
     //Right menu
     document.getElementById("propertiesClose").addEventListener("click", function () {
-        if (rightcard) {
-            rightcard = false;
-            document.getElementById("properties").classList.remove("expanded");
-            setTimeout(function () {
-                document.getElementById("propwrap").classList.remove("itson");
-            }, 300);
-            tempblock.classList.remove("selectedblock");
-        }
+        closePropertiesPanel();
     });
     //Delete buttons
     document.getElementById("removeblock").addEventListener("click", function () {
@@ -112,6 +116,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             })
         }
+        closePropertiesPanel();
     });
 
     //Block click events
