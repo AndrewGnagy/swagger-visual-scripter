@@ -238,7 +238,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    let importSwagger = async function (event) {
+    let importSwagger = function (event) {
         var reader = new FileReader();
 
         reader.onload = function (event) {
@@ -249,17 +249,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     let fileJsonKeys = Object.keys(fileJson)
                     if(fileJsonKeys.includes("swagger") || (fileJsonKeys.includes("openapi") && parseInt(fileJson["openapi"].charAt(0)) < 3)) {
                         // Swagger JSON is outdated.  Convert to openAPI V3 standard
-                        console.log("AAADFSDFDSFDSDSFSD")
-                        console.log(fileJson)
                         convertV2ToV3(fileJson).then(result => {
-                            console.log("SWAG:")
-                            console.log(result)
                             swaggerJson = result
                             populateBlocks();
-                            //do .then here
                         })
-                        // console.log("SWAG:")
-                        // console.log(swaggerJson)
                     } else if (!fileJsonKeys.includes("openapi")) {
                         // The first line in a valid Swagger JSON file should be the version (i.e. swagger or openapi)
                         throw new Error("Not a real swagger json file?");
@@ -359,12 +352,4 @@ document.addEventListener("DOMContentLoaded", function () {
     let runScript = function () {
         executeScript(chartProperties);
     };
-
-    // function convertJsonToV3(jsonToConvert) {
-    //     console.log("AAAAHHHH")
-    //     return convertV2ToV3(jsonToConvert)
-    // }
-
-    // const convertBtn = document.querySelector("#convertv2tov3");
-    // convertBtn.addEventListener("click", convertJson, false);
 });

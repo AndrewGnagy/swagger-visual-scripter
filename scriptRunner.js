@@ -106,11 +106,6 @@ let convertV2ToV3 = async (jsonToConvert) => {
   httpRequest.open(method, url);
   httpRequest.setRequestHeader("Content-Type", "application/json");
   return makeRequest(httpRequest)
-  // makeRequest(httpRequest).then(response => {
-  //   console.log("response: ")
-  //   console.log(response)
-  //   return response
-  // })
 }
 
 let makeRequest = async (httpRequest) => {
