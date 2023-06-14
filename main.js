@@ -165,6 +165,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     document
                         .getElementById("parameterinputs")
                         .insertAdjacentHTML("beforeend", `<h3 class="propheader">Name: ${property.name}</h3>`);
+                    
+                    // Populate the property text fields
                     Object.keys(property).forEach((propertyKey) => {
                         if (propertyKey == "schema") {
                             document
@@ -175,7 +177,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                         property[propertyKey]
                                     )}</p>`
                                 );
-                        } else {
+                        } else if (propertyKey != "name") {
                             document
                                 .getElementById("parameterinputs")
                                 .insertAdjacentHTML(
@@ -185,12 +187,12 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                     });
 
-                    // TODO: This is duplicate code as above?????????
-                    if(property.schema != null && property.schema.type != null) {
-                        let propertyType = property.schema.type
+                    // Populate the input fields
+                    if(property.schema != null) {
+                        let propertyType = property.schema.type // Might be null if property.schema.enum
                         let htmlToAdd
-                        if(property.enum) {
-                            let options = property.enum.map(val => `<option value="${val}">${val}</option>`);
+                        if(property.schema.enum) {
+                            let options = property.schema.enum.map(val => `<option value="${val}">${val}</option>`);
                             htmlToAdd = `<select class="dropme" data-id="${blockId} ${property.name}">${options.join("\n")}</select>`
                         } else if(propertyType == "string" || propertyType == "integer") {
                             htmlToAdd = `<input class="propinput" type="text" data-id="${blockId} ${property.name}">`
