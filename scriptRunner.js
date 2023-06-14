@@ -1,10 +1,9 @@
 let flowVariables = {};
-let chartProperties = {};
+let baseUrl = "https://nuthatch.lastelm.software/";
 
-function executeScript(chartProperties) {
+function executeScript() {
     //Start with root block
     //Kicks off depth-first tree traversal
-    chartProperties = chartProperties
     executeBlock(0);
 }
 
@@ -14,7 +13,7 @@ function executeBlock(id) {
     //If it's an API block, do a thing
     try {
         if (getDataProperty(block["data"], "method")) {
-            executeApiBlock(block);
+            return executeApiBlock(block);
         } else if (getDataProperty(block["data"], "logic")) { //Handle if or for blocks
             let blockType = getDataProperty(block["data"], "logic");
             console.log(blockType);
@@ -46,9 +45,9 @@ function executeBlock(id) {
         return;
     }
 
-    for(let i = 0; i < children.length; i++) {
-        executeBlock(children[i].id);
-    }
+    // for(let i = 0; i < children.length; i++) {
+    //     executeBlock(children[i].id);
+    // }
 }
 
 function getBlock(id) {
@@ -80,65 +79,80 @@ function executeApiBlock(block) {
     let data = undefined; //TODO gather params and such
     //Get query and path properties
     if (chartProperties[block.id] !== undefined && chartProperties[block.id] !== undefined) {
-      chartProperties[block.id].properties.forEach(property => {
-          if(property.in && property.in == "query") {
-              let separator = path.indexOf("?") == -1 ? "?" : "&";
-              path += separator + property.value;
-          } else if(property.in && property.in == "path") {
-              path = path.replace(`{${property.name}}`, property.value);
-          }
-      });
+        chartProperties[block.id].properties.forEach(property => {
+            let value = property.value;
+            if(value == undefined) {
+                return;
+            } else if(typeof value == "string" && value.startsWith("$")){
+                value = resolveVariable(value);
+            }
+            if(property.in && property.in == "query") {
+                let separator = path.indexOf("?") == -1 ? "?" : "&";
+                path += `${separator}${property.name}=${value}`;
+            } else if(property.in && property.in == "path") {
+                path = path.replace(`{${property.name}}`, value);
+            }
+        });
     }
     console.log("Making " + method + " request to: " + path);
-    //TODO uncomment when complete
     let baseUrl = "https://nuthatch.lastelm.software";
     let httpRequest = new XMLHttpRequest();
     httpRequest.open(method, baseUrl + path);
     httpRequest.setRequestHeader("Content-Type", "application/json");
     httpRequest.setRequestHeader("api-key", "130eff77-4b97-41d2-9198-d8e52e5dc96c");
-
-    makeRequest(httpRequest).then(response => {
-      console.log("response: " + response)
-      flowVariables['lastResult'] = response
+    makeRequest(httpRequest).then(result => {
+        flowVariables['lastResult'] = result;
+        let children = getChildBlocks(block.id);
+        if (children.length > 0) {
+            executeBlock(children[0].id);
+        }
     });
 }
 
 function resolveVariable(myvar) {
-    // myvar.split(".").reduce(o, k => {
-    //  //Something to account for []
-    //   return o && o[k];
-    // }, flowVariables);
+    myvar = myvar.replace("$", "");
+    let result = "";
+    try {
+        result = myvar.split(".").reduce((o, k) => {
+        //Something to account for []
+        return o && o[k];
+        }, flowVariables);
+    } catch(e) {
+        console.log(`Var ${myvar} couldn't be found`);
+        throw new Error(`Variable ${myvar} could not be resolved`);
+    }
+    return result;
 }
 
 let convertV2ToV3 = async (jsonToConvert) => {
-  let url = "https://converter.swagger.io/api/convert"
-  method = "POST"
-  data = JSON.stringify(jsonToConvert)
+    let url = "https://converter.swagger.io/api/convert"
+    method = "POST"
+    data = JSON.stringify(jsonToConvert)
 
-  console.log("Making " + method + " request to: " + url)
-  
-  let httpRequest = new XMLHttpRequest();
-  httpRequest.open(method, url);
-  httpRequest.setRequestHeader("Content-Type", "application/json");
-  return makeRequest(httpRequest)
+    console.log("Making " + method + " request to: " + url)
+
+    let httpRequest = new XMLHttpRequest();
+    httpRequest.open(method, url);
+    httpRequest.setRequestHeader("Content-Type", "application/json");
+    return makeRequest(httpRequest)
 }
 
 let makeRequest = async (httpRequest) => {
     return await new Promise((resolve, reject) => {
-      httpRequest.onreadystatechange = () => {
+        httpRequest.onreadystatechange = () => {
         if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-          console.log("responseText:" + httpRequest.responseText);
-          try {
+            console.log("responseText:" + httpRequest.responseText);
+            try {
             if(httpRequest.responseText) {
-              resolve(JSON.parse(httpRequest.responseText));
+                resolve(JSON.parse(httpRequest.responseText));
             } else {
-              resolve();
+                resolve();
             }
-          } catch (err) {
+            } catch (err) {
             reject(Error(err.message + " in " + httpRequest.responseText, err));
-          }
+            }
         } else if (httpRequest.readyState == 4) {
-          reject("Request returned status code" + httpRequest.status);
+            reject("Request returned status code " + httpRequest.status);
         }
       };
       httpRequest.onerror = () => {
