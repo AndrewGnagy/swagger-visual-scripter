@@ -166,40 +166,39 @@ document.addEventListener("DOMContentLoaded", function () {
                         .getElementById("parameterinputs")
                         .insertAdjacentHTML("beforeend", `<h3 class="propheader">Name: ${property.name}</h3>`);
                     Object.keys(property).forEach((propertyKey) => {
-                        if (propertyKey != "name") {
-                            if (propertyKey == "schema") {
-                                document
-                                    .getElementById("parameterinputs")
-                                    .insertAdjacentHTML(
-                                        "beforeend",
-                                        `<p class="propdata">${propertyKey.toUpperCase()}: ${JSON.stringify(
-                                            property[propertyKey]
-                                        )}</p>`
-                                    );
-                            } else {
-                                document
-                                    .getElementById("parameterinputs")
-                                    .insertAdjacentHTML(
-                                        "beforeend",
-                                        `<p class="propdata">${propertyKey.toUpperCase()}: ${property[propertyKey]}</p>`
-                                    );
-                            }
+                        if (propertyKey == "schema") {
+                            document
+                                .getElementById("parameterinputs")
+                                .insertAdjacentHTML(
+                                    "beforeend",
+                                    `<p class="propdata">${propertyKey.toUpperCase()}: ${JSON.stringify(
+                                        property[propertyKey]
+                                    )}</p>`
+                                );
+                        } else {
+                            document
+                                .getElementById("parameterinputs")
+                                .insertAdjacentHTML(
+                                    "beforeend",
+                                    `<p class="propdata">${propertyKey.toUpperCase()}: ${property[propertyKey]}</p>`
+                                );
                         }
                     });
 
-                    if(property.type != null) {
+                    // TODO: This is duplicate code as above?????????
+                    if(property.schema != null && property.schema.type != null) {
+                        let propertyType = property.schema.type
                         let htmlToAdd
                         if(property.enum) {
                             let options = property.enum.map(val => `<option value="${val}">${val}</option>`);
                             htmlToAdd = `<select class="dropme" data-id="${blockId} ${property.name}">${options.join("\n")}</select>`
-                        } else if(property.type == "string" || property.type == "integer") {
+                        } else if(propertyType == "string" || propertyType == "integer") {
                             htmlToAdd = `<input class="propinput" type="text" data-id="${blockId} ${property.name}">`
-                        } else if (property.type == "boolean") {
+                        } else if (propertyType == "boolean") {
                             htmlToAdd = `<input type="checkbox" data-id="${blockId} ${property.name}">`
                         }
                         document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", htmlToAdd)
                         document.querySelector(`[data-id='${blockId} ${property.name}']`).addEventListener("change", event => propertyChanged(event, blockId, property.name))
-                    } else if (property.schema != null) {
                     }
                 });
 
@@ -238,8 +237,21 @@ document.addEventListener("DOMContentLoaded", function () {
                 let fileJson = JSON.parse(event.target.result);
                 //TODO do better input validation
                 if (fileJson.info) {
-                    swaggerJson = fileJson;
-                    populateBlocks();
+                    let fileJsonKeys = Object.keys(fileJson)
+                    if(fileJsonKeys.includes("swagger") || (fileJsonKeys.includes("openapi") && parseInt(fileJson["openapi"].charAt(0)) < 3)) {
+                        // Swagger JSON is outdated.  Convert to openAPI V3 standard
+                        convertV2ToV3(fileJson).then(result => {
+                            swaggerJson = result
+                            populateBlocks();
+                        })
+                    } else if (!fileJsonKeys.includes("openapi")) {
+                        // The first line in a valid Swagger JSON file should be the version (i.e. swagger or openapi)
+                        throw new Error("Not a real swagger json file?");
+                    } else {
+                        // The provided Swagger JSON is good as-is
+                        swaggerJson = fileJson;
+                        populateBlocks();
+                    }
                 } else {
                     throw new Error("Not a real swagger json file?");
                 }

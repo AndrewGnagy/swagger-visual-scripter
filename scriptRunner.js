@@ -1,6 +1,5 @@
 let flowVariables = {};
 let chartProperties = {};
-let baseUrl = "https://nuthatch.lastelm.software/";
 
 function executeScript(chartProperties) {
     //Start with root block
@@ -92,7 +91,13 @@ function executeApiBlock(block) {
     }
     console.log("Making " + method + " request to: " + path);
     //TODO uncomment when complete
-    makeRequest(method, path, data).then(response => {
+    let baseUrl = "https://nuthatch.lastelm.software";
+    let httpRequest = new XMLHttpRequest();
+    httpRequest.open(method, baseUrl + path);
+    httpRequest.setRequestHeader("Content-Type", "application/json");
+    httpRequest.setRequestHeader("api-key", "130eff77-4b97-41d2-9198-d8e52e5dc96c");
+
+    makeRequest(httpRequest).then(response => {
       console.log("response: " + response)
       flowVariables['lastResult'] = response
     });
@@ -105,9 +110,21 @@ function resolveVariable(myvar) {
     // }, flowVariables);
 }
 
-let makeRequest = async (method, path, data) => {
+let convertV2ToV3 = async (jsonToConvert) => {
+  let url = "https://converter.swagger.io/api/convert"
+  method = "POST"
+  data = JSON.stringify(jsonToConvert)
+
+  console.log("Making " + method + " request to: " + url)
+  
+  let httpRequest = new XMLHttpRequest();
+  httpRequest.open(method, url);
+  httpRequest.setRequestHeader("Content-Type", "application/json");
+  return makeRequest(httpRequest)
+}
+
+let makeRequest = async (httpRequest) => {
     return await new Promise((resolve, reject) => {
-      let httpRequest = new XMLHttpRequest();
       httpRequest.onreadystatechange = () => {
         if (httpRequest.readyState == 4 && httpRequest.status == 200) {
           console.log("responseText:" + httpRequest.responseText);
@@ -127,9 +144,6 @@ let makeRequest = async (method, path, data) => {
       httpRequest.onerror = () => {
         reject(Error("There was a network error."));
       };
-      httpRequest.open(method, baseUrl + path);
-      httpRequest.setRequestHeader("Content-Type", "application/json");
-      httpRequest.setRequestHeader("api-key", "130eff77-4b97-41d2-9198-d8e52e5dc96c");
       httpRequest.send(data);
     });
   };
