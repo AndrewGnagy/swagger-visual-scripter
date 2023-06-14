@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let specialBlockCheck = block.querySelector('[name="logic"]');
         let blockId = parseInt(block.querySelector(".blockid").value);
         chartProperties[blockId] = {}
-        
+
         if (specialBlockCheck && specialBlockCheck.value == "if") {
             //This seems hacky???
             setTimeout(function () {
@@ -105,8 +105,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if(chartPropertiesKeys.includes(flowy.getActiveBlockId())) {
             flowy.deleteBranch(flowy.getActiveBlockId())
-            Object.keys(chartProperties).forEach(key => {
-                if (flowy.getBlock(key) == null) {
+            chartPropertiesKeys.forEach(key => {
+                // TODO: this will delete more blocks than you want
+                if (key >= flowy.getActiveBlockId() && getBlock(key)) {
                     delete chartProperties[flowy.getActiveBlockId()]
                 }
             })
@@ -148,7 +149,7 @@ document.addEventListener("DOMContentLoaded", function () {
             let blockEl = event.target.closest(".block");
             let blockId = flowy.getActiveBlockId();
             if (blockEl && !blockEl.classList.contains("dragging")) {
-                if (chartProperties[blockId] == null) {
+                if (Object.keys(chartProperties[blockId]).length == 0) {
                     flowyBlock = getBlock(blockId);
                     let method = getDataProperty(flowyBlock["data"], "method");
                     let path = getDataProperty(flowyBlock["data"], "path");
