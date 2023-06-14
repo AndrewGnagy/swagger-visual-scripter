@@ -64,6 +64,19 @@ body, html {
     /* top: 18px; */
     margin-top: 10px;
 }
+
+#swaggerName {
+    position: absolute;
+    width: 222px;
+    left: 50%;
+    margin-left: -70px;
+    top: 40px;
+    margin-top: 10px;
+    font-family: Roboto;
+    font-weight: bold;
+    color: #7149C6;
+
+}
 #leftswitch {
     border: 1px solid #E8E8EF;
     background-color: #7149C6;
@@ -868,8 +881,8 @@ SELECT {
   padding: 20px;
   border: 0.5px solid #E8E8EF;
   border-radius: 5px;
-  width: 50%;
-  height: 45%;
+  width: 55%;
+  height: 50%;
   z-index: 12;
 }
 
@@ -891,6 +904,10 @@ SELECT {
     margin-bottom: 10px;
     text-indent: 15px;
     width: 95%;
+}
+
+#authBearer {
+    margin-bottom: 40px !important;
 }
 
 .settingsinput:focus-visible {
