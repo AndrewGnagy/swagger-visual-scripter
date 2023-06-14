@@ -46,7 +46,7 @@ Vanilla JS! That's right. This project has only one dependency.
 
 <!-- USAGE EXAMPLES -->
 ## Usage
-To start, load any valid
+To start, load any valid JSON file describing your API.
 
 ### Variables
 Pre-defined variables
