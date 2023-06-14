@@ -31,8 +31,10 @@ document.addEventListener("DOMContentLoaded", function () {
     function snapping(block, first, parent) {
         //Element can be modified here
         let specialBlockCheck = block.querySelector('[name="logic"]');
+        let blockId = parseInt(block.querySelector(".blockid").value);
+        chartProperties[blockId] = {}
+        
         if (specialBlockCheck && specialBlockCheck.value == "if") {
-            let blockId = parseInt(block.querySelector(".blockid").value);
             //This seems hacky???
             setTimeout(function () {
                 flowy.addBlock(
@@ -145,7 +147,7 @@ document.addEventListener("DOMContentLoaded", function () {
             document.querySelectorAll(".selectedblock").forEach((el) => el.classList.remove("selectedblock"));
             let blockEl = event.target.closest(".block");
             let blockId = flowy.getActiveBlockId();
-            if(blockEl) {
+            if (blockEl && !blockEl.classList.contains("dragging")) {
                 if (chartProperties[blockId] == null) {
                     flowyBlock = getBlock(blockId);
                     let method = getDataProperty(flowyBlock["data"], "method");
@@ -187,60 +189,58 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 }
 
-                if (!blockEl.classList.contains("dragging")) {
-                    document.getElementById("parameterinputs").innerHTML = "";
-                    //Add properties to the right card
-                    chartProperties[blockId].properties.forEach((property) => {
-                        // render the name first and with unique formatting from the rest of the data
-                        document
-                            .getElementById("parameterinputs")
-                            .insertAdjacentHTML("beforeend", `<h3 class="propheader">Name: ${property.name}</h3>`);
-                        
-                        // Populate the property text fields
-                        Object.keys(property).forEach((propertyKey) => {
-                            if (propertyKey == "schema") {
-                                document
-                                    .getElementById("parameterinputs")
-                                    .insertAdjacentHTML(
-                                        "beforeend",
-                                        `<p class="propdata">${propertyKey.toUpperCase()}: ${JSON.stringify(
-                                            property[propertyKey]
-                                        )}</p>`
-                                    );
-                            } else if (propertyKey != "name") {
-                                document
-                                    .getElementById("parameterinputs")
-                                    .insertAdjacentHTML(
-                                        "beforeend",
-                                        `<p class="propdata">${propertyKey.toUpperCase()}: ${property[propertyKey]}</p>`
-                                    );
-                            }
-                        });
-
-                        // Populate the input fields
-                        if(property.schema != null) {
-                            let propertyType = property.schema.type // Might be null if property.schema.enum
-                            let htmlToAdd
-                            if(property.schema.enum) {
-                                let options = property.schema.enum.map(val => `<option value="${val}">${val}</option>`);
-                                htmlToAdd = `<select class="dropme" data-id="${blockId} ${property.name}">${options.join("\n")}</select>`
-                            } else if(propertyType == "string" || propertyType == "integer") {
-                                htmlToAdd = `<input class="propinput" type="text" data-id="${blockId} ${property.name}">`
-                            } else if (propertyType == "boolean") {
-                                htmlToAdd = `<input type="checkbox" data-id="${blockId} ${property.name}">`
-                            }
-                            document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", htmlToAdd)
-                            document.querySelector(`[data-id='${blockId} ${property.name}']`).addEventListener("change", event => propertyChanged(event, blockId, property.name))
+                document.getElementById("parameterinputs").innerHTML = "";
+                //Add properties to the right card
+                chartProperties[blockId].properties.forEach((property) => {
+                    // render the name first and with unique formatting from the rest of the data
+                    document
+                        .getElementById("parameterinputs")
+                        .insertAdjacentHTML("beforeend", `<h3 class="propheader">Name: ${property.name}</h3>`);
+                    
+                    // Populate the property text fields
+                    Object.keys(property).forEach((propertyKey) => {
+                        if (propertyKey == "schema") {
+                            document
+                                .getElementById("parameterinputs")
+                                .insertAdjacentHTML(
+                                    "beforeend",
+                                    `<p class="propdata">${propertyKey.toUpperCase()}: ${JSON.stringify(
+                                        property[propertyKey]
+                                    )}</p>`
+                                );
+                        } else if (propertyKey != "name") {
+                            document
+                                .getElementById("parameterinputs")
+                                .insertAdjacentHTML(
+                                    "beforeend",
+                                    `<p class="propdata">${propertyKey.toUpperCase()}: ${property[propertyKey]}</p>`
+                                );
                         }
                     });
 
-                    //Pop the right card and highlight the block
-                    tempblock = event.target.closest(".block");
-                    rightcard = true;
-                    document.getElementById("properties").classList.add("expanded");
-                    document.getElementById("propwrap").classList.add("itson");
-                    tempblock.classList.add("selectedblock");
-                }
+                    // Populate the input fields
+                    if(property.schema != null) {
+                        let propertyType = property.schema.type // Might be null if property.schema.enum
+                        let htmlToAdd
+                        if(property.schema.enum) {
+                            let options = property.schema.enum.map(val => `<option value="${val}">${val}</option>`);
+                            htmlToAdd = `<select class="dropme" data-id="${blockId} ${property.name}">${options.join("\n")}</select>`
+                        } else if(propertyType == "string" || propertyType == "integer") {
+                            htmlToAdd = `<input class="propinput" type="text" data-id="${blockId} ${property.name}">`
+                        } else if (propertyType == "boolean") {
+                            htmlToAdd = `<input type="checkbox" data-id="${blockId} ${property.name}">`
+                        }
+                        document.getElementById("parameterinputs").insertAdjacentHTML("beforeend", htmlToAdd)
+                        document.querySelector(`[data-id='${blockId} ${property.name}']`).addEventListener("change", event => propertyChanged(event, blockId, property.name))
+                    }
+                });
+
+                //Pop the right card and highlight the block
+                tempblock = event.target.closest(".block");
+                rightcard = true;
+                document.getElementById("properties").classList.add("expanded");
+                document.getElementById("propwrap").classList.add("itson");
+                tempblock.classList.add("selectedblock");
             }
         }
     };
