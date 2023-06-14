@@ -296,6 +296,8 @@ document.addEventListener("DOMContentLoaded", function () {
                         baseUrl = fileJson.servers[0].url;
                         document.querySelector("#baseUrl").value = baseUrl;
                     }
+                    document.getElementById("swaggerName").innerHTML = fileJson?.info?.title || "";
+                    document.getElementById("swaggerVersion").innerHTML = fileJson?.info?.version ? `v${fileJson?.info?.version}` : "";
                     let fileJsonKeys = Object.keys(fileJson)
                     if(fileJsonKeys.includes("swagger") || (fileJsonKeys.includes("openapi") && parseInt(fileJson["openapi"].charAt(0)) < 3)) {
                         // Swagger JSON is outdated.  Convert to openAPI V3 standard

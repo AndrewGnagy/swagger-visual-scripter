@@ -126,6 +126,14 @@ function executeApiBlock(block, iterableItems) {
                 path = path.replace(`{${property.name}}`, value);
             } else if(property.in && property.in == "body") {
                 data = property.value;
+                //Resolve any variables in the body
+                data = data.split(" ").map(symb => {
+                    if(symb.startsWith("$")) {
+                        let res = resolveVariable(symb);
+                        return JSON.stringify(res);
+                    }
+                    return symb;
+                }).join(" ");
             }
         });
     }
