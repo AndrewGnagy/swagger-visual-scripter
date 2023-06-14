@@ -620,11 +620,6 @@ var flowy = function(canvas, grab, release, snapping, rearrange, spacing_x, spac
             return element.parentNode && hasParentClass(element.parentNode, classname);
         }
 
-        flowy.getBlock = function(id) {
-            let querySelector = document.querySelector(".blockid[value='" + id + "']")
-            return querySelector == null ? null : querySelector.parentNode;
-        }
-
         flowy.getActiveBlockId = function() {
             return lastblock;
         }
