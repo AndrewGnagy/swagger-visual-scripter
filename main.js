@@ -1,3 +1,13 @@
+/**
+ * {
+ *  flowyId: {
+ *      path: "",
+ *      properties: []
+ *  }
+ * }
+ */
+let chartProperties = {};
+
 document.addEventListener("DOMContentLoaded", function () {
     let swaggerJson;
     var rightcard = false;
@@ -14,16 +24,6 @@ document.addEventListener("DOMContentLoaded", function () {
             generateBlock("Add log", "Logs a given input", undefined, [{ name: "logic", value: "log" }])
         ]
     };
-
-    /**
-     * {
-     *  flowyId: {
-     *      path: "",
-     *      properties: []
-     *  }
-     * }
-     */
-    var chartProperties = {};
 
     flowy(document.getElementById("canvas"), drag, release, snapping, rearrange);
     function snapping(block, first, parent) {
