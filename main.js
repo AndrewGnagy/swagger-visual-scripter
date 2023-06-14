@@ -147,7 +147,9 @@ document.addEventListener("DOMContentLoaded", function () {
                                     name: "expression",
                                     description: "what to evaluate",
                                     required: "true",
-                                    type: "string"
+                                    schema: {
+                                        type: "string"
+                                    }
                                 }
                             ]
                         };

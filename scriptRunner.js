@@ -20,7 +20,21 @@ function executeBlock(id) {
             console.log(blockType);
             switch(blockType) {
                 case "if":
-                    let expressionResult = Parser.evaluate(chartProperties[id].properties.value);
+                    let expression = chartProperties[id].properties[0].value;
+                    //Replace variables with literals
+                    expression = expression.split(" ").map(symb => {
+                        if(symb.startsWith("$")) {
+                            let res = resolveVariable(symb);
+                            if(typeof res == "string") {
+                                return `"${res}"`;
+                            }
+                            return res;
+                        }
+                        return symb;
+                    }).join(" ");
+                    // let expressionResult = Parser.evaluate(chartProperties[id].properties[0].value);
+                    let expressionResult = eval(expression);
+                    swagLog(`If result: ${!!expressionResult}`);
                     let trueFalseBlock = expressionResult ? 0 : 1;
                     executeBlock(children[trueFalseBlock].id);
                     return;
@@ -46,9 +60,9 @@ function executeBlock(id) {
         return;
     }
 
-    // for(let i = 0; i < children.length; i++) {
-    //     executeBlock(children[i].id);
-    // }
+    if(children.length > 0) {
+        executeBlock(children[0].id);
+    }
 }
 
 function getBlock(id) {
@@ -112,7 +126,7 @@ function executeApiBlock(block) {
 
 function resolveVariable(myvar) {
     myvar = myvar.replace("$", "");
-    let result = "";
+    let result = undefined;
     try {
         result = myvar.split(".").reduce((o, k) => {
         //Something to account for []
@@ -126,23 +140,25 @@ function resolveVariable(myvar) {
 }
 
 let convertV2ToV3 = async (jsonToConvert) => {
-    let url = "https://converter.swagger.io/api/convert"
-    method = "POST"
-    data = JSON.stringify(jsonToConvert)
+    let url = "https://converter.swagger.io/api/convert";
+    method = "POST";
+    data = JSON.stringify(jsonToConvert);
 
     console.log("Making " + method + " request to: " + url);
 
     let httpRequest = new XMLHttpRequest();
     httpRequest.open(method, url);
     httpRequest.setRequestHeader("Content-Type", "application/json");
-    return makeRequest(httpRequest)
+    return makeRequest(httpRequest, false);
 }
 
-let makeRequest = async (httpRequest) => {
+let makeRequest = async (httpRequest, doLog=true) => {
     return await new Promise((resolve, reject) => {
         httpRequest.onreadystatechange = () => {
         if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-            swagLog("responseText:" + httpRequest.responseText);
+            if (doLog) {
+                swagLog("responseText:" + httpRequest.responseText);
+            }
             try {
                 flowVariables['lastStatus'] = httpRequest.status;
                 if(httpRequest.responseText) {
