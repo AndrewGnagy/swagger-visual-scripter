@@ -316,7 +316,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
                 let blockHtml = generateBlock(
                     pathMethod + " " + path,
-                    swaggerJson.paths[path][pathMethod]["summary"],
+                    swaggerJson.paths[path][pathMethod]["summary"] || swaggerJson.paths[path][pathMethod]["description"],
                     "assets/arrow.svg",
                     [
                         { name: "method", value: pathMethod },
