@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };
     addEventListenerMulti("click", blockNavClick, false, ".side");
     //Right menu
-    document.getElementById("close").addEventListener("click", function () {
+    document.getElementById("propertiesClose").addEventListener("click", function () {
         if (rightcard) {
             rightcard = false;
             document.getElementById("properties").classList.remove("expanded");
@@ -335,4 +335,21 @@ document.addEventListener("DOMContentLoaded", function () {
     };
     const runBtn = document.querySelector("#runscript");
     runBtn.addEventListener("click", runScript, false);
+
+    // Settings Modal
+    const settingsModal = document.querySelector("#settingsModal")
+
+    let openSettingsModal = function () {
+        settingsModal.style.display = "block";
+    };
+
+    let closeSettingsModal = function () {
+        settingsModal.style.display = "none";
+    };
+
+    const settingsBtn = document.querySelector("#settingsBtn");
+    settingsBtn.addEventListener("click", openSettingsModal, false);
+
+    const settingsCloseBtn = document.querySelector("#settingsClose")
+    settingsCloseBtn.addEventListener("click", closeSettingsModal, false);
 });
