@@ -55,8 +55,8 @@ function executeBlock(id) {
         setTimeout(function () {
             blockEl.classList.remove("errorblock");
         }, 5000);
-        console.log(`Error running block: ${id}`);
-        console.log(e);
+        swagLog(`Error running block: ${id}`);
+        swagLog(e);
         return;
     }
 
@@ -91,7 +91,6 @@ function executeApiBlock(block) {
     console.log("Api");
     let method = getDataProperty(block["data"], "method");
     let path = getDataProperty(block["data"], "path");
-    let data = undefined; //TODO gather params and such
     //Get query and path properties
     if (chartProperties[block.id] !== undefined && chartProperties[block.id] !== undefined) {
         chartProperties[block.id].properties.forEach(property => {
@@ -133,7 +132,7 @@ function resolveVariable(myvar) {
         return o && o[k];
         }, flowVariables);
     } catch(e) {
-        console.log(`Var ${myvar} couldn't be found`);
+        swagLog(`Var ${myvar} couldn't be found`);
         throw new Error(`Variable ${myvar} could not be resolved`);
     }
     return result;
