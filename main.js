@@ -23,7 +23,9 @@ document.addEventListener("DOMContentLoaded", function () {
      *  }
      * }
      */
-    var chartProperties = {};
+    let chartProperties = {};
+
+    let blockGroups = []
 
     flowy(document.getElementById("canvas"), drag, release, snapping, rearrange);
     function snapping(block, first, parent) {
@@ -43,6 +45,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         .childNodes[0],
                     blockId
                 );
+
+                // Accounts for the True/False branch blocks, this is also hacky
+                blockGroups[blockId] = [blockId + 1, blockId + 2]
             }, 250);
         }
 
@@ -94,7 +99,20 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     //Delete buttons
     document.getElementById("removeblock").addEventListener("click", function () {
-        flowy.deleteBranch(flowy.getActiveBlockId());
+        let blockId = flowy.getActiveBlockId()
+        if(Object.keys(blockGroups).includes(blockId)) {
+            blockGroups[blockId].forEach(id => flowy.deleteBlock(id))
+            blockGroups.splice(blockId, 1)
+        }
+        if(!blockGroups.flat(1).map(String).includes(blockId)) {
+            flowy.deleteBlock(blockId);
+
+            if(Object.keys(chartProperties).includes(blockId)) {
+                delete chartProperties[blockId]
+            }
+        }
+
+        console.log(chartProperties)
     });
 
     //Block click events
@@ -157,6 +175,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         };
                     }
                 }
+                console.log(chartProperties)
 
                 document.getElementById("parameterinputs").innerHTML = "";
                 //Add properties to the right card
