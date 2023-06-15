@@ -335,9 +335,6 @@ document.addEventListener("DOMContentLoaded", function () {
         reader.readAsText(event.target.files[0]);
     };
     let populateBlocks = function () {
-        // TODO: once we support importing from multiple APIs, we should remove this line
-        document.getElementById("blocklist").innerHTML = ""
-        
         apiPaths = Object.keys(swaggerJson.paths);
         for (let i = 0; i < apiPaths.length; i++) {
             let path = apiPaths[i];
