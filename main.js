@@ -292,11 +292,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 let fileJson = JSON.parse(event.target.result);
 
                 let fileJsonKeys = Object.keys(fileJson)
-                if(fileJsonKeys.includes("swaggerJson") && fileJsonKeys.includes("flowyOutput") && fileJsonKeys.includes("chartProperties")) {
+                if(fileJsonKeys.includes("swaggerJson") || fileJsonKeys.includes("flowyOutput") || fileJsonKeys.includes("chartProperties")) {
                     // We are importing a previously Exported flow chart
-                    swaggerJson = fileJson.swaggerJson
-                    flowy.import(fileJson.flowyOutput)  // TODO: This is unsafe!
-                    chartProperties = fileJson.chartProperties
+                    if (fileJsonKeys.includes("swaggerJson")) swaggerJson = fileJson.swaggerJson
+                    if (fileJsonKeys.includes("flowyOutput")) flowy.import(fileJson.flowyOutput)  // TODO: This is unsafe!
+                    if (fileJsonKeys.includes("chartProperties")) chartProperties = fileJson.chartProperties
                     populateBlocks()
                     return
                 }
@@ -335,6 +335,9 @@ document.addEventListener("DOMContentLoaded", function () {
         reader.readAsText(event.target.files[0]);
     };
     let populateBlocks = function () {
+        // TODO: once we support importing from multiple APIs, we should remove this line
+        document.getElementById("blocklist").innerHTML = ""
+        
         apiPaths = Object.keys(swaggerJson.paths);
         for (let i = 0; i < apiPaths.length; i++) {
             let path = apiPaths[i];
