@@ -290,6 +290,17 @@ document.addEventListener("DOMContentLoaded", function () {
         reader.onload = function (event) {
             try {
                 let fileJson = JSON.parse(event.target.result);
+
+                let fileJsonKeys = Object.keys(fileJson)
+                if(fileJsonKeys.includes("swaggerJson") && fileJsonKeys.includes("flowyOutput") && fileJsonKeys.includes("chartProperties")) {
+                    // We are importing a previously Exported flow chart
+                    swaggerJson = fileJson.swaggerJson
+                    flowy.import(fileJson.flowyOutput)  // TODO: This is unsafe!
+                    chartProperties = fileJson.chartProperties
+                    populateBlocks()
+                    return
+                }
+
                 //TODO do better input validation
                 if (fileJson.info) {
                     if(fileJson.servers && fileJson.servers.length > 0) {
@@ -298,7 +309,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                     document.getElementById("swaggerName").innerHTML = fileJson?.info?.title || "";
                     document.getElementById("swaggerVersion").innerHTML = fileJson?.info?.version ? `v${fileJson?.info?.version}` : "";
-                    let fileJsonKeys = Object.keys(fileJson)
                     if(fileJsonKeys.includes("swagger") || (fileJsonKeys.includes("openapi") && parseInt(fileJson["openapi"].charAt(0)) < 3)) {
                         // Swagger JSON is outdated.  Convert to openAPI V3 standard
                         convertV2ToV3(fileJson).then(result => {
@@ -444,8 +454,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
     setBaseUrlAtStartup()
 
+    let exportChart = function () {
+        const saveJson = document.createElement( "a" );
+        let flowyOutput = flowy.output()
+        let outputData = JSON.stringify({ swaggerJson: swaggerJson, flowyOutput: flowyOutput, chartProperties: chartProperties })
+        saveJson.href = URL.createObjectURL(new Blob([outputData], {type: "application/json"}));
+        saveJson.download= "swaggerFlowChart.json";
+        saveJson.click();
+        setTimeout(() => URL.revokeObjectURL( saveJson.href ), 60000 );
+    }
+
     const consoleCloseBtn = document.querySelector("#consoleClose");
     consoleCloseBtn.addEventListener("click", closeBottom, false);
+
+    const exportBtn = document.querySelector("#export");
+    exportBtn.addEventListener("click", exportChart, false);
 });
 
 function openBottom() {
