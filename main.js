@@ -136,6 +136,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
     var doneTouch = function (event) {
         if (event.type === "mouseup" && aclick && !noinfo) {
+
+        Object.keys(swaggerJson.paths).forEach(path => {
+            Object.keys(swaggerJson.paths[path]).forEach(method => {
+                if(swaggerJson.paths[path][method].parameters) {
+                    swaggerJson.paths[path][method].parameters.forEach(parameter => {
+                        if(parameter.value) {
+                            console.log(parameter.value)
+                            delete parameter.value
+                        }
+                    })
+                }
+                // if(swaggerJson.paths[path][method].parameters && swaggerJson.paths[path][method].parameters.value) {
+                //     console.log(swaggerJson.paths[path][method].parameters.value)
+                //     delete swaggerJson.paths[path][method].parameters.value
+                // }
+            })
+        })
+
             document.querySelectorAll(".selectedblock").forEach((el) => el.classList.remove("selectedblock"));
             let blockEl = event.target.closest(".block");
             let blockId = flowy.getActiveBlockId();
@@ -149,6 +167,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                         //Properties for Swagger methods
                         if (method) {
+                            console.log(swaggerJson)
                             //Set chartProperties to match block
                             Object.keys(swaggerJson.paths).forEach((swaggerPath) => {
                                 if (swaggerPath == path) {
@@ -159,6 +178,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                                 path: method + " " + path,
                                                 properties: swaggerJson.paths[swaggerPath][pathMethod].parameters || []
                                             };
+
                                             if(swaggerJson.paths[swaggerPath][pathMethod].requestBody) {
                                                 let examples = swaggerJson.paths[swaggerPath][pathMethod].requestBody.content?.["application/json"]?.examples;
                                                 chartProperties[blockId].properties.push({
@@ -268,17 +288,20 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     function propertyChanged(event, blockId, propertyName) {
+        console.log(swaggerJson.paths)
         let value;
         if(event.target.type == "checkbox") {
             value = event.currentTarget.checked;
         } else {
             value = event.target.value;
         }
-
+        console.log(swaggerJson.paths)
         let properties = chartProperties[blockId].properties;
         for(let i = 0; i < properties.length; i++) {
             if(properties[i].name == propertyName) {
+                console.log(swaggerJson.paths)
                 properties[i].value = value;
+                console.log(swaggerJson.paths)
                 break;
             }
         }
@@ -296,7 +319,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     // We are importing a previously Exported flow chart
                     if (fileJsonKeys.includes("swaggerJson")) swaggerJson = fileJson.swaggerJson
                     if (fileJsonKeys.includes("flowyOutput")) flowy.import(fileJson.flowyOutput)  // TODO: This is unsafe!
-                    if (fileJsonKeys.includes("chartProperties")) chartProperties = fileJson.chartProperties
+                    if (fileJsonKeys.includes("chartProperties")) {
+                        chartProperties = fileJson.chartProperties
+
+                    }
                     populateBlocks()
                     return
                 }
