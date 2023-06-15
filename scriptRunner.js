@@ -20,7 +20,8 @@ function executeBlock(id, iterableItems) {
     try {
         //If it's an API block, do a thing
         if (getDataProperty(block["data"], "method")) {
-            return executeApiBlock(block, iterableItems);
+
+            return executeApiBlock(block, iterableItems?.slice(1));
         } else if (getDataProperty(block["data"], "logic")) { //Handle if or for blocks
             let blockType = getDataProperty(block["data"], "logic");
             console.log(blockType);
@@ -50,14 +51,8 @@ function executeBlock(id, iterableItems) {
             }
         }
     } catch (e) {
-        //Highlight block in error for 5sec
-        let blockEl = document.querySelector(".blockid[value='" + id + "']").parentElement;
-        blockEl.classList.add("errorblock");
-        setTimeout(function () {
-            blockEl.classList.remove("errorblock");
-        }, 5000);
-        swagLog(`Error running block: ${id}`);
-        swagLog(e);
+        errorHighlight(id);
+        swagLog(e.toString());
         return;
     }
 
@@ -67,6 +62,16 @@ function executeBlock(id, iterableItems) {
     if(children.length > 0) {
         return executeBlock(children[0].id, iterableItems);
     }
+}
+
+function errorHighlight(id) {
+    //Highlight block in error for 5sec
+    let blockEl = document.querySelector(".blockid[value='" + id + "']").parentElement;
+    blockEl.classList.add("errorblock");
+    setTimeout(function () {
+        blockEl.classList.remove("errorblock");
+    }, 5000);
+    swagLog(`Error running block: ${id}`);
 }
 
 function processExpression(expression) {
@@ -154,7 +159,7 @@ function executeApiBlock(block, iterableItems) {
         if(iterableItems != undefined) {
             //flowVariables['loop'][iterableItems.length] = result;
             if(iterableItems.length > 0) {
-                return executeBlock(block.id, iterableItems.slice(1));
+                return executeBlock(block.id, iterableItems);
             }
         }
         flowVariables['lastResult'] = result;
@@ -162,6 +167,8 @@ function executeApiBlock(block, iterableItems) {
         if (children.length > 0) {
             executeBlock(children[0].id, iterableItems);
         }
+    }).catch(e => {
+        errorHighlight(block.id);
     });
 }
 
