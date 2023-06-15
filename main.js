@@ -284,38 +284,41 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    let processSwaggerJson = function(fileJson) {
+        if (fileJson.info) {
+            if(fileJson.servers && fileJson.servers.length > 0) {
+                baseUrl = fileJson.servers[0].url;
+                document.querySelector("#baseUrl").value = baseUrl;
+            }
+            document.getElementById("swaggerName").innerHTML = fileJson?.info?.title || "";
+            document.getElementById("swaggerVersion").innerHTML = fileJson?.info?.version ? `v${fileJson?.info?.version}` : "";
+            let fileJsonKeys = Object.keys(fileJson)
+            if(fileJsonKeys.includes("swagger") || (fileJsonKeys.includes("openapi") && parseInt(fileJson["openapi"].charAt(0)) < 3)) {
+                // Swagger JSON is outdated.  Convert to openAPI V3 standard
+                convertV2ToV3(fileJson).then(result => {
+                    swaggerJson = result
+                    populateBlocks();
+                })
+            } else if (!fileJsonKeys.includes("openapi")) {
+                // The first line in a valid Swagger JSON file should be the version (i.e. swagger or openapi)
+                throw new Error("Not a real swagger json file?");
+            } else {
+                // The provided Swagger JSON is good as-is
+                swaggerJson = fileJson;
+                populateBlocks();
+            }
+        } else {
+            throw new Error("Not a real swagger json file?");
+        }
+    }
+
     let importSwagger = function (event) {
         var reader = new FileReader();
 
         reader.onload = function (event) {
             try {
                 let fileJson = JSON.parse(event.target.result);
-                //TODO do better input validation
-                if (fileJson.info) {
-                    if(fileJson.servers && fileJson.servers.length > 0) {
-                        baseUrl = fileJson.servers[0].url;
-                        document.querySelector("#baseUrl").value = baseUrl;
-                    }
-                    document.getElementById("swaggerName").innerHTML = fileJson?.info?.title || "";
-                    document.getElementById("swaggerVersion").innerHTML = fileJson?.info?.version ? `v${fileJson?.info?.version}` : "";
-                    let fileJsonKeys = Object.keys(fileJson)
-                    if(fileJsonKeys.includes("swagger") || (fileJsonKeys.includes("openapi") && parseInt(fileJson["openapi"].charAt(0)) < 3)) {
-                        // Swagger JSON is outdated.  Convert to openAPI V3 standard
-                        convertV2ToV3(fileJson).then(result => {
-                            swaggerJson = result
-                            populateBlocks();
-                        })
-                    } else if (!fileJsonKeys.includes("openapi")) {
-                        // The first line in a valid Swagger JSON file should be the version (i.e. swagger or openapi)
-                        throw new Error("Not a real swagger json file?");
-                    } else {
-                        // The provided Swagger JSON is good as-is
-                        swaggerJson = fileJson;
-                        populateBlocks();
-                    }
-                } else {
-                    throw new Error("Not a real swagger json file?");
-                }
+                processSwaggerJson(fileJson);
             } catch (e) {
                 //TODO
                 console.log("Error reading swagger json");
@@ -446,6 +449,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const consoleCloseBtn = document.querySelector("#consoleClose");
     consoleCloseBtn.addEventListener("click", closeBottom, false);
+
+    //If there's a swagger.json file in this directory, process it automatically
+    fetch("./swagger.json").then(processSwaggerJson);
 });
 
 function openBottom() {
