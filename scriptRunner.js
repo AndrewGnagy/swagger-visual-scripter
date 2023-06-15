@@ -27,7 +27,7 @@ function executeBlock(id, iterableItems) {
             switch(blockType) {
                 case "if":
                     let ifResult = processExpression(chartProperties[id].properties[0].value);
-                    swagLog(`If result: ${!!expressionResult}`);
+                    swagLog(`If result: ${!!ifResult}`);
                     let trueFalseBlock = ifResult ? 0 : 1;
                     executeBlock(children[trueFalseBlock].id);
                     return;
