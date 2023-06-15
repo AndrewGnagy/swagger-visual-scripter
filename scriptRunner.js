@@ -154,7 +154,7 @@ function executeApiBlock(block, iterableItems) {
         if(iterableItems != undefined) {
             //flowVariables['loop'][iterableItems.length] = result;
             if(iterableItems.length > 0) {
-                return executeBlock(block.id, iterableItems);
+                return executeBlock(block.id, iterableItems.slice(1));
             }
         }
         flowVariables['lastResult'] = result;
