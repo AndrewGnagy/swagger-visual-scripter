@@ -29,7 +29,10 @@ function executeBlock(id, iterableItems) {
                     let ifResult = processExpression(chartProperties[id].properties[0].value);
                     swagLog(`If result: ${!!ifResult}`);
                     let trueFalseBlock = ifResult ? 0 : 1;
-                    executeBlock(children[trueFalseBlock].id);
+                    let grandChildBlocks = getChildBlocks(children[trueFalseBlock].id)
+                    if (grandChildBlocks.length > 0) {
+                      executeBlock(grandChildBlocks[0].id);
+                    }
                     return;
                 case "for":
                     let loopExpressionResult = processExpression(chartProperties[id].properties[0].value);
