@@ -7,6 +7,7 @@
  * }
  */
 let chartProperties = {};
+let PACKAGED;
 
 document.addEventListener("DOMContentLoaded", function () {
     let swaggerJson;
