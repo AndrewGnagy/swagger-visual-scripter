@@ -92,6 +92,4 @@ Thumbs.db
 # Google cloud stuff
 dispatch.yaml
 app.yaml
-package.json
-package-lock.json
 .gcloudignore 
