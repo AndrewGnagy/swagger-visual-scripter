@@ -1,18 +1,22 @@
 {
-    "name": "openapi-visual-scripter",
-    "version": "1.0.0",
-    "description": "An application for creating visual script from openapi json",
-    "scripts": {
-        "start": "http-server",
-        "minify": "uglifyjs --compress --mangle --define PACKAGED=true -- main.js scriptRunner.js > dist/swag-vis-scripter.1.0.min.js"
-    },
-    "keywords": [
-        "openapi",
-        "api"
-    ],
-    "author": "Andrew Gnagy",
-    "license": "MIT",
-    "dependencies": {
-        "http-server": "^14.1.1"
-    }
+  "name": "openapi-visual-scripter",
+  "version": "1.0.0",
+  "description": "An application for creating visual script from openapi json",
+  "scripts": {
+    "start": "http-server",
+    "minify": "uglifyjs --compress --mangle --define PACKAGED=true -- main.js scriptRunner.js > dist/swag-vis-scripter.1.0.min.js",
+    "prettier": "npx prettier . --write"
+  },
+  "keywords": [
+    "openapi",
+    "api"
+  ],
+  "author": "Andrew Gnagy",
+  "license": "MIT",
+  "dependencies": {
+    "http-server": "^14.1.1"
+  },
+  "devDependencies": {
+    "prettier": "3.0.0"
+  }
 }
