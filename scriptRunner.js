@@ -17,6 +17,7 @@ function executeBlock(id, iterableItems) {
   if (iterableItems && iterableItems.length > 0) {
     //Set var value for loop
     flowVariables['loopItem'] = iterableItems[0];
+    flowVariables['i'] = iterableItems[0];
   }
   try {
     //If it's an API block, do a thing
@@ -182,6 +183,7 @@ function executeApiBlock(block, iterableItems) {
         }
       }
       flowVariables['lastResult'] = result;
+      flowVariables['r'] = result;
       let children = getChildBlocks(block.id);
       if (children.length > 0) {
         executeBlock(children[0].id, iterableItems);
@@ -229,6 +231,7 @@ let makeRequest = async (httpRequest, data, doLog = true) => {
         }
         try {
           flowVariables['lastStatus'] = httpRequest.status;
+          flowVariables['s'] = httpRequest.status;
           if (httpRequest.responseText) {
             resolve(JSON.parse(httpRequest.responseText));
           } else {

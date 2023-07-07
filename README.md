@@ -50,9 +50,9 @@ To start, load any valid JSON file describing your API.
 
 Pre-defined variables
 
-- `$lastResult` - the response body of the most recent API request
-- `$lastCode` - the response code of the most recent API request
-- `$loopItem` - the current item in an iteration of a for loop
+- `$lastResult` or `$r` - the response body of the most recent API request
+- `$lastStatus` or `$s` - the response code of the most recent API request
+- `$loopItem` or `$i` - the current item in an iteration of a for loop
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
