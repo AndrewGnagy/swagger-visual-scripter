@@ -398,7 +398,7 @@ document.addEventListener("DOMContentLoaded", function () {
         );
         return `<div class="blockelem create-flowy noselect blockroot">${dataFields.join(
             "\n"
-        )}<div class="grabme"><img src="assets/grabme.svg"></div><div class="blockin">                  <div class="blockico"><span></span><img src="${iconPath}"></div><div class="blocktext">                        <p class="blocktitle ${title.split(" ")[0]}">${title}</p><p class="blockdesc">${description}</p>        </div></div></div>`;
+        )}<div class="grabme"><img src="${PACKAGED ? "https://storage.googleapis.com/lastelm-static" : ""}/assets/grabme.svg"></div><div class="blockin"><div class="blockico"><span></span><img src="${PACKAGED ? "https://storage.googleapis.com/lastelm-static" : ""}/${iconPath}"></div><div class="blocktext"><p class="blocktitle ${title.split(" ")[0]}">${title}</p><p class="blockdesc">${description}</p></div></div></div>`;
     }
 
     function filterBlocks(event) {
@@ -451,7 +451,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (inputValue !== undefined && inputValue !== null && inputValue !== "") {
             baseUrl = inputValue;
         } else {
-            baseUrl = "https://nuthatch.lastelm.software/";
+            baseUrl = "";
         }
     }
 
@@ -473,9 +473,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const exportBtn = document.querySelector("#export");
     exportBtn.addEventListener("click", exportChart, false);
 
-    //If there's a swagger.json file in this directory, process it automatically
-    fetch("./swagger.json").then(processImportJson);
-
+    if(PACKAGED) {
+        //If there's a swagger.json file in this directory, process it automatically
+        fetch("./swagger.json").then(result => result.json()).then(processImportJson);
+    }
 });
 
 function openBottom() {

@@ -1,7 +1,6 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # compiled output
-/dist
 /tmp
 /out-tsc
 
@@ -89,3 +88,10 @@ lerna-debug.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# Google cloud stuff
+dispatch.yaml
+app.yaml
+package.json
+package-lock.json
+.gcloudignore 

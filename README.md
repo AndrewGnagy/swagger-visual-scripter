@@ -56,6 +56,12 @@ Pre-defined variables
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+## Minifying
+
+To minify, run this command:
+`uglifyjs --compress --mangle --define PACKAGED=true -- main.js scriptRunner.js > dist/swag-vis-scripter.1.0.min.js`
+You'll need uglifyjs globally installed
+
 <!-- ROADMAP -->
 ## Roadmap
 
