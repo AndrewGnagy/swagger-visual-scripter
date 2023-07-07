@@ -8,8 +8,6 @@
   </a>
 </div> -->
 
-
-
 <!-- TABLE OF CONTENTS -->
 <details>
   <summary>Table of Contents</summary>
@@ -24,9 +22,8 @@
   </ol>
 </details>
 
-
-
 <!-- ABOUT THE PROJECT -->
+
 ## About The Project
 
 ![Screen Shot](screenshot.png)
@@ -39,20 +36,23 @@ Swagger visual scripted allows creation of scripts using any valid Swagger v2 or
 
 Vanilla JS! That's right. This project has only one dependency.
 
-* [Flowy-V2](https://github.com/AndrewGnagy/flowy-v2)
+- [Flowy-V2](https://github.com/AndrewGnagy/flowy-v2)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
 <!-- USAGE EXAMPLES -->
+
 ## Usage
+
 To start, load any valid JSON file describing your API.
 
 ### Variables
+
 Pre-defined variables
-* `$lastResult` - the response body of the most recent API request
-* `$lastCode` - the response code of the most recent API request
-* `$loopItem` - the current item in an iteration of a for loop
+
+- `$lastResult` - the response body of the most recent API request
+- `$lastCode` - the response code of the most recent API request
+- `$loopItem` - the current item in an iteration of a for loop
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -63,6 +63,7 @@ To minify, run this command:
 You'll need uglifyjs globally installed
 
 <!-- ROADMAP -->
+
 ## Roadmap
 
 - [ ] Package and minify project
@@ -71,6 +72,7 @@ You'll need uglifyjs globally installed
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- CONTRIBUTING -->
+
 ## Contributing
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
