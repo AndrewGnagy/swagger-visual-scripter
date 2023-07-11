@@ -295,7 +295,11 @@ document.addEventListener('DOMContentLoaded', function () {
               } else if (propertyType == 'boolean') {
                 htmlToAdd = `<input type="checkbox" data-id="${blockId} ${property.name}">`;
               } else if (propertyType == 'json') {
-                htmlToAdd = `<textarea data-id="${blockId} ${property.name}">`;
+                flowyBlock = getBlock(blockId);
+                let callPath = getDataProperty(flowyBlock['data'], 'path');
+                htmlToAdd = `<textarea data-id="${blockId} ${
+                  property.name
+                }">${getModel(callPath)}`;
               }
               let parser = new DOMParser();
               let propertyElement = parser.parseFromString(
@@ -335,6 +339,35 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }
   };
+
+  function getModel(callPath) {
+    let refPath =
+      swaggerJson.paths[callPath].post.requestBody.content['application/json']
+        .schema['$ref'];
+    refPath = refPath.substring(refPath.lastIndexOf('/') + 1);
+    jsonSchema = swaggerJson.components.schemas[refPath].properties;
+    let jsonProps;
+    let text = '{\n';
+    jsonProps = Object.keys(jsonSchema).forEach((prop) => {
+      let propType = JSON.stringify(jsonSchema[prop]);
+      let typeText = ' : ';
+      if (propType.includes('array')) {
+        typeText += '[]';
+      } else if (propType.includes('string')) {
+        typeText += '""';
+      } else if (propType.includes('number') || propType.includes('integer')) {
+        typeText += '0';
+      } else if (prop.includes('boolean')) {
+        typeText += 'false';
+      } else {
+        typeText += '{}';
+      }
+      typeText += '\n';
+      text += '  ' + prop + typeText;
+    });
+    text += '}';
+    return text;
+  }
 
   function propertyChanged(event, blockId, propertyName) {
     let value;
@@ -452,16 +485,6 @@ document.addEventListener('DOMContentLoaded', function () {
         );
         addBlockToBlockList('api', blockHtml);
       }
-
-      // //Models
-      // let models;
-      // //If swagger v2
-      // if (swaggerJson["swagger"]) {
-      //     models = swaggerJson.definitions;
-      // } else if (swaggerJson["openapi"]) {
-      //     //If swagger v3
-      //     models = swaggerJson.components.schemas;
-      // }
     }
   };
   addEventListener('mousedown', beginTouch, false);
