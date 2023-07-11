@@ -340,6 +340,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   };
 
+  //get the basic model of a specific api request
   function getModel(callPath) {
     let refPath =
       swaggerJson.paths[callPath].post.requestBody.content['application/json']
