@@ -297,9 +297,10 @@ document.addEventListener('DOMContentLoaded', function () {
               } else if (propertyType == 'json') {
                 flowyBlock = getBlock(blockId);
                 let callPath = getDataProperty(flowyBlock['data'], 'path');
+                let callType = getDataProperty(flowyBlock['data'], 'method');
                 htmlToAdd = `<textarea data-id="${blockId} ${
                   property.name
-                }">${getModel(callPath)}`;
+                }">${getModel(callPath, callType)}`;
               }
               let parser = new DOMParser();
               let propertyElement = parser.parseFromString(
@@ -341,13 +342,25 @@ document.addEventListener('DOMContentLoaded', function () {
   };
 
   //get the basic model of a specific api request
-  function getModel(callPath) {
-    let refPath =
-      swaggerJson.paths[callPath].post.requestBody.content['application/json']
-        .schema['$ref'];
+  function getModel(callPath, callType) {
+    let refPath;
+    if (callType == 'post') {
+      refPath =
+        swaggerJson.paths[callPath].post.requestBody.content['application/json']
+          .schema['$ref'];
+    } else if (callType == 'put') {
+      refPath =
+        swaggerJson.paths[callPath].put.requestBody.content['application/json']
+          .schema['$ref'];
+    } else if (callType == 'patch') {
+      refPath =
+        swaggerJson.paths[callPath].patch.requestBody.content[
+          'application/json'
+        ].schema['$ref'];
+    }
+
     refPath = refPath.substring(refPath.lastIndexOf('/') + 1);
     jsonSchema = swaggerJson.components.schemas[refPath].properties;
-    let jsonProps;
     let text = '{\n';
     jsonProps = Object.keys(jsonSchema).forEach((prop) => {
       let propType = JSON.stringify(jsonSchema[prop]);
