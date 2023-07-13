@@ -49,6 +49,16 @@ function executeBlock(id, iterableItems) {
             throw new Error('For loop result was not iterable');
           }
           return;
+        case 'set':
+          let varName = chartProperties[id].properties[0].value.replace("$", "");
+          let varVal = chartProperties[id].properties[1].value;
+          try {
+            flowVariables[varName] = varVal;
+          } catch(e) {
+            swagLog(`Variable ${varName} is invalid`);
+            throw new Error(`Variable ${varName} is invalid`);
+          }
+          break;
         case 'log':
           swagLog(chartProperties[id].properties[0].value);
           break;
@@ -94,7 +104,6 @@ function processExpression(expression) {
       return symb;
     })
     .join(' ');
-  // let expressionResult = Parser.evaluate(chartProperties[id].properties[0].value);
   return eval(expression);
 }
 
