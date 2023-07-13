@@ -346,41 +346,48 @@ document.addEventListener('DOMContentLoaded', function () {
     let refPath;
     if (callType == 'post') {
       refPath =
-        swaggerJson.paths[callPath].post.requestBody.content['application/json']
-          .schema['$ref'];
+        swaggerJson.paths[callPath].post?.requestBody.content[
+          'application/json'
+        ]?.schema['$ref'];
     } else if (callType == 'put') {
       refPath =
-        swaggerJson.paths[callPath].put.requestBody.content['application/json']
-          .schema['$ref'];
+        swaggerJson.paths[callPath].put?.requestBody.content['application/json']
+          ?.schema['$ref'];
     } else if (callType == 'patch') {
       refPath =
-        swaggerJson.paths[callPath].patch.requestBody.content[
+        swaggerJson.paths[callPath].patch?.requestBody.content[
           'application/json'
-        ].schema['$ref'];
+        ]?.schema['$ref'];
     }
-
-    refPath = refPath.substring(refPath.lastIndexOf('/') + 1);
-    jsonSchema = swaggerJson.components.schemas[refPath].properties;
-    let text = '{\n';
-    jsonProps = Object.keys(jsonSchema).forEach((prop) => {
-      let propType = JSON.stringify(jsonSchema[prop]);
-      let typeText = ' : ';
-      if (propType.includes('array')) {
-        typeText += '[]';
-      } else if (propType.includes('string')) {
-        typeText += '""';
-      } else if (propType.includes('number') || propType.includes('integer')) {
-        typeText += '0';
-      } else if (prop.includes('boolean')) {
-        typeText += 'false';
-      } else {
-        typeText += '{}';
-      }
-      typeText += '\n';
-      text += '  ' + prop + typeText;
-    });
-    text += '}';
-    return text;
+    if (refPath != undefined) {
+      refPath = refPath.substring(refPath.lastIndexOf('/') + 1);
+      jsonSchema = swaggerJson.components.schemas[refPath].properties;
+      let text = '{\n';
+      jsonProps = Object.keys(jsonSchema).forEach((prop) => {
+        let propType = JSON.stringify(jsonSchema[prop]);
+        let typeText = ' : ';
+        if (propType.includes('array')) {
+          typeText += '[]';
+        } else if (propType.includes('string')) {
+          typeText += '""';
+        } else if (
+          propType.includes('number') ||
+          propType.includes('integer')
+        ) {
+          typeText += '0';
+        } else if (prop.includes('boolean')) {
+          typeText += 'false';
+        } else {
+          typeText += '{}';
+        }
+        typeText += '\n';
+        text += '  ' + prop + typeText;
+      });
+      text += '}';
+      return text;
+    } else {
+      return '';
+    }
   }
 
   function propertyChanged(event, blockId, propertyName) {
