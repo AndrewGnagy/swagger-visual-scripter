@@ -220,7 +220,7 @@ document.addEventListener('DOMContentLoaded', function () {
                   });
                 }
               });
-            } else if (logic && logic != "set") {
+            } else if (logic && logic != 'set') {
               //Properties for if and for
               chartProperties[blockId] = {
                 logic: logic,
@@ -235,7 +235,7 @@ document.addEventListener('DOMContentLoaded', function () {
                   },
                 ],
               };
-            } else if (logic && logic === "set") {
+            } else if (logic && logic === 'set') {
               //Properties for set
               chartProperties[blockId] = {
                 logic: logic,
@@ -255,7 +255,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     schema: {
                       type: 'string',
                     },
-                  }
+                  },
                 ],
               };
             } else {

@@ -50,11 +50,14 @@ function executeBlock(id, iterableItems) {
           }
           return;
         case 'set':
-          let varName = chartProperties[id].properties[0].value.replace("$", "");
+          let varName = chartProperties[id].properties[0].value.replace(
+            '$',
+            ''
+          );
           let varVal = chartProperties[id].properties[1].value;
           try {
             flowVariables[varName] = varVal;
-          } catch(e) {
+          } catch (e) {
             swagLog(`Variable ${varName} is invalid`);
             throw new Error(`Variable ${varName} is invalid`);
           }
