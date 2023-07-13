@@ -344,21 +344,10 @@ document.addEventListener('DOMContentLoaded', function () {
   //get the basic model of a specific api request
   function getModel(callPath, callType) {
     let refPath;
-    if (callType == 'post') {
-      refPath =
-        swaggerJson.paths[callPath].post?.requestBody.content[
-          'application/json'
-        ]?.schema['$ref'];
-    } else if (callType == 'put') {
-      refPath =
-        swaggerJson.paths[callPath].put?.requestBody.content['application/json']
-          ?.schema['$ref'];
-    } else if (callType == 'patch') {
-      refPath =
-        swaggerJson.paths[callPath].patch?.requestBody.content[
-          'application/json'
-        ]?.schema['$ref'];
-    }
+    refPath =
+      swaggerJson.paths[callPath][callType].requestBody.content[
+        'application/json'
+      ]?.schema['$ref'];
     if (refPath != undefined) {
       refPath = refPath.substring(refPath.lastIndexOf('/') + 1);
       jsonSchema = swaggerJson.components.schemas[refPath].properties;
