@@ -51,7 +51,6 @@ document.addEventListener('DOMContentLoaded', function () {
       ]),
     ],
   };
-
   flowy(document.getElementById('canvas'), drag, release, snapping, rearrange);
 
   function snapping(block, first, parent) {
@@ -59,7 +58,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let specialBlockCheck = block.querySelector('[name="logic"]');
     let blockId = parseInt(block.querySelector('.blockid').value);
     chartProperties[blockId] = {};
-
     if (specialBlockCheck && specialBlockCheck.value == 'if') {
       //This seems hacky???
       setTimeout(function () {
@@ -396,6 +394,29 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
+  let deepMerge = (...arguments) => {
+    let target = {};
+    let prop2;
+    let merger = (object) => {
+      for (let property in object) {
+        if (object.hasOwnProperty(property)) {
+          if (property.hasOwnProperty(prop2)) {
+            target[property][prop2] = {
+              ...target[property][prop2],
+              ...object[property][prop2],
+            };
+          } else {
+            target[property] = { ...target[property], ...object[property] };
+          }
+        }
+      }
+    };
+    for (let i = 0; i < arguments.length; i++) {
+      merger(arguments[i]);
+    }
+    return target;
+  };
+
   let processImportJson = function (fileJson) {
     let fileJsonKeys = Object.keys(fileJson);
     if (
@@ -405,11 +426,11 @@ document.addEventListener('DOMContentLoaded', function () {
     ) {
       // We are importing a previously Exported flow chart
       if (fileJsonKeys.includes('swaggerJson'))
-        swaggerJson = fileJson.swaggerJson;
+        swaggerJson = deepMerge(swaggerJson, fileJson.swaggerJson);
       if (fileJsonKeys.includes('flowyOutput'))
         flowy.import(fileJson.flowyOutput); // TODO: This is unsafe!
       if (fileJsonKeys.includes('chartProperties'))
-        chartProperties = fileJson.chartProperties;
+        chartProperties = chartProperties;
       populateBlocks();
       return;
     }
@@ -424,7 +445,7 @@ document.addEventListener('DOMContentLoaded', function () {
         fileJson?.info?.title || '';
       document.getElementById('swaggerVersion').innerHTML = fileJson?.info
         ?.version
-        ? `v${fileJson?.info?.version}`
+        ? `${fileJson?.info?.version}`
         : '';
       if (
         fileJsonKeys.includes('swagger') ||
@@ -433,7 +454,7 @@ document.addEventListener('DOMContentLoaded', function () {
       ) {
         // Swagger JSON is outdated.  Convert to openAPI V3 standard
         convertV2ToV3(fileJson).then((result) => {
-          swaggerJson = result;
+          swaggerJson = deepMerge(swaggerJson, result);
           populateBlocks();
         });
       } else if (!fileJsonKeys.includes('openapi')) {
@@ -441,7 +462,7 @@ document.addEventListener('DOMContentLoaded', function () {
         throw new Error('Not a real swagger json file?');
       } else {
         // The provided Swagger JSON is good as-is
-        swaggerJson = fileJson;
+        swaggerJson = deepMerge(swaggerJson, fileJson);
         populateBlocks();
       }
     } else {
@@ -464,6 +485,7 @@ document.addEventListener('DOMContentLoaded', function () {
     };
     reader.readAsText(event.target.files[0]);
   };
+
   let populateBlocks = function () {
     apiPaths = Object.keys(swaggerJson.paths);
     for (let i = 0; i < apiPaths.length; i++) {
