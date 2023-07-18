@@ -394,29 +394,20 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  let deepMerge = (...arguments) => {
-    let target = {};
-    let prop2;
-    let merger = (object) => {
-      for (let property in object) {
-        if (object.hasOwnProperty(property)) {
-          if (property.hasOwnProperty(prop2)) {
-            target[property][prop2] = {
-              ...target[property][prop2],
-              ...object[property][prop2],
-            };
-          } else {
-            target[property] = { ...target[property], ...object[property] };
-          }
+  //function to merge objects and their properties
+  let deepMerge = (obj1, obj2) => {
+    let target = { ...obj1, ...obj2 };
+    if (obj1 && obj2) {
+      for (let propkey in target) {
+        if (typeof target[propkey] == 'object' && target[propkey] !== null) {
+          target[propkey] = deepMerge(obj1[propkey], obj2[propkey]);
         }
       }
-    };
-    for (let i = 0; i < arguments.length; i++) {
-      merger(arguments[i]);
     }
     return target;
   };
 
+  //imports a new api
   let processImportJson = function (fileJson) {
     let fileJsonKeys = Object.keys(fileJson);
     if (
@@ -487,10 +478,12 @@ document.addEventListener('DOMContentLoaded', function () {
   };
 
   let populateBlocks = function () {
+    //clear prevoius blocklist so we dont duplicate
+    blockLists['api'] = [];
+
     apiPaths = Object.keys(swaggerJson.paths);
     for (let i = 0; i < apiPaths.length; i++) {
       let path = apiPaths[i];
-
       //Build a block for each path
       pathMethods = Object.keys(swaggerJson.paths[path]);
       //TODO null check as appropriate
