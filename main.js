@@ -444,7 +444,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if (fileJsonKeys.includes('flowyOutput'))
         flowy.import(fileJson.flowyOutput); // TODO: This is unsafe!
       if (fileJsonKeys.includes('chartProperties'))
-        chartProperties = chartProperties;
+        chartProperties = fileJson.chartProperties;
       populateBlocks();
       return;
     }
