@@ -218,14 +218,37 @@ document.addEventListener('DOMContentLoaded', function () {
                   });
                 }
               });
-            } else if (logic) {
-              //Properties for if, for, etc
+            } else if (logic && logic != 'set') {
+              //Properties for if and for
               chartProperties[blockId] = {
                 logic: logic,
                 properties: [
                   {
                     name: 'expression',
                     description: 'what to evaluate',
+                    required: 'true',
+                    schema: {
+                      type: 'string',
+                    },
+                  },
+                ],
+              };
+            } else if (logic && logic === 'set') {
+              //Properties for set
+              chartProperties[blockId] = {
+                logic: logic,
+                properties: [
+                  {
+                    name: 'VariableName',
+                    description: 'name of variable to set',
+                    required: 'true',
+                    schema: {
+                      type: 'string',
+                    },
+                  },
+                  {
+                    name: 'VariableValue',
+                    description: 'value to set on the variable',
                     required: 'true',
                     schema: {
                       type: 'string',
