@@ -664,6 +664,32 @@ document.addEventListener('DOMContentLoaded', function () {
       .then((result) => result.json())
       .then(processImportJson);
   }
+
+  let runJsScript = function () {
+    document.getElementById('jslabel').innerHTML =
+      createScript(chartProperties);
+  };
+
+  //show javascript button and modal funtions
+  const jsModal = document.querySelector('#jsModal');
+  const showJsBtn = document.querySelector('#jsdisplay');
+  const jsCloseBtn = document.querySelector('#jsClose');
+  const jsCopyBtn = document.querySelector('#jsCopy');
+
+  let closeJsModal = function () {
+    jsModal.style.display = 'none';
+  };
+  let openJsModal = function () {
+    jsModal.style.display = 'block';
+    runJsScript();
+  };
+  let copyScript = function () {
+    navigator.clipboard.writeText(document.getElementById('jslabel').innerHTML);
+  };
+
+  showJsBtn.addEventListener('click', openJsModal, false);
+  jsCopyBtn.addEventListener('click', copyScript, false);
+  jsCloseBtn.addEventListener('click', closeJsModal, false);
 });
 
 function openBottom() {

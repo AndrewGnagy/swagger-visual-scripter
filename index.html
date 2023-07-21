@@ -23,6 +23,7 @@
     <script src="lib/flowy.js"></script>
     <script src="main.js"></script>
     <script src="scriptRunner.js"></script>
+    <script src="flowToScript.js"></script>
   </head>
 
   <body>
@@ -40,6 +41,7 @@
             <div id="rightswitch">Code Editor</div>
         </div> -->
       <div id="buttonsright">
+        <div id="jsdisplay">Show Javascript</div>
         <button
           id="import"
           onclick="document.getElementById('importinput').click()"
@@ -52,6 +54,20 @@
         </button>
         <div id="settingsBtn"><i class="bi bi-gear-fill"></i></div>
         <div id="runscript"><i class="bi bi-play-circle-fill"></i></div>
+      </div>
+    </div>
+    <div id="jsModal" class="modal">
+      <!-- Modal content -->
+      <div class="modal-content">
+        <button id="jsCopy">
+          <i class="bi bi-file-earmark-arrow-up-fill"></i>
+        </button>
+        <div id="jsClose" class="close">
+          <i class="bi bi-x-circle-fill"></i>
+        </div>
+
+        <h3 class="jsheader">Javascript</h3>
+        <p id="jslabel" class="settingslabel">Base URL</p>
       </div>
     </div>
     <div id="settingsModal" class="modal">

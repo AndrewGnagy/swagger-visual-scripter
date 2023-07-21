@@ -118,6 +118,35 @@ html {
   margin-left: -5px;
 }
 
+#jsdisplay {
+  font-family: Roboto;
+  font-weight: 500;
+  font-size: 14px;
+  color: #fff;
+  background-color: #379237;
+  border-radius: 5px;
+  border: none;
+  width: 200px;
+  height: 36px;
+  margin-left: 10px;
+  display: inline-block;
+  vertical-align: top;
+  text-align: center;
+  line-height: 38px;
+  margin-right: 10px;
+  transition: all 0.2s cubic-bezier(0.05, 0.03, 0.35, 1);
+  margin-top: 6px;
+}
+
+#jsdisplay:hover {
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+#jscopy {
+  float: right;
+}
+
 /* Import Button */
 #import {
   font-family: Roboto;
@@ -875,6 +904,7 @@ SELECT {
   cursor: pointer;
   opacity: 0.7;
 }
+
 .modal {
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */

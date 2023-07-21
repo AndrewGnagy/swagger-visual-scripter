@@ -1,21 +1,27 @@
 //Build a js script based on the flow. How hard could it be?
+let requestString;
 
 function createScript(chartProperties) {
   //Start with root block
   //Kicks off depth-first tree traversal
   chartProperties = chartProperties;
+  requestString = '';
   evaluateBlock(0);
+  return requestString;
 }
 
 function evaluateBlock(id) {
   let block = getBlock(id);
   //If it's an API block, do a thing
-
   if (getDataProperty(block['data'], 'method')) {
-    //
+    requestString += `resp = await makeRequest(${JSON.stringify(
+      block['data'][0].value
+    )}, ${JSON.stringify(block['data'][1].value)}});`;
   } else if (getDataProperty(block['data'], 'logic')) {
-    //Handle if or for blocks
-    //console.log("Logic");
+    // if(if){
+    //   requestString += `if (${}) {${}`
+    // }else if(for){
+    // }else if(set variable)
   }
 
   let children = getChildBlocks(id);
