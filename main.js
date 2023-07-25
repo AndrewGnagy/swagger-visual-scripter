@@ -390,7 +390,7 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
           typeText += '{}';
         }
-        typeText += '\n';
+        typeText += ', \n';
         text += '  ' + prop + typeText;
       });
       text += '}';
@@ -674,7 +674,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const jsModal = document.querySelector('#jsModal');
   const showJsBtn = document.querySelector('#jsdisplay');
   const jsCloseBtn = document.querySelector('#jsClose');
-  const jsCopyBtn = document.querySelector('#jsCopy');
+  const jsCopyBtn = document.querySelector('#jscopy');
 
   let closeJsModal = function () {
     jsModal.style.display = 'none';

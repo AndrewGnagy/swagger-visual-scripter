@@ -5,27 +5,53 @@ function createScript(chartProperties) {
   //Start with root block
   //Kicks off depth-first tree traversal
   chartProperties = chartProperties;
-  requestString = '';
+  requestString = 'let resp; \n';
   evaluateBlock(0);
-  return requestString;
+  return requestString + makeRequestString;
 }
 
 function evaluateBlock(id) {
   let block = getBlock(id);
+  let children = getChildBlocks(id);
+  let startI = 0;
   //If it's an API block, do a thing
   if (getDataProperty(block['data'], 'method')) {
     requestString += `resp = await makeRequest(${JSON.stringify(
       block['data'][0].value
-    )}, ${JSON.stringify(block['data'][1].value)}});`;
+    )}, ${JSON.stringify(block['data'][1].value)}`;
+    props = chartProperties[id]['properties'];
+    for (prop of props) {
+      if (prop.in == 'path') {
+        requestString[requestString.length - 1] = '?';
+        requestString += `path=${prop.value}"`;
+      } else if (prop.in == 'query') {
+        requestString += `, {${prop.name}: "${prop.value}" }`;
+      } else if (prop.in == 'body') {
+        requestString += `, ${prop.value}`;
+      }
+    }
+    requestString += ');';
   } else if (getDataProperty(block['data'], 'logic')) {
-    // if(if){
-    //   requestString += `if (${}) {${}`
-    // }else if(for){
-    // }else if(set variable)
+    if (block['data'][0].value == 'if') {
+      requestString += `if(${chartProperties[id]['properties'][0].value}){`;
+      id++;
+      evaluateBlock(id);
+      requestString += `}else{`;
+      id++;
+      evaluateBlock(id);
+      requestString += `}`;
+      startI += 2;
+    } else {
+      requestString += `for(${chartProperties[id]['properties'][0].value}){`;
+      id++;
+      evaluateBlock(id);
+      requestString += `}`;
+      startI++;
+    }
   }
 
-  let children = getChildBlocks(id);
-  for (let i = 0; i < children.length; i++) {
+  requestString += '\n';
+  for (let i = startI; i < children.length; i++) {
     evaluateBlock(children[i].id);
   }
 }
