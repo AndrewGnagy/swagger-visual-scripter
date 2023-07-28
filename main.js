@@ -666,8 +666,9 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   let runJsScript = function () {
-    document.getElementById('jslabel').innerHTML =
-      createScript(chartProperties);
+    let scriptText = createScript(chartProperties);
+    document.getElementById('jslabel').innerHTML = scriptText[0];
+    document.getElementById('jstext').innerHTML = scriptText[1];
   };
 
   //show javascript button and modal funtions
@@ -681,10 +682,17 @@ document.addEventListener('DOMContentLoaded', function () {
   };
   let openJsModal = function () {
     jsModal.style.display = 'block';
+    document.getElementById('jscopy').innerHTML =
+      '<i class="bi bi-clipboard2"></i>';
     runJsScript();
   };
   let copyScript = function () {
-    navigator.clipboard.writeText(document.getElementById('jslabel').innerHTML);
+    navigator.clipboard.writeText(
+      document.getElementById('jslabel').innerText +
+        document.getElementById('jstext').innerText
+    );
+    document.getElementById('jscopy').innerHTML =
+      '<i class="bi bi-clipboard2-check"></i>';
   };
 
   showJsBtn.addEventListener('click', openJsModal, false);

@@ -126,7 +126,7 @@ html {
   background-color: #379237;
   border-radius: 5px;
   border: none;
-  width: 200px;
+  width: 150px;
   height: 36px;
   margin-left: 10px;
   display: inline-block;
@@ -145,6 +145,31 @@ html {
 
 #jscopy {
   float: right;
+  font-size: 20px;
+  border: none;
+}
+
+#jscopy:hover {
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.jslabel {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+  color: #393c44;
+  margin-left: 25px;
+  margin-top: 20px;
+  margin-bottom: 0px;
+}
+
+.jstext {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: #717378;
+  margin-left: 25px;
+  margin-top: 20px;
+  margin-bottom: 0px;
 }
 
 /* Import Button */
