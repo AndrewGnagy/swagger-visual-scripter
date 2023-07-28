@@ -46,8 +46,6 @@ function createScript(chartProperties) {
   } catch {
     requestString = 'Script not found. Try adding blocks or parameters.';
   }
-
-  return [requestString, makeRequestString];
 }
 
 function evaluateBlock(id) {
