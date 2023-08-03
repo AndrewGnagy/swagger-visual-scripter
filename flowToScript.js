@@ -54,22 +54,35 @@ function evaluateBlock(id) {
   let startI = 0;
   //If it's an API block, do a thing
   if (getDataProperty(block['data'], 'method')) {
-    requestString += `resp = await makeRequest("${baseUrl.substring(
-      baseUrl.lastIndexOf('/') + 1
-    )}", ${JSON.stringify(block['data'][0].value)}, ${JSON.stringify(
-      block['data'][1].value
-    )}`;
+    blockUrl = block['data'][2].value.substring(baseUrl.lastIndexOf(':') + 3);
+    requestString += `resp = await makeRequest("${blockUrl.replace(
+      /\/$/,
+      ''
+    )}", ${JSON.stringify(block['data'][0].value)},"`;
+    requestString += JSON.stringify(block['data'][1].value);
     props = chartProperties[id]['properties'];
+    let queryArr = [];
+    let bodyString = '';
     for (prop of props) {
+      if (prop.value == undefined) {
+        continue;
+      }
       if (prop.in == 'path') {
-        requestString[requestString.length - 1] = '?';
-        requestString += `path=${prop.value}"`;
+        requestString = requestString.replace(
+          `{${prop.name}}`,
+          `${prop.value}`
+        );
       } else if (prop.in == 'query') {
-        requestString += `, {${prop.name}: "${prop.value}" }`;
+        queryArr.push(`${prop.name}=${prop.value}`);
       } else if (prop.in == 'body') {
-        requestString += `, ${prop.value}`;
+        bodyString += `, ${prop.value}`;
       }
     }
+    if (queryArr[0]) {
+      requestString[requestString.length - 1] = '?';
+      requestString += queryArr.join('&') + '"';
+    }
+    requestString += bodyString;
     requestString += ');';
   } else if (getDataProperty(block['data'], 'logic')) {
     paramValue = chartProperties[id]['properties'][0].value;
@@ -90,11 +103,15 @@ function evaluateBlock(id) {
       startI++;
     } else if (block['data'][0].value == 'log') {
       requestString += `console.log(${paramValue});`;
+    } else if (block['data'][0].value == 'set') {
+      requestString += `let ${paramValue} = ${chartProperties[id]['properties'][1].value};`;
     }
   }
 
   requestString += '\n';
+
   for (let i = startI; i < children.length; i++) {
     evaluateBlock(children[i].id);
   }
+  requestString = requestString.replace('""', '"');
 }

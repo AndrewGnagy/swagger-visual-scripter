@@ -441,6 +441,10 @@ document.addEventListener('DOMContentLoaded', function () {
       // We are importing a previously Exported flow chart
       if (fileJsonKeys.includes('swaggerJson'))
         swaggerJson = deepMerge(swaggerJson, fileJson.swaggerJson);
+      if (fileJson.swaggerJson?.servers[0]) {
+        baseUrl = fileJson.swaggerJson.servers[0].url;
+        document.querySelector('#baseUrl').value = baseUrl;
+      }
       if (fileJsonKeys.includes('flowyOutput'))
         flowy.import(fileJson.flowyOutput); // TODO: This is unsafe!
       if (fileJsonKeys.includes('chartProperties'))
@@ -455,6 +459,9 @@ document.addEventListener('DOMContentLoaded', function () {
         baseUrl = fileJson.servers[0].url;
         document.querySelector('#baseUrl').value = baseUrl;
       }
+      // else if(fileJson.){
+
+      // }
       document.getElementById('swaggerName').innerHTML =
         fileJson?.info?.title || '';
       document.getElementById('swaggerVersion').innerHTML = fileJson?.info
@@ -528,6 +535,10 @@ document.addEventListener('DOMContentLoaded', function () {
             {
               name: 'path',
               value: path,
+            },
+            {
+              name: 'url',
+              value: baseUrl,
             },
           ]
         );

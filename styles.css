@@ -161,6 +161,7 @@ html {
   margin-left: 25px;
   margin-top: 20px;
   margin-bottom: 0px;
+  white-space: pre-wrap;
 }
 
 .jstext {
@@ -170,6 +171,7 @@ html {
   margin-left: 25px;
   margin-top: 20px;
   margin-bottom: 0px;
+  white-space: pre-wrap;
 }
 
 /* Import Button */
@@ -955,6 +957,7 @@ SELECT {
   width: 55%;
   height: 50%;
   z-index: 12;
+  overflow-y: auto;
 }
 
 .settingsheader {
