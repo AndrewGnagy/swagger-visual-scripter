@@ -79,8 +79,8 @@ function evaluateBlock(id) {
       }
     }
     if (queryArr[0]) {
-      requestString[requestString.length - 1] = '?';
-      requestString += queryArr.join('&') + '"';
+      requestString = requestString.substring(0, requestString.length - 1);
+      requestString += '?' + queryArr.join('&') + '"';
     }
     requestString += bodyString;
     requestString += ');';
