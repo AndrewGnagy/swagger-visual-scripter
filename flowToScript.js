@@ -19,6 +19,9 @@ function createScript(chartProperties) {
       path: path,
       method: method,
       data: data,
+      headers: {
+        'api-key': null
+      }
     };
   
     const req = https.request(options, (res) => {
@@ -37,6 +40,12 @@ function createScript(chartProperties) {
     return response;
     };
     requestBlock();`;
+    if (document.getElementById('apiKey').value) {
+      makeRequestString = makeRequestString.replace(
+        'null',
+        document.getElementById('apiKey').value
+      );
+    }
   } else {
     makeRequestString = 'Base URL not found. Try importing a swagger file.';
   }
