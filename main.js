@@ -459,9 +459,7 @@ document.addEventListener('DOMContentLoaded', function () {
         baseUrl = fileJson.servers[0].url;
         document.querySelector('#baseUrl').value = baseUrl;
       }
-      // else if(fileJson.){
 
-      // }
       document.getElementById('swaggerName').innerHTML =
         fileJson?.info?.title || '';
       document.getElementById('swaggerVersion').innerHTML = fileJson?.info

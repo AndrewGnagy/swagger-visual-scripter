@@ -20,7 +20,7 @@ function createScript(chartProperties) {
       method: method,
       data: data,
       headers: {
-        'api-key': null
+        'api-key': ${document.getElementById('apiKey').value || 'null'}
       }
     };
   
@@ -40,12 +40,6 @@ function createScript(chartProperties) {
     return response;
     };
     requestBlock();`;
-    if (document.getElementById('apiKey').value) {
-      makeRequestString = makeRequestString.replace(
-        'null',
-        document.getElementById('apiKey').value
-      );
-    }
   } else {
     makeRequestString = 'Base URL not found. Try importing a swagger file.';
   }
@@ -97,17 +91,14 @@ function evaluateBlock(id) {
     paramValue = chartProperties[id]['properties'][0].value;
     if (block['data'][0].value == 'if') {
       requestString += `if(${paramValue}){`;
-      id++;
-      evaluateBlock(id);
+      evaluateBlock(id + 1);
       requestString += `}else{`;
-      id++;
-      evaluateBlock(id);
+      evaluateBlock(id + 2);
       requestString += `}`;
       startI += 2;
     } else if (block['data'][0].value == 'for') {
       requestString += `for(${paramValue}){`;
-      id++;
-      evaluateBlock(id);
+      evaluateBlock(id + 1);
       requestString += `}`;
       startI++;
     } else if (block['data'][0].value == 'log') {
