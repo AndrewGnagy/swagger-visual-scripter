@@ -118,6 +118,62 @@ html {
   margin-left: -5px;
 }
 
+#jsdisplay {
+  font-family: Roboto;
+  font-weight: 500;
+  font-size: 14px;
+  color: #fff;
+  background-color: #379237;
+  border-radius: 5px;
+  border: none;
+  width: 150px;
+  height: 36px;
+  margin-left: 10px;
+  display: inline-block;
+  vertical-align: top;
+  text-align: center;
+  line-height: 38px;
+  margin-right: 10px;
+  transition: all 0.2s cubic-bezier(0.05, 0.03, 0.35, 1);
+  margin-top: 6px;
+}
+
+#jsdisplay:hover {
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+#jscopy {
+  float: right;
+  font-size: 20px;
+  border: none;
+}
+
+#jscopy:hover {
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.jslabel {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+  color: #393c44;
+  margin-left: 25px;
+  margin-top: 20px;
+  margin-bottom: 0px;
+  white-space: pre-wrap;
+}
+
+.jstext {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: #717378;
+  margin-left: 25px;
+  margin-top: 20px;
+  margin-bottom: 0px;
+  white-space: pre-wrap;
+}
+
 /* Import Button */
 #import {
   font-family: Roboto;
@@ -875,6 +931,7 @@ SELECT {
   cursor: pointer;
   opacity: 0.7;
 }
+
 .modal {
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
@@ -900,6 +957,7 @@ SELECT {
   width: 55%;
   height: 50%;
   z-index: 12;
+  overflow-y: auto;
 }
 
 .settingsheader {

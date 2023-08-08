@@ -390,7 +390,7 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
           typeText += '{}';
         }
-        typeText += '\n';
+        typeText += ', \n';
         text += '  ' + prop + typeText;
       });
       text += '}';
@@ -441,6 +441,10 @@ document.addEventListener('DOMContentLoaded', function () {
       // We are importing a previously Exported flow chart
       if (fileJsonKeys.includes('swaggerJson'))
         swaggerJson = deepMerge(swaggerJson, fileJson.swaggerJson);
+      if (fileJson.swaggerJson?.servers[0]) {
+        baseUrl = fileJson.swaggerJson.servers[0].url;
+        document.querySelector('#baseUrl').value = baseUrl;
+      }
       if (fileJsonKeys.includes('flowyOutput'))
         flowy.import(fileJson.flowyOutput); // TODO: This is unsafe!
       if (fileJsonKeys.includes('chartProperties'))
@@ -455,6 +459,7 @@ document.addEventListener('DOMContentLoaded', function () {
         baseUrl = fileJson.servers[0].url;
         document.querySelector('#baseUrl').value = baseUrl;
       }
+
       document.getElementById('swaggerName').innerHTML =
         fileJson?.info?.title || '';
       document.getElementById('swaggerVersion').innerHTML = fileJson?.info
@@ -528,6 +533,10 @@ document.addEventListener('DOMContentLoaded', function () {
             {
               name: 'path',
               value: path,
+            },
+            {
+              name: 'url',
+              value: baseUrl,
             },
           ]
         );
@@ -664,6 +673,37 @@ document.addEventListener('DOMContentLoaded', function () {
       .then((result) => result.json())
       .then(processImportJson);
   }
+
+  let runJsScript = function () {
+    createScript(chartProperties);
+    document.getElementById('jslabel').innerHTML = requestString;
+    document.getElementById('jstext').innerHTML = makeRequestString;
+  };
+
+  //show javascript button and modal funtions
+  const jsModal = document.querySelector('#jsModal');
+  const showJsBtn = document.querySelector('#jsdisplay');
+  const jsCloseBtn = document.querySelector('#jsClose');
+  const jsCopyBtn = document.querySelector('#jscopy');
+
+  let closeJsModal = function () {
+    jsModal.style.display = 'none';
+  };
+  let openJsModal = function () {
+    jsModal.style.display = 'block';
+    document.getElementById('jscopy').innerHTML =
+      '<i class="bi bi-clipboard2"></i>';
+    runJsScript();
+  };
+  let copyScript = function () {
+    navigator.clipboard.writeText(requestString + makeRequestString);
+    document.getElementById('jscopy').innerHTML =
+      '<i class="bi bi-clipboard2-check"></i>';
+  };
+
+  showJsBtn.addEventListener('click', openJsModal, false);
+  jsCopyBtn.addEventListener('click', copyScript, false);
+  jsCloseBtn.addEventListener('click', closeJsModal, false);
 });
 
 function openBottom() {

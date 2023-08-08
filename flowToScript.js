@@ -1,55 +1,117 @@
 //Build a js script based on the flow. How hard could it be?
-
+let requestString;
+let makeRequestString;
 function createScript(chartProperties) {
   //Start with root block
   //Kicks off depth-first tree traversal
   chartProperties = chartProperties;
-  evaluateBlock(0);
+  requestString = 'let resp; \n let requestBlock = async () => { \n';
+
+  if (baseUrl != '') {
+    makeRequestString = `let makeRequest = async (baseUrl, method, path, data) => {
+    const https = require("node:${baseUrl.substring(
+      0,
+      baseUrl.lastIndexOf(':')
+    )}");
+    let response;
+    const options = {
+      hostname: baseUrl,
+      path: path,
+      method: method,
+      data: data,
+      headers: {
+        'api-key': ${document.getElementById('apiKey').value || 'null'}
+      }
+    };
+  
+    const req = https.request(options, (res) => {
+      console.log("statusCode:", res.statusCode);
+      console.log("headers:", res.headers);
+      response = res;
+      res.on("data", (data) => {
+        process.stdout.write(data);
+      });
+    });
+  
+    req.on("error", (e) => {
+      console.error(e);
+    });
+    req.end();
+    return response;
+    };
+    requestBlock();`;
+  } else {
+    makeRequestString = 'Base URL not found. Try importing a swagger file.';
+  }
+  try {
+    evaluateBlock(0);
+    requestString += '}; \n';
+  } catch {
+    requestString = 'Script not found. Try adding blocks or parameters.';
+  }
 }
 
 function evaluateBlock(id) {
   let block = getBlock(id);
+  let children = getChildBlocks(id);
+  let startI = 0;
   //If it's an API block, do a thing
-
   if (getDataProperty(block['data'], 'method')) {
-    //
+    blockUrl = block['data'][2].value.substring(baseUrl.lastIndexOf(':') + 3);
+    requestString += `resp = await makeRequest("${blockUrl.replace(
+      /\/$/,
+      ''
+    )}", ${JSON.stringify(block['data'][0].value)},"`;
+    requestString += JSON.stringify(block['data'][1].value);
+    props = chartProperties[id]['properties'];
+    let queryArr = [];
+    let bodyString = '';
+    for (prop of props) {
+      if (prop.value == undefined) {
+        continue;
+      }
+      if (prop.in == 'path') {
+        requestString = requestString.replace(
+          `{${prop.name}}`,
+          `${prop.value}`
+        );
+      } else if (prop.in == 'query') {
+        queryArr.push(`${prop.name}=${prop.value}`);
+      } else if (prop.in == 'body') {
+        bodyString += `, ${prop.value}`;
+      }
+    }
+    if (queryArr[0]) {
+      requestString = requestString.substring(0, requestString.length - 1);
+      requestString += '?' + queryArr.join('&') + '"';
+    }
+    requestString += bodyString;
+    requestString += ');';
   } else if (getDataProperty(block['data'], 'logic')) {
-    //Handle if or for blocks
-    //console.log("Logic");
+    paramValue = chartProperties[id]['properties'][0].value;
+    if (block['data'][0].value == 'if') {
+      requestString += `if(${paramValue}){`;
+      evaluateBlock(id + 1);
+      requestString += `}else{`;
+      evaluateBlock(id + 2);
+      requestString += `}`;
+      startI += 2;
+    } else if (block['data'][0].value == 'for') {
+      requestString += `for(${paramValue}){`;
+      evaluateBlock(id + 1);
+      requestString += `}`;
+      startI++;
+    } else if (block['data'][0].value == 'log') {
+      requestString += `console.log(${paramValue});`;
+    } else if (block['data'][0].value == 'set') {
+      requestString += `let ${paramValue} = ${chartProperties[id]['properties'][1].value};`;
+    }
   }
 
-  let children = getChildBlocks(id);
-  for (let i = 0; i < children.length; i++) {
+  requestString += '\n';
+
+  for (let i = startI; i < children.length; i++) {
     evaluateBlock(children[i].id);
   }
+  requestString = requestString.replace('""', '"');
 }
-
-let makeRequestString = `
-let makeRequest = async (method, path, data) => {
-    return await new Promise((resolve, reject) => {
-      let httpRequest = new XMLHttpRequest();
-      httpRequest.onreadystatechange = () => {
-        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-          console.log("responseText:" + httpRequest.responseText);
-          try {
-            if(httpRequest.responseText) {
-              resolve(JSON.parse(httpRequest.responseText));
-            } else {
-              resolve();
-            }
-          } catch (err) {
-            reject(Error(err.message + " in " + httpRequest.responseText, err));
-          }
-        } else if (httpRequest.readyState == 4) {
-          reject("Request returned status code" + httpRequest.status);
-        }
-      };
-      httpRequest.onerror = () => {
-        reject(Error("There was a network error."));
-      };
-      httpRequest.open(method, baseUrl + path);
-      httpRequest.setRequestHeader("Content-Type", "application/json");
-      httpRequest.setRequestHeader("api-key", "130eff77-4b97-41d2-9198-d8e52e5dc96c");
-      httpRequest.send(data);
-    });
-  };`;
